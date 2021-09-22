@@ -21,6 +21,10 @@ def test_register_invalid_email():
     with pytest.raises(InputError):
         auth_register_v1("john.doe.unsw.edu.au","password","John","Doe")
 
+def test_register_empty_email():
+    with pytest.raises(InputError):
+        auth_register_v1("","password","John","Doe")
+
 def test_register_email_already_used():
 
     auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")
@@ -67,14 +71,18 @@ def test_register_last_name_incorrect_length():
 
 def test_email_not_registered():
     with pytest.raises(InputError):
-        auth_login_v1("john.doe@aunsw.edu.au","password","John","Doe")
+        auth_login_v1("john.doe@unsw.edu.au","password","John","Doe")
 
+def test_email_empty():
+    auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")
+    with pytest.raises(InputError):
+        auth_login_v1("","password","John","Doe")
 
 # The email is a user, but has the wrong password
 def test_incorrect_password():
     auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")
     with pytest.raises(InputError):
-        auth_login_v1("john.doe@aunsw.edu.au","password","John","Doe")
+        auth_login_v1("john.doe@aunsw.edu.au","password123","John","Doe")
 
 # TODO: Check it returns the correct ID?
 def test_correct_password():
