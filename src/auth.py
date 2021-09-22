@@ -4,6 +4,7 @@
 import re
 
 def auth_login_v1(email, password):
+    '''
     # Do some for loop that loops through the users list somehow and compares the given email to
     user_emails = user_info['emails']
     
@@ -36,6 +37,7 @@ def auth_login_v1(email, password):
     return {
         'auth_user_id': 1,
     }
+    '''
 
 def auth_register_v1(email, password, name_first, name_last):
     # Used to check that the email is correct
