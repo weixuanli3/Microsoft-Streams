@@ -28,7 +28,7 @@ Example usage:
 initial_object = {
      'names': [],
      'name_last': [],
-     'emails': [],
+     'emails': [], 
      'password': []
 }
 ## YOU SHOULD MODIFY THIS OBJECT ABOVE
@@ -41,7 +41,7 @@ class Datastore:
         return self.__store['names']
 
     def get_data(self):
-        return self.__store
+       return self.__store
 
     def set(self, store):
         if not isinstance(store, dict):

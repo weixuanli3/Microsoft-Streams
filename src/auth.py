@@ -1,7 +1,7 @@
-from data_store import data_store
+import data_store
 from error import InputError
 
-import re 
+import re  
 
 def auth_login_v1(email, password):
     pass
@@ -42,7 +42,7 @@ def auth_login_v1(email, password):
 
 def auth_register_v1(email, password, name_first, name_last):
     # Used to check that the email is correct
-    regex  = '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}$'
+    regex  = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}$"
 
     user_info = data_store.get_data()
     user_emails = user_info['emails']
@@ -58,13 +58,15 @@ def auth_register_v1(email, password, name_first, name_last):
             is_valid_name_first and is_not_already_registered):
         # RAISE ERROR
         raise InputError()
+        
     else:
         # REGISTER USER
         user_names = user_info['names']
         user_names.append(name_first)
         user_emails.append(email)
+
         
 
     
-#auth_register_v1("john.henderson@gmail.com", "123126", "John", "Doe")
-#auth_register_v1("john.henderson@gmail.com", "123126", "John", "Doe")
+auth_register_v1("john.henderson@gmail.com", "123126", "John", "Doe")
+print(data_store.get())
