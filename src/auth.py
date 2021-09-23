@@ -1,6 +1,8 @@
-import data_store
+from data_store import data_store
 from error import InputError
+  
 
+  
 import re  
 
 def auth_login_v1(email, password):
@@ -57,16 +59,16 @@ def auth_register_v1(email, password, name_first, name_last):
     if not (is_valid_email and is_valid_password and is_valid_name_last and 
             is_valid_name_first and is_not_already_registered):
         # RAISE ERROR
-        raise InputError()
+        return "False"
         
     else:
         # REGISTER USER
         user_names = user_info['names']
         user_names.append(name_first)
         user_emails.append(email)
-
+        return "Success"
         
 
     
-auth_register_v1("john.henderson@gmail.com", "123126", "John", "Doe")
-print(data_store.get())
+#auth_register_v1("john.henderson@gmail.com", "123126", "John", "Doe")
+#auth_register_v1("john.henderson@gmail.com", "123126", "John", "Doe")
