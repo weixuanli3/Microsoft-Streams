@@ -7,7 +7,7 @@ You don't need to understand how it works at this point, just how to use it :)
 The data_store variable is global, meaning that so long as you import it into any
 python file in src, you can access its contents.
 
-Example usage:
+Example usage: 
 
     from data_store import data_store
 
@@ -26,23 +26,10 @@ Example usage:
 
 ## YOU SHOULD MODIFY THIS OBJECT BELOW
 initial_object = {
-    'user': [
-        {
-            'u_id': 1,
-            'email' : 'eg@example.com'
-            'name_first' : 'John'
-            'name_last' : 'Smith'
-            'handle_str' : 'JohnSmith'
-            'password' : '123cat'
-        },
-    ],
-    'users': [],
-    'channel' : [
-        {
-            
-        }
-    ]
-    
+     'names': [],
+     'name_last': [],
+     'emails': [],
+     'password': []
 }
 ## YOU SHOULD MODIFY THIS OBJECT ABOVE
 
@@ -51,12 +38,18 @@ class Datastore:
         self.__store = initial_object
 
     def get(self):
+        return self.__store['names']
+
+    def get_data(self):
         return self.__store
 
     def set(self, store):
         if not isinstance(store, dict):
             raise TypeError('store must be of type dictionary')
         self.__store = store
+
+    def __str__(self):
+        return self.__store['names']
 
 print('Loading Datastore...')
 
