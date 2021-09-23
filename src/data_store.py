@@ -26,10 +26,11 @@ Example usage:
 
 ## YOU SHOULD MODIFY THIS OBJECT BELOW
 initial_object = {
-    'users' : []
-
+     'names': [],
+     'name_last': [],
+     'emails': [], 
+     'password': []
 }
-   
 ## YOU SHOULD MODIFY THIS OBJECT ABOVE
 
 class Datastore:
