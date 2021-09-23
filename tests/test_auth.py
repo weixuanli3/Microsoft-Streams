@@ -8,7 +8,6 @@ Check over tests to make sure they are correct.
 """
 import pytest
 
-'''
 
 from src.auth import auth_register_v1 
 from src.auth import auth_login_v1
@@ -28,7 +27,7 @@ def test_register_empty_email():
 
 def test_register_email_already_used():
 
-    auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")
+    auth_register_v1("john.doe@unsw.edu.au","password","John","Doe")
 
     # Regerstering a second account with the same email
     with pytest.raises(InputError):
@@ -45,8 +44,8 @@ def test_register_password_incorrect_length():
         auth_register_v1("john.doe@aunsw.edu.au","123","John","Doe")
 
     # TODO: Possible max password
-    with pytest.raises(InputError):
-        auth_register_v1("john.doe@aunsw.edu.au","1234566789abcdefghijklmnopqrstuvwxyz","John","Doe")
+    #with pytest.raises(InputError):
+    #   auth_register_v1("john.doe@aunsw.edu.au","1234566789abcdefghijklmnopqrstuvwxyz","John","Doe")
 
 # First name must be between 1 and 50 characters inclusive
 def test_register_first_name_incorrect_length():
@@ -65,6 +64,7 @@ def test_register_last_name_incorrect_length():
         auth_register_v1("john.doe@aunsw.edu.au","password","John","DoeDoeDoeDoeDoeDoeDoeDoeDoeDoeDoeDoeDoeDoeDoeDoeDoe")
 
 
+'''
 #------------------------------------------------------------
 # This block of code deals with the auth_login_v1 function 
 # from auth.py

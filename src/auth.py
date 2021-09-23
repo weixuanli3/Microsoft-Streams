@@ -1,10 +1,9 @@
-import data_store
-from error import InputError
+from src.data_store import data_store
+from src.error import InputError
 
 import re  
 
 def auth_login_v1(email, password):
-    pass
     '''
     # Do some for loop that loops through the users list somehow and compares the given email to
     user_emails = user_info['emails']
@@ -41,14 +40,14 @@ def auth_login_v1(email, password):
     '''
 
 def auth_register_v1(email, password, name_first, name_last):
+
     # Used to check that the email is correct
     regex  = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}$"
 
-    user_info = data_store.get_data()
-    user_emails = user_info['emails']
+    user_emails = data_store.get('emails')
 
     is_not_already_registered = not email in user_emails
-
+ 
     is_valid_email = re.match(regex, email)
     is_valid_password = len(password) >= 6
     is_valid_name_first = len(name_first) >= 1 and len(name_first) <= 50
@@ -61,12 +60,8 @@ def auth_register_v1(email, password, name_first, name_last):
         
     else:
         # REGISTER USER
-        user_names = user_info['names']
+        user_names = data_store.get('names')
         user_names.append(name_first)
         user_emails.append(email)
+        return {1}
 
-        
-
-    
-auth_register_v1("john.henderson@gmail.com", "123126", "John", "Doe")
-print(data_store.get())

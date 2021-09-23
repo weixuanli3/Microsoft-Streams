@@ -37,19 +37,19 @@ class Datastore:
     def __init__(self):
         self.__store = initial_object
 
-    def get(self):
-        return self.__store['names']
+    def get(self, specification = 'names'):
+        return self.__store [specification]
 
     def get_data(self):
-       return self.__store
+      return self.__store
 
     def set(self, store):
         if not isinstance(store, dict):
             raise TypeError('store must be of type dictionary')
         self.__store = store
 
-    def __str__(self):
-        return self.__store['names']
+    #def __str__(self):
+    #   return self.__store['names']
 
 print('Loading Datastore...')
 
