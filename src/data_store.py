@@ -33,7 +33,8 @@ initial_object = {
             'names' : 'Admin',
             'name_lasts' : 'User',
             'emails' : 'admin_email@unsw.edu.au',
-            'passwords': '123123'
+            'passwords': '123123',
+            'handle' : 'AdminUser1234567891011'
         },
     ],
     'channels': [
