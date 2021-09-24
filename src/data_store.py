@@ -18,6 +18,7 @@ Example usage:
 
     names.remove('Rob')
     names.append('Jake')
+    # Will not work with current set up
     names.sort()
 
     print(store) # Prints { 'names': ['Emily', 'Hayden', 'Jake', 'Nick'] }
@@ -27,12 +28,12 @@ Example usage:
 ## YOU SHOULD MODIFY THIS OBJECT BELOW
 initial_object = {
     'users': [
-        {
+        {   # Example user
             'id' : 1,
-            'name' : 'John',
-            'name_last' : 'Doe',
-            'email' : 'john.doe@unsw.edu.au',
-            'password': '123123'
+            'names' : 'Admin',
+            'name_lasts' : 'User',
+            'emails' : 'admin_email@unsw.edu.au',
+            'passwords': '123123'
         },
     ],
     'channels': [
@@ -53,9 +54,24 @@ class Datastore:
     def __init__(self):
         self.__store = initial_object
 
-    def get(self, specification = 'names'):
-        return self.__store
+    '''
+    Will return a subset of the database. Will return the names of all 
+    users by default, but if you enter somehting as the specification, it will return that.
+    Eg. If you want to print all user emails:
 
+    user_emails = data_store.get('emails')
+    
+    for emails in user_emails:
+        print(emails)
+    '''
+    def get(self, specification = 'names'):
+        new_list = list()
+        all_users = self.__store['users']
+        for user in all_users:
+            new_list.append(user[specification])
+        return {specification : new_list}
+    
+    # Will return the whole database of channels and users
     def get_data(self):
       return self.__store
 
@@ -64,11 +80,8 @@ class Datastore:
             raise TypeError('store must be of type dictionary')
         self.__store = store
 
-    #def __str__(self):
-    #   return self.__store['names']
 
 print('Loading Datastore...')
 
 global data_store
 data_store = Datastore()
-
