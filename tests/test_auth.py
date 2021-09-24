@@ -78,28 +78,25 @@ def test_symbles_handle():
 
 #------------------------------------------------------------
 # Log in
-'''
 # This block of code deals with the auth_login_v1 function 
 # from auth.py
 
 def test_email_not_registered():
     with pytest.raises(InputError):
-        auth_login_v1("john.doe@unsw.edu.au","password","John","Doe")
+        auth_login_v1("john.doe10@unsw.edu.au","password")
 
 def test_email_empty():
-    auth_register_v1("john.doe@unsw.edu.au","password","John","Doe")
+    auth_register_v1("john.doe11@unsw.edu.au","password","John","Doe")
     with pytest.raises(InputError):
-        auth_login_v1("","password","John","Doe")
+        auth_login_v1("","password")
 
 # The email is a user, but has the wrong password
 def test_incorrect_password():
-    auth_register_v1("john.doe@unsw.edu.au","password","John","Doe")
+    auth_register_v1("john.doe12@unsw.edu.au","password","John","Doe")
     with pytest.raises(InputError):
-        auth_login_v1("john.doe@unsw.edu.au","password123","John","Doe")
+        auth_login_v1("john.doe12@unsw.edu.au","password123")
 
 # TODO: Check it returns the correct ID?
 def test_correct_password():
-    auth_register_v1("john.doe@unsw.edu.au","password","John","Doe")
-    auth_login_v1("john.doe@unsw.edu.au","password","John","Doe")
-
-'''
+    auth_register_v1("john.doe13@unsw.edu.au","password","John","Doe")
+    assert auth_login_v1("john.doe13@unsw.edu.au","password") == {8}

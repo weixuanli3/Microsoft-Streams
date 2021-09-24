@@ -10,6 +10,24 @@ from src.error import InputError
 import re  
 
 def auth_login_v1(email, password):
+
+    """
+    Returns the user id if a valid email and password pair are entered
+    """
+
+    user_data = data_store.get_data()['users']
+    authentic_user = False
+    user_id = -1
+    print(type(user_data))
+    for users in user_data:
+        if (users['emails'], users['passwords']) == (email, password):
+            authentic_user = True
+            user_id = users['id']
+    
+    if (authentic_user == False):
+        raise InputError("Password or email is incorrect")
+
+    return {user_id}
     '''
     # Do some for loop that loops through the users list somehow and compares the given email to
     user_emails = user_info['emails']
@@ -69,7 +87,7 @@ def auth_register_v1(email, password, name_first, name_last):
     if not (is_valid_email and is_valid_password and is_valid_name_last and 
             is_valid_name_first and is_not_already_registered):
         # RAISE ERROR 
-        raise InputError('Bad')
+        raise InputError("Bad registration data")
         
     else:
         # REGISTER USER
@@ -112,4 +130,3 @@ def generate_handle(name_first, name_last):
         user_handle += str(i)
         is_valid_handle = not user_handle in data_store.get('handle')['handle']
     return user_handle
-
