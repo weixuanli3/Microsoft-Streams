@@ -15,7 +15,7 @@ def auth_login_v1(email, password):
             # return an input error for the incorrect password
             
         
-    # else return an input error for email not found
+    # else return an input error for email not found 
     
     
     
@@ -43,12 +43,12 @@ def auth_register_v1(email, password, name_first, name_last):
 
     # Used to check that the email is correct
     regex  = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}$"
+    is_valid_email = re.match(regex, email)
 
     user_emails = data_store.get('emails')
 
     is_not_already_registered = not email in user_emails
  
-    is_valid_email = re.match(regex, email)
     is_valid_password = len(password) >= 6
     is_valid_name_first = len(name_first) >= 1 and len(name_first) <= 50
     is_valid_name_last = len(name_last) >= 1 and len(name_last) <= 50
@@ -56,7 +56,7 @@ def auth_register_v1(email, password, name_first, name_last):
     if not (is_valid_email and is_valid_password and is_valid_name_last and 
             is_valid_name_first and is_not_already_registered):
         # RAISE ERROR
-        raise InputError()
+        raise InputError('Bad')
         
     else:
         # REGISTER USER

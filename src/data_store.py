@@ -26,11 +26,27 @@ Example usage:
 
 ## YOU SHOULD MODIFY THIS OBJECT BELOW
 initial_object = {
-     'names': [],
-     'name_last': [],
-     'emails': [], 
-     'password': []
+    'users': [
+        {
+            'id' : 1,
+            'name' : 'John',
+            'name_last' : 'Doe',
+            'email' : 'john.doe@unsw.edu.au',
+            'password': '123123'
+        },
+    ],
+    'channels': [
+        {
+            'id': 1,
+            'name' : 'channel1',
+        },
+        {
+            'id': 2,
+            'name' : 'channel2',
+        },
+    ],
 }
+
 ## YOU SHOULD MODIFY THIS OBJECT ABOVE
 
 class Datastore:
@@ -38,7 +54,7 @@ class Datastore:
         self.__store = initial_object
 
     def get(self, specification = 'names'):
-        return self.__store [specification]
+        return self.__store
 
     def get_data(self):
       return self.__store
