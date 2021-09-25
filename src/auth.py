@@ -19,7 +19,6 @@ def auth_login_v1(email, password):
     user_data = data_store.get_data()['users']
     authentic_user = False
     user_id = -1
-    print(type(user_data))
     for users in user_data:
         if (users['emails'], users['passwords']) == (email, password):
             authentic_user = True
