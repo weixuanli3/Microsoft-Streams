@@ -40,11 +40,9 @@ initial_object = {
     'channels': [
         {
             'id': 1,
-            'name' : 'channel1',
-        },
-        {
-            'id': 2,
-            'name' : 'channel2',
+            'name': 'channel1',
+            'owner': 'owner1',
+            'public': True
         },
     ],
 }
