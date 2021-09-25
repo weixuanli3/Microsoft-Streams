@@ -9,7 +9,6 @@ Check over tests to make sure they are correct.
 from src.data_store import Datastore
 import pytest
 
-
 from src.auth import auth_register_v1, generate_handle 
 from src.auth import auth_login_v1
 from src.error import InputError
@@ -19,7 +18,6 @@ from src.data_store import data_store
 # This block of code deals with the auth_register_v1 function 
 # from auth.py
 
-# TODO: Check it returns the correct ID?
 def test_register_valid_email():
     assert auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe") == {2}
 
@@ -96,7 +94,6 @@ def test_incorrect_password():
     with pytest.raises(InputError):
         auth_login_v1("john.doe12@unsw.edu.au","password123")
 
-# TODO: Check it returns the correct ID?
 def test_correct_password():
     auth_register_v1("john.doe13@unsw.edu.au","password","John","Doe")
     assert auth_login_v1("john.doe13@unsw.edu.au","password") == {8}
