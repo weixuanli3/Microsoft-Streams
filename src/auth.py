@@ -1,4 +1,5 @@
 # John Henderson (z5368143)
+# Tomas Ostroumoff (z5312982)
 
 #from data_store import data_store
 #from error import InputError
@@ -28,45 +29,11 @@ def auth_login_v1(email, password):
         raise InputError("Password or email is incorrect")
 
     return {user_id}
-    '''
-    # Do some for loop that loops through the users list somehow and compares the given email to
-    user_emails = user_info['emails']
-    
-    if (email in user_email):
-        if (users[i]['password'] == password):
-            return user[i]['u_id']
-        else:
-            # return an input error for the incorrect password
-            
-        
-    # else return an input error for email not found 
-    
-    
-    
-    # found = 0
-    # i = 0
-    # while (found == 0):
-    #     # reference some the user list
-    #     if (users[i]['email'] == email):
-    #         found == 1
-    #         if (users[i]['password'] == password):
-    #             return user[i]['u_id']
-    #         else:
-    #             ##Spit out an input error for the wrong password
-    #         return 
-        
-    #     i+= 1
-    
-    ## return an input error for the email not being found
-    return {
-        'auth_user_id': 1,
-    }
-    '''
+   
 # Assumptions: Possible max length password?
 # Name cannot contain any characters like .!@#$%^&
 def auth_register_v1(email, password, name_first, name_last):
     """
-    # Done by John Henderson
     This function is used to register a user. It will raise an input error 
     if the email, password, name or last name are invalid. If the new_users
     infomation is corrent, it will return the new users ID {ID}.

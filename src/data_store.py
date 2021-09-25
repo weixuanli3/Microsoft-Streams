@@ -7,7 +7,7 @@ You don't need to understand how it works at this point, just how to use it :)
 The data_store variable is global, meaning that so long as you import it into any
 python file in src, you can access its contents.
 
-Example usage: 
+Example usage: (By Hayden Smith)
 
     from data_store import data_store
 
