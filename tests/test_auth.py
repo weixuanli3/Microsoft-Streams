@@ -1,5 +1,5 @@
 # John Henderson (z5368143)
-# This will test the auth python file
+# This will test the auth.py file
 
 """
 TODO:
@@ -38,12 +38,11 @@ def test_register_invalid_email():
         auth_register_v1("john.doe.unsw.edu.au","password","John","Doe")
 
 # Password can only be a minimum of 6 characters
-# Maximum? Possible assumpsion
 def test_register_password_incorrect_length():
     with pytest.raises(InputError):
         auth_register_v1("john.doe3@unsw.edu.au","123","John","Doe")
 
-    # TODO: Possible max password
+    # TODO: Possible max password?
     #with pytest.raises(InputError):
     #   auth_register_v1("john.doe@aunsw.edu.au","1234566789abcdefghijklmnopqrstuvwxyz","John","Doe")
 
