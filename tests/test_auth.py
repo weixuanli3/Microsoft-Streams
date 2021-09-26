@@ -6,6 +6,7 @@ TODO:
 Check that when a test is successful that it returns the correct user ID.
 Check over tests to make sure they are correct.
 """
+from src.other import clear_v1
 from src.data_store import Datastore
 import pytest
 
@@ -18,8 +19,10 @@ from src.data_store import data_store
 # This block of code deals with the auth_register_v1 function 
 # from auth.py
 
+# This will be the second user as the first user is the example Admin user
 def test_register_valid_email():
     assert auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe") == {2}
+    clear_v1()
 
 def test_register_empty_email():
     with pytest.raises(InputError):
@@ -32,6 +35,8 @@ def test_register_email_already_used():
     # Regerstering a second account with the same email
     with pytest.raises(InputError):
         auth_register_v1("john.doe1@unsw.edu.au","password","John","Doe")
+
+    clear_v1()
 
 def test_register_invalid_email():
     with pytest.raises(InputError):
@@ -68,10 +73,12 @@ def test_register_last_name_incorrect_length():
 def test_corrent_handle():
     auth_register_v1("john.doe8@unsw.edu.au","password","John","Doe")
     assert 'johndoe01234567891011' in data_store.get('handle')['handle']
+    clear_v1()
 
 def test_symbles_handle():
     auth_register_v1("john.doe9@unsw.edu.au","password","/.,/.","/.,/.,@#")
     assert '01234567891011121314' in data_store.get('handle')['handle']
+    clear_v1()
 
 #------------------------------------------------------------
 # Log in
@@ -86,13 +93,27 @@ def test_email_empty():
     auth_register_v1("john.doe11@unsw.edu.au","password","John","Doe")
     with pytest.raises(InputError):
         auth_login_v1("","password")
+    clear_v1()
 
 # The email is a user, but has the wrong password
 def test_incorrect_password():
     auth_register_v1("john.doe12@unsw.edu.au","password","John","Doe")
     with pytest.raises(InputError):
         auth_login_v1("john.doe12@unsw.edu.au","password123")
+    clear_v1()
 
 def test_correct_password():
     auth_register_v1("john.doe13@unsw.edu.au","password","John","Doe")
-    assert auth_login_v1("john.doe13@unsw.edu.au","password") == {8}
+    assert auth_login_v1("john.doe13@unsw.edu.au","password") == {2}
+    clear_v1()
+
+def test_bad_login_then_good_login():
+    assert auth_register_v1("john.doe@unsw.edu.au","password","John","Doe") == {2}
+
+    # Should not work
+    with pytest.raises(InputError):
+        auth_login_v1("john.doe@unsw.edu.au","password1")
+
+    # Should return corrent login user ID
+    assert auth_login_v1("john.doe@unsw.edu.au","password") == {2}
+    clear_v1()

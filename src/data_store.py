@@ -34,19 +34,17 @@ initial_object = {
             'name_lasts' : 'User',
             'emails' : 'admin_email@unsw.edu.au',
             'passwords': '123123',
-            'handle' : 'AdminUser1234567891011'
+            'handle' : 'AdminUser1234567891011',
+            'channels' : []
         },
     ],
     'channels': [
         {
             'id': 1,
             'name' : 'channel1',
+            'users' : []
         },
-        {
-            'id': 2,
-            'name' : 'channel2',
-        },
-    ],
+    ], 
 }
 
 ## YOU SHOULD MODIFY THIS OBJECT ABOVE
