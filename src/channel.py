@@ -86,7 +86,7 @@ def channel_join_v1(auth_user_id, channel_id):
     # Add user_id to the channel
     for channel in channel_data:
         if (channel['chan_id']) == (channel_id):
-            raise InputError("User already a part of the channel")
+            channel['users_id'].append(auth_user_id) 
             
     # Add channel_id to the user
     for user in user_data:
