@@ -27,12 +27,12 @@ def channels_create_v1(auth_user_id, name, is_public):
     for user in user_data:
         if auth_user_id == {user['id']}:
             user_exists = True
+            if len(name) < 1 or len(name) > 20:
+                raise InputError("Invalid channel name")
+            user['channels'].add(name)
     
     if not user_exists:
         raise InputError("User doesn't exist")
-    
-    if len(name) < 1 or len(name) > 20:
-        raise InputError("Invalid channel name")
     
     channel_data = data_store.get_data()['channels']
     for channel in channel_data:
@@ -40,9 +40,11 @@ def channels_create_v1(auth_user_id, name, is_public):
             raise InputError("Channel name already exists")
     new_channel_id = len(channel_data) + 1
     channel_data.append({
-        'id': new_channel_id,
+        'chan_id': new_channel_id,
         'name': name,
-        'owner': name
+        'owner': name,
+        'users': {auth_user_id},
+        'public': is_public
     })
     return {
         'channel_id': new_channel_id,
