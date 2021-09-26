@@ -34,11 +34,8 @@ initial_object = {
             'name_lasts' : 'User',
             'emails' : 'admin_email@unsw.edu.au',
             'passwords': '123123',
-            'handle' : 'AdminUser1234567891011'
-            'channels' : {
-                1,
-                2
-            }
+            'handle' : 'AdminUser1234567891011',
+            'channels' : {1, 2}
         },
     ],
     'channels': [
@@ -46,7 +43,7 @@ initial_object = {
             'chan_id': 1,
             'name': 'Channel 1',
             'owner_id': 1,
-            'users_id' : {1, 2, 3}
+            'users_id' : {1, 2, 3},
             'is_public': True
         },
     ],
