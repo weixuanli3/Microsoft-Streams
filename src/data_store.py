@@ -36,8 +36,8 @@ initial_object = {
             'passwords': '123123',
             'handle' : 'AdminUser1234567891011'
             'channels' : {
-                'Channel 1',
-                'Channel 2'
+                1,
+                2
             }
         },
     ],
