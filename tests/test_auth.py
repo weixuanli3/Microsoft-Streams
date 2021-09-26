@@ -115,5 +115,5 @@ def test_bad_login_then_good_login():
         auth_login_v1("john.doe@unsw.edu.au","password1")
 
     # Should return corrent login user ID
-    assert auth_login_v1("john.doe2@unsw.edu.au","password") == {2}
+    assert auth_login_v1("john.doe@unsw.edu.au","password") == {2}
     clear_v1()
