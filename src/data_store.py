@@ -44,10 +44,10 @@ initial_object = {
     'channels': [
         {
             'chan_id': 1,
-            'name': 1,
-            'owner': 'owner1',
-            'users' : {1, 2, 3}
-            'public': True
+            'name': 'Channel 1',
+            'owner_id': 1,
+            'users_id' : {1, 2, 3}
+            'is_public': True
         },
     ],
 }
