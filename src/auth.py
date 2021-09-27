@@ -27,7 +27,7 @@ def auth_login_v1(email, password):
     if (authentic_user == False):
         raise InputError("Password or email is incorrect")
 
-    return {user_id}
+    return {'auth_user_id': user_id}
    
 # Assumptions: Possible max length password?
 # Name cannot contain any characters like .!@#$%^&
@@ -68,7 +68,7 @@ def auth_register_v1(email, password, name_first, name_last):
             'passwords': password,
             'handle' : generate_handle(name_first, name_last)
         })
-        return {new_user_id}
+        return {'auth_user_id': new_user_id}
 
 #Assumption: Possible max handle? throw error if handle is over 30? 100?
 def generate_handle(name_first, name_last):
