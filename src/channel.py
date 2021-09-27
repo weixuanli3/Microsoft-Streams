@@ -3,8 +3,40 @@ from src.error import InputError
 from src.error import AccessError
 
 def channel_invite_v1(auth_user_id, channel_id, u_id):
-    return {
-    }
+    channel_data = data_store.get_data()['channels']
+    #check if the channel exists
+    channel_exists = False
+    
+    for channel in channel_data:
+        if channel_id == {channel['chan_id']}:
+            channel_exists = True
+            Return_Dictionary['channel_name'] = channel['name']
+            Return_Dictionary['public_status'] = channel['is_public']
+            member_ids = channel['users_id']
+            owner_ids = channel['owner_id']
+    
+    if not channel_exists:
+        raise InputError("Channel ID not valid")
+    
+    #check if the u_id refers to a valid user
+    user_valid = False
+
+
+
+    if not user_valid:
+        raise InputError("user id does not refer to a valid user")
+
+    # check if the u_id refers to a user not aready in the channel
+    user_valid_member = True
+
+    for channel in channel_data:
+        if u_id == {channel['users_id']}:
+            user_valid_member = False
+    
+    if not user_valid_member:
+        raise InputError("User is already a member of the channel")
+
+    return {}
 
 def channel_details_v1(auth_user_id, channel_id):
         # check if the user exists 
