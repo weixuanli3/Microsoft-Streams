@@ -8,7 +8,7 @@ from src.error import AccessError
 from src.other import clear_v1
 from src.channel import channel_details_v1
 
-# The following tests channel_create_v1
+# The following tests channels_create_v1
 def test_invalid_user_id():
     clear_v1()
     with pytest.raises(InputError):
@@ -36,10 +36,23 @@ def test_channel_name_exists():
     with pytest.raises(InputError):
         channels_create_v1(user2_id, "Channel 1", True)
 
-# TODO: Check how it is successfully created
-def test_channel_create_success():
-    pass
+# The following tests channel_list_v1
+def test_channel_list_one_user():
+    clear_v1()
+    user1_id = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")
+    chan_id = channels_create_v1(user1_id, "Channel 1", True)['channel_id']
+    assert channels_list_v1(auth1_id)['channels'] == [
+        {
+            'channel_id': auth1_id
+            'name': "Channel 1"
+        }
+    ]
 
+def test_channel_list_one_private_channel():
+    clear_v1()
+    user1_id = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")
+    chan_id = channels_create_v1(user1_id, "Channel 1", False)['channel_id']
+    assert channels_list_v1(auth1_id)['channels'] == []
 
 # The following tests are for channel_join
 def test_join_public_channel():
