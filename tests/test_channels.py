@@ -6,6 +6,7 @@ from src.channel import channel_join_v1
 from src.error import InputError
 from src.error import AccessError
 from src.other import clear_v1
+from src.channel import channel_details_v1
 
 # The following tests channel_create_v1
 def test_invalid_user_id():
@@ -84,4 +85,24 @@ def test_join_channel_channel_does_not_exist():
     with pytest.raises(InputError):
         channel_join_v1(1, 3)
 
+# The following tests are for channel_details
+    
+def test_channel_details_valid_channel():
+    clear_v1()
+    #user_id = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")
+    channel_id = channels_create_v1(1, "Channel 1", True)
+    channel_details_v1(1, channel_id)
+    
+def test_channel_details_non_existant_channel():
+    clear_v1()
+    #user_id = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")
+    #channel_id = channels_create_v1(1, "Channel 1", True)
+    with pytest.raises(InputError):
+        channel_details_v1(1, 33)
         
+def test_channel_details_non_existant_channel():
+    clear_v1()
+    user_id = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")
+    #channel_id = channels_create_v1(user_id, "Channel 1", True)
+    with pytest.raises(AccessError):
+        channel_details_v1(user_id, 1)

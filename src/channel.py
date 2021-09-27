@@ -7,6 +7,72 @@ def channel_invite_v1(auth_user_id, channel_id, u_id):
     }
 
 def channel_details_v1(auth_user_id, channel_id):
+        # check if the user exists 
+        # MAYBE NOT NECESSARY!!!!!
+    '''
+    user_data = data_store.get_data()['users']
+    user_exists = False
+    for user in user_data:
+        if auth_user_id == {user['id']}:
+            user_exists = True
+            
+    if not user_exists:
+        raise InputError("User doesn't exist")
+    
+    '''
+    
+    Return_Dictionary = {
+        'channel_name' : '',
+        'public_status' : True,
+        'owner_members' : [],
+        'all_members' : [],
+    }
+    
+    owner_ids = []
+    member_ids = []
+    
+    #check if the channel exists
+    channel_data = data_store.get_data()['channels']
+    channel_exists = False
+    
+    for channel in channel_data:
+        if channel_id == {channel['chan_id']}:
+            channel_exists = True
+            Return_Dictionary['channel_name'] = channel['name']
+            Return_Dictionary['public_status'] = channel['is_public']
+            member_ids = channel['users_id']
+            owner_ids = channel['owner_id']
+    
+    if not channel_exists:
+        raise InputError("Channel ID not valid")
+    
+    user_valid_member = False
+    
+    # check if the user is aready in the channel
+    for channel in channel_data:
+        if auth_user_id == {channel['users_id']}:
+            user_valid_member = True
+    
+    if not user_valid_member:
+        raise AccessError("User not a member of the channel")
+    
+    # Add the owener_ids and member_ids to the return dictionary
+    # NOT SURE IF THIS IS THE CORRECT SYNTAX TO ADD TO DICTIONARIES 
+    # also shiocking time complexity if that matters at all hopefully not though
+    user_data = data_store.get_data()['users']
+    user_exists = False
+    for user in user_data:
+        for id in owner_ids:
+            if id == {user['id']}:
+                Return_Dictionary['owner_members'].append(user)
+        for id1 in user_data:
+            if id1 == {user['id']}:
+                Return_Dictionary['all_members'].append(user)
+                
+    
+    return Return_Dictionary
+    
+    '''  
     return {
         'name': 'Hayden',
         'owner_members': [
@@ -28,6 +94,7 @@ def channel_details_v1(auth_user_id, channel_id):
             }
         ],
     }
+    '''
 
 def channel_messages_v1(auth_user_id, channel_id, start):
     return {
@@ -80,7 +147,7 @@ def channel_join_v1(auth_user_id, channel_id):
     # check if the user is aready in the channel
     for channel in channel_data:
         if auth_user_id == {channel['users_id']}:
-            channel_exists = True
+            raise InputError("User already member of channel")
     
     
     # Add user_id to the channel
