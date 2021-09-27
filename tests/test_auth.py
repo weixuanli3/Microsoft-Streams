@@ -1,11 +1,8 @@
 # John Henderson (z5368143)
 # This will test the auth.py file
 
-"""
-TODO:
-Check that when a test is successful that it returns the correct user ID.
-Check over tests to make sure they are correct.
-"""
+# TODO Make blackbox
+
 from src.other import clear_v1
 from src.data_store import Datastore
 import pytest
@@ -21,7 +18,7 @@ from src.data_store import data_store
 
 # This will be the second user as the first user is the example Admin user
 def test_register_valid_email():
-    assert auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe") == {2}
+    assert auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe") == {'auth_user_id': 2}
     clear_v1()
 
 def test_register_empty_email():
@@ -104,16 +101,16 @@ def test_incorrect_password():
 
 def test_correct_password():
     auth_register_v1("john.doe13@unsw.edu.au","password","John","Doe")
-    assert auth_login_v1("john.doe13@unsw.edu.au","password") == {2}
+    assert auth_login_v1("john.doe13@unsw.edu.au","password") == {'auth_user_id': 2}
     clear_v1()
 
 def test_bad_login_then_good_login():
-    assert auth_register_v1("john.doe@unsw.edu.au","password","John","Doe") == {2}
+    assert auth_register_v1("john.doe@unsw.edu.au","password","John","Doe") == {'auth_user_id': 2}
 
     # Should not work
     with pytest.raises(InputError):
         auth_login_v1("john.doe@unsw.edu.au","password1")
 
     # Should return corrent login user ID
-    assert auth_login_v1("john.doe@unsw.edu.au","password") == {2}
+    assert auth_login_v1("john.doe@unsw.edu.au","password") == {'auth_user_id': 2}
     clear_v1()
