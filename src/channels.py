@@ -25,7 +25,7 @@ def channels_create_v1(auth_user_id, name, is_public):
     user_data = data_store.get_data()['users']
     user_exists = False
     for user in user_data:
-        if auth_user_id == {user['id']}:
+        if auth_user_id == user['id']:
             user_exists = True
             curr_user = user
     
@@ -41,7 +41,10 @@ def channels_create_v1(auth_user_id, name, is_public):
             raise InputError("Channel name already exists")
     new_channel_id = len(channel_data) + 1
     
-    curr_user['channels'].add(new_channel_id)
+    if 'channels' in curr_user:
+        curr_user['channels'].add(new_channel_id)
+    else:
+        curr_user['channels'] = {new_channel_id}
     channel_data.append({
         'chan_id': new_channel_id,
         'name': name,

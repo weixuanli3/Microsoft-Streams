@@ -23,6 +23,7 @@ def clear_v1():
     """
     
     store = data_store.get_data()
+
     store = {
         'users': [
             {   # Example user
