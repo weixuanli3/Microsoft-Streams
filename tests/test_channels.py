@@ -7,6 +7,7 @@ from src.error import InputError
 from src.error import AccessError
 from src.other import clear_v1
 from src.channel import channel_details_v1
+from src.channel import channel_list_v1
 
 # The following tests channels_create_v1
 def test_invalid_user_id():
