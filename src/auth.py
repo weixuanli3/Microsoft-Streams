@@ -66,7 +66,8 @@ def auth_register_v1(email, password, name_first, name_last):
             'name_lasts' : name_last,
             'emails' : email,
             'passwords': password,
-            'handle' : generate_handle(name_first, name_last)
+            'handle' : generate_handle(name_first, name_last),
+            'channels' : []
         })
         return {'auth_user_id': new_user_id}
 

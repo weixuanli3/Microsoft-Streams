@@ -24,25 +24,7 @@ def clear_v1():
     
     store = data_store.get_data()
     store = {
-        'users': [
-            {   # Example user
-                'id' : 1,
-                'names' : 'Admin',
-                'name_lasts' : 'User',
-                'emails' : 'admin_email@unsw.edu.au',
-                'passwords': '123123',
-                'handle' : 'AdminUser1234567891011'
-            },
-        ],
-        'channels': [
-            {
-                'id': 1,
-                'name' : 'channel1',
-            },
-            {
-                'id': 2,
-                'name' : 'channel2',
-            },
-        ], 
+        'users': [],
+        'channels': [], 
     }
     data_store.set(store)
