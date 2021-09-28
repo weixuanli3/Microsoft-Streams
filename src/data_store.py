@@ -23,30 +23,35 @@ Example usage: (By Hayden Smith)
 
     print(store) # Prints { 'names': ['Emily', 'Hayden', 'Jake', 'Nick'] }
     data_store.set(store)
-'''
 
+Example Storage: (Joseph)
+    data = {
+        'users': [
+            {   # Example user
+                'id' : 1,
+                'names' : 'Admin',
+                'name_lasts' : 'User',
+                'emails' : 'admin_email@unsw.edu.au',
+                'passwords': '123123',
+                'handle' : 'AdminUser1234567891011',
+                'channels' : [1, 2]
+            },
+        ],
+        'channels': [
+            {
+                'chan_id': 1,
+                'name': 'Channel 1',
+                'owner_id': 1,
+                'users_id' : [1, 2, 3],
+                'is_public': True
+            },
+        ],
+    }
+'''
 ## YOU SHOULD MODIFY THIS OBJECT BELOW
 initial_object = {
-    'users': [
-        {   # Example user
-            'id' : 1,
-            'names' : 'Admin',
-            'name_lasts' : 'User',
-            'emails' : 'admin_email@unsw.edu.au',
-            'passwords': '123123',
-            'handle' : 'AdminUser1234567891011',
-            'channels' : {1, 2}
-        },
-    ],
-    'channels': [
-        {
-            'chan_id': 1,
-            'name': 'Channel 1',
-            'owner_id': 1,
-            'users_id' : {1, 2, 3},
-            'is_public': True
-        },
-    ],
+    'users': [],
+    'channels': [], 
 }
 
 ## YOU SHOULD MODIFY THIS OBJECT ABOVE

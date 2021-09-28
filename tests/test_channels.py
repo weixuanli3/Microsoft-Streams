@@ -7,7 +7,6 @@ from src.error import InputError
 from src.error import AccessError
 from src.other import clear_v1
 from src.channel import channel_details_v1
-from src.channel import channel_list_v1
 
 # The following tests channels_create_v1
 def test_invalid_user_id():
@@ -71,7 +70,7 @@ def test_channels_list_default():
             {
                 'channel_id': chan1_id,
                 'name': 'Public Channel 1',
-        }#,
+            }#,
 #            {
 #                'channel_id': chan2_id,
 #                'name': 'Public Channel 2',
@@ -93,10 +92,10 @@ def test_channels_listall_default():
             {
                 'channel_id': chan_priv_id,
                 'name': 'Private Channel',
-        },
+            },
             {
                 'channel_id': chan1_id,
                 'name': 'Public Channel 1',
-        }
+            }
         ]
     }
