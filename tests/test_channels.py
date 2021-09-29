@@ -74,7 +74,7 @@ def test_channels_list_default():
             {
                 'channel_id': chan2_id,
                 'name': 'Public Channel 2',
-        }
+            }
         ]
     }
 
@@ -87,7 +87,7 @@ def test_channels_listall_default():
     chan1_id = channels_create_v1(user1_id, "Public Channel 1", True)['channel_id']
     chan2_id = channels_create_v1(user2_id, "Public Channel 2", True)['channel_id']
     channel_join_v1(user1_id, chan2_id)
-    assert channels_list_v1(user1_id) == {
+    assert channels_listall_v1(user1_id) == {
         'channels': [
             {
                 'channel_id': chan_priv_id,
@@ -96,6 +96,10 @@ def test_channels_listall_default():
             {
                 'channel_id': chan1_id,
                 'name': 'Public Channel 1',
+            },
+            {
+                'channel_id': chan2_id,
+                'name': 'Public Channel 2',
             }
         ]
     }
