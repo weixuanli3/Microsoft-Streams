@@ -70,11 +70,11 @@ def test_channels_list_default():
             {
                 'channel_id': chan1_id,
                 'name': 'Public Channel 1',
-            }#,
-#            {
-#                'channel_id': chan2_id,
-#                'name': 'Public Channel 2',
-#        }
+            },
+            {
+                'channel_id': chan2_id,
+                'name': 'Public Channel 2',
+        }
         ]
     }
 
