@@ -35,3 +35,23 @@ def test_channel_name_exists():
         channels_create_v1(user1_id, "Channel 1", True)
     with pytest.raises(InputError):
         channels_create_v1(user2_id, "Channel 1", True)
+
+
+#Call channels_list with no channels
+def test_no_channels():
+    clear_v1()
+    user1_id = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['auth_user_id']
+    assert channels_list_v1(user1_id) == {}
+
+#Call channels_listall with no channels
+def test_no_channels_all():
+    clear_v1()
+    user1_id = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['auth_user_id']
+    assert channels_listall_v1(user1_id) == {}
+
+#Call channels_list with only private channels
+def test_all_private():
+    clear_v1()
+    user1_id = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['auth_user_id']
+    channels_create_v1(user1_id, "Private Channel", False)
+    assert channels_list_v1(user1_id) == {}
