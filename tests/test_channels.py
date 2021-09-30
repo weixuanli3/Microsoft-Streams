@@ -55,3 +55,51 @@ def test_all_private():
     user1_id = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['auth_user_id']
     channels_create_v1(user1_id, "Private Channel", False)
     assert channels_list_v1(user1_id) == {}
+    
+#Call channels_list with both private and public channels
+def test_channels_list_default():
+    clear_v1()
+    user1_id = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['auth_user_id']
+    user2_id = auth_register_v1("jade.lee@aunsw.edu.au","password","Jade","Lee")['auth_user_id']
+    channels_create_v1(user1_id, "Private Channel", False)
+    chan1_id = channels_create_v1(user1_id, "Public Channel 1", True)['channel_id']
+    chan2_id = channels_create_v1(user2_id, "Public Channel 2", True)['channel_id']
+    channel_join_v1(user1_id, chan2_id)
+    assert channels_list_v1(user1_id) == {
+        'channels': [
+            {
+                'channel_id': chan1_id,
+                'name': 'Public Channel 1',
+            },
+            {
+                'channel_id': chan2_id,
+                'name': 'Public Channel 2',
+            }
+        ]
+    }
+
+#Regular channels_listall
+def test_channels_listall_default():
+    clear_v1()
+    user1_id = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['auth_user_id']
+    user2_id = auth_register_v1("jade.lee@aunsw.edu.au","password","Jade","Lee")['auth_user_id']
+    chan_priv_id = channels_create_v1(user1_id, "Private Channel", False)['channel_id']
+    chan1_id = channels_create_v1(user1_id, "Public Channel 1", True)['channel_id']
+    chan2_id = channels_create_v1(user2_id, "Public Channel 2", True)['channel_id']
+    channel_join_v1(user1_id, chan2_id)
+    assert channels_listall_v1(user1_id) == {
+        'channels': [
+            {
+                'channel_id': chan_priv_id,
+                'name': 'Private Channel',
+            },
+            {
+                'channel_id': chan1_id,
+                'name': 'Public Channel 1',
+            },
+            {
+                'channel_id': chan2_id,
+                'name': 'Public Channel 2',
+            }
+        ]
+    }

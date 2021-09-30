@@ -44,6 +44,7 @@ Example Storage: (Joseph)
                 'owner_id': 1,
                 'users_id' : [1, 2, 3],
                 'is_public': True
+                'messages': []
             },
         ],
     }
