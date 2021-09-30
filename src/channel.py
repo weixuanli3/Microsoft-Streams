@@ -86,6 +86,7 @@ def channel_details_v1(auth_user_id, channel_id):
             return_dictionary['public_status'] = channel['is_public']
             member_ids = channel['users_id']
             owner_ids = channel['owner_id']
+            
 
     if not channel_exists:
         raise InputError("Channel ID not valid")
@@ -105,15 +106,36 @@ def channel_details_v1(auth_user_id, channel_id):
     # also shiocking time complexity if that matters at all hopefully not though
     user_data = data_store.get_data()['users']
     user_exists = False
+    
     for user in user_data:
-        for id in owner_ids:
-            print("The type is : ", type(user['id']))
-            if id == user['id']:
-                return_dictionary['owner_members'].append(user)
-        for id1 in user_data:
-            if id1 == user['id']:
-                return_dictionary['all_members'].append(user)
+        if owner_ids == user['id']:
+            user_exists = True
+            return_dictionary['owner_members'].append({
+            'u_id': user['id'],
+            'email': user['emails'],
+            'name_first': user['names'],
+            'name_last': user['name_lasts'],
+            'handle_str': user['handle'],
+        })
+        if user['id'] in member_ids:
+            return_dictionary['all_members'].append({
+            'u_id': user['id'],
+            'email': user['emails'],
+            'name_first': user['names'],
+            'name_last': user['name_lasts'],
+            'handle_str': user['handle'],
+        })
+            
+    # for user in user_data:
+    #     for id in owner_ids:
+    #         print("The type is : ", type(user['id']))
+    #         if id == user['id']:
+    #             return_dictionary['owner_members'].append(user)
+        # for id1 in user_data:
+        #     if id1 == user['id']:
+        #         return_dictionary['all_members'].append(user)
 
+    
     return return_dictionary
 
     '''
