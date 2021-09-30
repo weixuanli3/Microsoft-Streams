@@ -282,7 +282,7 @@ def channel_join_v1(auth_user_id, channel_id):
 
     # check if the user is aready in the channel
     for channel in channel_data:
-        if auth_user_id in channel['users_id']:
+        if auth_user_id in channel['users_id'] and channel_id == channel['chan_id']:
             raise InputError("User already member of channel")
 
     # Add user_id to the channel
