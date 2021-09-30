@@ -1,3 +1,7 @@
+''' Contains the functions to create a new channel and to list pub/priv channels'''
+from src.data_store import data_store
+from src.error import InputError
+
 def channels_list_v1(auth_user_id):
     return {
         'channels': [
