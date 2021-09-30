@@ -163,19 +163,88 @@ def channel_details_v1(auth_user_id, channel_id):
     '''
 
 def channel_messages_v1(auth_user_id, channel_id, start):
-
-    return {
-        'messages': [
-            {
-                'message_id': 1,
-                'u_id': 1,
-                'message': 'Hello world',
-                'time_created': 1582426789,
-            }
-        ],
-        'start': 0,
-        'end': 50,
+    
+    return_dictionary = {
+        'messages': [],
     }
+
+    # check if the user exists
+    user_data = data_store.get_data()['users']
+    user_exists = False
+    for user in user_data:
+        if auth_user_id == user['id']:
+            user_exists = True
+
+    if not user_exists:
+        raise InputError("User doesn't exist")
+    
+    #check if the channel exists
+    channel_data = data_store.get_data()['channels']
+    channel_exists = False
+
+    for channel in channel_data:
+        if channel_id == channel['chan_id']:
+            channel_exists = True
+
+    if not channel_exists:
+        raise InputError("Channel doesn't exist")
+    
+    # check if the user is aready in the channel
+    user_valid_member = False
+    
+    for channel in channel_data:
+        if auth_user_id in channel['users_id']:
+            user_valid_member = True
+
+    if not user_valid_member:
+        raise AccessError("User not a member of the channel")
+    
+    '''
+    messages is a list of strings, everytime a new message is sent, .append the
+    string to messages. When function is called, call messages.reverse() so that most
+    recent message has index of 0, specified by the requirements. 
+    '''
+
+    channel_data = data_store.get_data()['channels']
+
+    msg = []
+
+    for channel in channel_data:
+        if channel_id == channel['chan_id']:
+            msg.append(channel['messages'])
+    
+    msg = msg.reverse() # Reversed so that newest message has index of 0
+    
+    if not msg:
+        if start != 0:
+            raise InputError("Start is greater than the total number of messages in the channel") 
+    elif start > len(msg) - 1:
+        raise InputError("Start is greater than the total number of messages in the channel") 
+    
+    if len(msg) < (start + 50): # If there are e.g. 50 messages and start = 30, can only return 20, end = -1
+        return_messages = msg[start:-1]
+        end = -1
+    else: # If there are e.g. 100 messages and start = 30, returns 30 up to 80, end = 80
+        return_messages = msg[start:start + 50]
+        end = start + 50
+    
+    return_dictionary['messages'].append(return_messages)
+    return_dictionary['start'] = start
+    return_dictionary['end'] = end
+    
+    return return_dictionary
+    # {
+    #     'messages': [
+    #         {
+    #             'message_id': 1,
+    #             'u_id': 1,
+    #             'message': 'Hello world',
+    #             'time_created': 1582426789,
+    #         }
+    #     ],
+    #     'start': 0,
+    #     'end': 50,
+    # }
 
 def channel_join_v1(auth_user_id, channel_id):
     # The more efficient way would be to loop through the channels and users once then
@@ -226,5 +295,4 @@ def channel_join_v1(auth_user_id, channel_id):
         if (user['id']) == (auth_user_id):
             user['channels'].append(channel_id)
 
-    return {
-    }
+    return {}
