@@ -4,11 +4,11 @@
 # from data_store import data_store
 # from error import InputError
 
+import re
+
 from src.data_store import data_store
 from src.error import InputError
 
-
-import re  
 
 def auth_login_v1(email, password):
 
@@ -23,24 +23,24 @@ def auth_login_v1(email, password):
         if (users['emails'], users['passwords']) == (email, password):
             authentic_user = True
             user_id = users['id']
-    
-    if (authentic_user == False):
+
+    if authentic_user == False:
         raise InputError("Password or email is incorrect")
 
     return {'auth_user_id': user_id}
-   
+
 # Assumptions: Possible max length password?
 # Name cannot contain any characters like .!@#$%^&
 def auth_register_v1(email, password, name_first, name_last):
     """
-    This function is used to register a user. It will raise an input error 
+    This function is used to register a user. It will raise an input error
     if the email, password, name or last name are invalid. If the new_users
     infomation is corrent, it will return the new users ID {ID}. Strips all
     special characters from user name.
     """
     # Do not allow passwords of all white space
     password_is_all_spaces = password == (len(password) * ' ')
-    if (password_is_all_spaces):
+    if password_is_all_spaces:
         raise InputError("Password cannot be all white space")
 
     # Formating name to remove special characters
@@ -62,11 +62,11 @@ def auth_register_v1(email, password, name_first, name_last):
     is_valid_name_first = len(name_first) >= 1 and len(name_first) <= 50
     is_valid_name_last = len(name_last) >= 1 and len(name_last) <= 50
 
-    if not (is_valid_email and is_valid_password and is_valid_name_last and 
+    if not (is_valid_email and is_valid_password and is_valid_name_last and
             is_valid_name_first and is_not_already_registered):
-        # RAISE ERROR 
+        # RAISE ERROR
         raise InputError("Bad registration data")
-        
+
     else:
         # REGISTER USER
         user_data = data_store.get_data()['users']
@@ -86,18 +86,18 @@ def auth_register_v1(email, password, name_first, name_last):
 #Assumption: Possible max handle? throw error if handle is over 30? 100?
 def generate_handle(name_first, name_last):
     """
-    Given a first and last name, it will generate a handle for the user. 
-    A handle is generated that is the concatenation of their casted-to-lowercase 
-    alphanumeric (a-z0-9) first name and last name . If the concatenation is 
-    longer than 20 characters, it is cut off at 20 characters. If it is too 
-    short than numbers are added until it is a length of 20. If it is 20 characters 
+    Given a first and last name, it will generate a handle for the user.
+    A handle is generated that is the concatenation of their casted-to-lowercase
+    alphanumeric (a-z0-9) first name and last name . If the concatenation is
+    longer than 20 characters, it is cut off at 20 characters. If it is too
+    short than numbers are added until it is a length of 20. If it is 20 characters
     and this handle is already taken, then it may go over.
     """
-    'Used just to filter out any hyphens in the name'
+    # Used just to filter out any hyphens in the name
     user_handle = re.sub(r'\W+', '', name_first + name_last)
     user_handle = user_handle[:20]
     user_handle = user_handle.lower()
-    
+
     i = 0
     while len(user_handle) < 20:
         user_handle += str(i)

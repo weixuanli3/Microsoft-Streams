@@ -31,13 +31,13 @@ def test_is_public_not_true_false():
     user_id = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['auth_user_id']
     with pytest.raises(InputError):
         channels_create_v1(user_id, "Lengthofchanneltoolarge!", "")
-        
+
 def test_create_success_public():
     clear_v1()
     user_id = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['auth_user_id']
     # assert channels_create_v1(user_id, "Channel 1", True) == {'channel_id': 1}
     channels_create_v1(user_id, "Channel 1", True)
-    
+
 def test_create_success_private():
     clear_v1()
     user_id = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['auth_user_id']
@@ -50,7 +50,7 @@ def test_no_channels():
     user1_id = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['auth_user_id']
     # assert channels_list_v1(user1_id) == {}
     channels_list_v1(user1_id)
-    
+
 #Call channels_listall with no channels
 def test_no_channels_all():
     clear_v1()
@@ -68,7 +68,7 @@ def test_all_private():
     channel_invite_v1(user2_id, chan_id, user1_id)
     # assert channels_list_v1(user1_id) == {}
     channels_list_v1(user1_id)
-    
+
 #Call channels_list with only public channels
 def test_all_public():
     clear_v1()
@@ -109,7 +109,7 @@ def test_joined():
     #         },
     #     ]
     # }
-    
+
 #Call channels_list with only created channels
 def test_created():
     clear_v1()
@@ -129,7 +129,7 @@ def test_created():
     #         }
     #     ]
     # }
-    
+
 #Call channels_list with both public and private channels
 def test_public_private():
     clear_v1()
@@ -145,12 +145,12 @@ def test_public_private():
     #         },
     #     ]
     # }
-    
+
 def test_invalid_user():
     clear_v1()
     with pytest.raises(InputError):
         channels_list_v1(0)
-    
+
 #Call channels_listall with only private channels
 def test_list_all_all_private():
     clear_v1()
@@ -217,7 +217,7 @@ def test_list_all_joined():
     #         }
     #     ]
     # }
-    
+
 #Call channels_listall with only created channels
 def test_created():
     clear_v1()
@@ -237,12 +237,12 @@ def test_created():
     #         }
     #     ]
     # }
-    
+
 def test_invalid_user():
     clear_v1()
     with pytest.raises(InputError):
         channels_listall_v1(0)
-    
+
 #Call channels_list with both private and public channels
 def test_channels_list_default():
     clear_v1()
