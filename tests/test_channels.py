@@ -26,16 +26,6 @@ def test_long_channel_name():
     with pytest.raises(InputError):
         channels_create_v1(user_id, "Lengthofchanneltoolarge!", True)
 
-def test_channel_name_exists():
-    clear_v1()
-    user1_id = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['auth_user_id']
-    user2_id = auth_register_v1("john.smith@aunsw.edu.au", "naisud", "John", "Smith")['auth_user_id']
-    channels_create_v1(user1_id, "Channel 1", True)
-    with pytest.raises(InputError):
-        channels_create_v1(user1_id, "Channel 1", True)
-    with pytest.raises(InputError):
-        channels_create_v1(user2_id, "Channel 1", True)
-
 def test_is_public_not_true_false():
     clear_v1()
     user_id = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['auth_user_id']

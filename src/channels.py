@@ -43,17 +43,15 @@ def channels_list_v1(auth_user_id):
 
     channel_data = data_store.get_data()['channels']
     channel_dict = {}
-    channel_list = []
     for channels in channel_data:
         if channels['chan_id'] in channel_ids and channels['is_public']:
             new_chan = {
                 'channel_id': channels['chan_id'],
                 'name': channels['name']
             }
-            
+
             if 'channels' not in channel_dict:
-                channel_list.append(new_chan)
-                channel_dict['channels'] = channel_list
+                channel_dict['channels'] = [new_chan]
             else:
                 channel_dict['channels'].append(new_chan)
 
@@ -100,25 +98,17 @@ def channels_listall_v1(auth_user_id):
 
     channel_data = data_store.get_data()['channels']
     channel_dict = {}
-    channel_list = []
     for channels in channel_data:
         if channels['chan_id'] in channel_ids:
             new_chan = {
                 'channel_id': channels['chan_id'],
                 'name': channels['name']
             }
-            
+
             if 'channels' not in channel_dict:
-                channel_list.append(new_chan)
-                channel_dict['channels'] = channel_list
+                channel_dict['channels'] = [new_chan]
             else:
                 channel_dict['channels'].append(new_chan)
-
-            # Joseph's old code. Wei's updated one above now passes pytests
-            # if 'channels' in channel_dict:
-            #     channel_dict['channels'].append(new_chan)
-            # else:
-            #     channel_dict['channels'] = new_chan
 
     return channel_dict
 
@@ -157,17 +147,14 @@ def channels_create_v1(auth_user_id, name, is_public):
         raise InputError("Invalid channel name")
 
     channel_data = data_store.get_data()['channels']
-    for channel in channel_data:
-        if name == channel['name']:
-            raise InputError("Channel name already exists")
-    new_channel_id = len(channel_data) + 1
 
+    new_channel_id = len(channel_data) + 1
     curr_user['channels'].append(new_channel_id)
 
     channel_data.append({
         'chan_id': new_channel_id,
         'name': name,
-        'owner_id': auth_user_id,
+        'owner_id': [auth_user_id],
         'users_id': [auth_user_id],
         'is_public': is_public,
         'messages': [],
