@@ -156,7 +156,7 @@ def channels_create_v1(auth_user_id, name, is_public):
     channel_data.append({
         'chan_id': new_channel_id,
         'name': name,
-        'owner_id': auth_user_id,
+        'owner_id': [auth_user_id],
         'users_id': [auth_user_id],
         'is_public': is_public,
         'messages': [],
