@@ -35,7 +35,6 @@ Example Storage: (Joseph)
                 'passwords': '123123',
                 'handle' : 'AdminUser1234567891011',
                 'channels' : [1, 2]
-                'is_global' : False
             },
         ],
         'channels': [
@@ -48,12 +47,14 @@ Example Storage: (Joseph)
                 'messages': []
             },
         ],
+        'global_owners':[]
     }
 '''
 ## YOU SHOULD MODIFY THIS OBJECT BELOW
 initial_object = {
     'users': [],
     'channels': [], 
+    'global_owners': [],
 }
 
 ## YOU SHOULD MODIFY THIS OBJECT ABOVE
