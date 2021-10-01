@@ -77,6 +77,14 @@ def test_register_password_all_spaces():
     clear_v1()
     with pytest.raises(InputError):
         auth_register_v1("john.doe8@unsw.edu.au","      ","John","Doe")
+        
+def test_register_first_name_special_characters():
+    clear_v1()
+    auth_register_v1("john.doe8@unsw.edu.au","password","J%^o&*h#(n#","Doe")
+    
+def test_register_last_name_special_characters():
+    clear_v1()
+    auth_register_v1("john.doe8@unsw.edu.au","password","John","$#D^^o%^&^%$e")
 
 #------------------------------------------------------------
 # This tests generating handles
