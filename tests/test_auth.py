@@ -43,7 +43,12 @@ def test_register_invalid_email():
 def test_register_password_incorrect_length():
     clear_v1()
     with pytest.raises(InputError):
-        auth_register_v1("john.doe3@unsw.edu.au","123","John","Doe")
+        auth_register_v1("john.doe3@unsw.edu.au","12345","John","Doe")
+
+def test_register_no_password():
+    clear_v1()
+    with pytest.raises(InputError):
+        auth_register_v1("john.doe3@unsw.edu.au","","John","Doe")
 
     # TODO: Possible max password?
     #with pytest.raises(InputError):
@@ -66,6 +71,13 @@ def test_register_last_name_incorrect_length():
 
     with pytest.raises(InputError):
         auth_register_v1("john.doe7@unsw.edu.au","password","John","DoeDoeDoeDoeDoeDoeDoeDoeDoeDoeDoeDoeDoeDoeDoeDoeDoe")
+
+''' FAILING PYTEST
+def test_register_password_spaces():
+    clear_v1()
+    with pytest.raises(InputError):
+        auth_register_v1("john.doe8@unsw.edu.au","      ","John","Doe")
+'''
 
 #------------------------------------------------------------
 # This tests generating handles
@@ -118,3 +130,21 @@ def test_bad_login_then_good_login():
 
     # Should return corrent login user ID
     assert auth_login_v1("john.doe@unsw.edu.au","password") == {'auth_user_id': 1}
+    
+def test_password_empty():
+    clear_v1()
+    auth_register_v1("john.doe12@unsw.edu.au","password","John","Doe")
+    with pytest.raises(InputError):
+        auth_login_v1("john.doe12@unsw.edu.au","")
+
+def test_pass_different_user():
+    clear_v1()
+    auth_register_v1("john.doe1@unsw.edu.au","password1","John","Doe")
+    auth_register_v1("john.doe2@unsw.edu.au","password2","John","Doe")
+    with pytest.raises(InputError):
+        auth_login_v1("john.doe1@unsw.edu.au", "password2")
+        
+def no_users():
+    clear_v1()
+    with pytest.raises(InputError):
+        auth_login_v1("john.doe1@unsw.edu.au", "password2")

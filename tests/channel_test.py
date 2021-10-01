@@ -50,6 +50,42 @@ def test_channel_invite_valid():
     channel1_id = channels_create_v1(user1_id, "Channel 1", True)['channel_id']
     channel_invite_v1(user1_id, channel1_id, user2_id) == {}
     
+def test_channel_invite_channel_id_empty():
+    clear_v1()
+    user1_id = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['auth_user_id']
+    user2_id = auth_register_v1("john.smith@aunsw.edu.au", "naisud", "John", "Smith")['auth_user_id']
+    channel1_id = channels_create_v1(user1_id, "Channel 1", True)['channel_id']
+    with pytest.raises(InputError):
+        channel_invite_v1(user1_id, "", user2_id)
+    
+def test_channel_invite_channel_id_empty():
+    clear_v1()
+    user1_id = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['auth_user_id']
+    user2_id = auth_register_v1("john.smith@aunsw.edu.au", "naisud", "John", "Smith")['auth_user_id']
+    channel1_id = channels_create_v1(user1_id, "Channel 1", True)['channel_id']
+    with pytest.raises(InputError):
+        channel_invite_v1(user1_id, channel1_id, "")
+        
+def test_channel_invite_no_channels():
+    clear_v1()
+    user1_id = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['auth_user_id']
+    user2_id = auth_register_v1("john.smith@aunsw.edu.au", "naisud", "John", "Smith")['auth_user_id']
+    with pytest.raises(InputError):
+        channel_invite_v1(user1_id, 1, user2_id)
+    
+def test_channel_invite_auth_id_invalid():
+    clear_v1()
+    user1_id = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['auth_user_id']
+    channel1_id = channels_create_v1(user1_id, "Channel 1", True)['channel_id']
+    with pytest.raises(InputError):
+        channel_invite_v1("", channel1_id, user1_id)
+        
+def test_channel_invite_user_invites_self():
+    clear_v1()
+    user1_id = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['auth_user_id']
+    channel1_id = channels_create_v1(user1_id, "Channel 1", True)['channel_id']
+    with pytest.raises(InputError):
+        channel_invite_v1(user1_id, channel1_id, user1_id)
     
     # The following tests are for channel_join
 def test_join_public_channel():
@@ -57,7 +93,7 @@ def test_join_public_channel():
     user1_id = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['auth_user_id']
     user2_id = auth_register_v1("john.smith@aunsw.edu.au", "naisud", "John", "Smith")['auth_user_id']
     channel_id = channels_create_v1(user1_id, "Channel 1", True)['channel_id']
-    channel_join_v1(user2_id, channel_id)
+    assert channel_join_v1(user2_id, channel_id) == {}
     
 def test_join_channel_user_aready_in():
     clear_v1()
@@ -96,6 +132,20 @@ def test_join_channel_channel_does_not_exist():
     user_id = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['auth_user_id']
     with pytest.raises(InputError):
         channel_join_v1(user_id, 3333)
+        
+def test_join_channel_user_id_empty():
+    clear_v1()
+    user_id = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['auth_user_id']
+    channel_id = channels_create_v1(user_id, "Channel 1", True)['channel_id']    
+    with pytest.raises(InputError):
+        channel_join_v1("", channel_id)
+        
+def test_join_channel_channel_id_empty():
+    clear_v1()
+    user_id = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['auth_user_id']
+    channel_id = channels_create_v1(user_id, "Channel 1", True)['channel_id']    
+    with pytest.raises(InputError):
+        channel_join_v1(user_id, "")
 
 # The following tests are for channel_details
     
@@ -138,6 +188,19 @@ def test_channel_details_not_in_channel():
     channel_id = channels_create_v1(user1_id, "Channel 1", True)['channel_id']
     with pytest.raises(AccessError):
         channel_details_v1(user2_id, channel_id)
+        
+def test_channel_details_user_id_invalid():
+    clear_v1()
+    user1_id = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['auth_user_id']
+    channel_id = channels_create_v1(user1_id, "Channel 1", True)['channel_id']
+    with pytest.raises(AccessError):
+        channel_details_v1("", channel_id)
+
+def test_channel_details_channel_id_invalid():
+    clear_v1()
+    user1_id = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['auth_user_id']
+    with pytest.raises(InputError):
+        channel_details_v1(user1_id, "")
 
 # The following tests are for channel_messages
 def test_channel_messages_invalid_channel():
@@ -160,3 +223,26 @@ def test_channel_messages_user_not_member():
     channel_id = channels_create_v1(user1_id, "Channel 1", True)['channel_id']
     with pytest.raises(AccessError):
         channel_messages_v1(user2_id, channel_id, 0)
+        
+def test_channel_messages_no_channel_id():
+    clear_v1()
+    user1_id = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['auth_user_id']
+    user2_id = auth_register_v1("john.smith@aunsw.edu.au", "naisud", "John", "Smith")['auth_user_id']
+    channel_id = channels_create_v1(user1_id, "Channel 1", True)['channel_id']
+    with pytest.raises(InputError):
+        channel_messages_v1(user2_id, "", 0)
+        
+def test_channel_messages_start_empty():
+    clear_v1()
+    user1_id = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['auth_user_id']
+    user2_id = auth_register_v1("john.smith@aunsw.edu.au", "naisud", "John", "Smith")['auth_user_id']
+    channel_id = channels_create_v1(user1_id, "Channel 1", True)['channel_id']
+    with pytest.raises(AccessError):
+        channel_messages_v1(user2_id, channel_id, "")
+        
+def test_channel_messages_invalid_user():
+    clear_v1()
+    user1_id = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['auth_user_id']
+    channel_id = channels_create_v1(user1_id, "Channel 1", True)['channel_id']
+    with pytest.raises(InputError):
+        channel_messages_v1(2, channel_id, 0)
