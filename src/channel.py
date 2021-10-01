@@ -2,6 +2,7 @@ from src.data_store import data_store
 from src.error import InputError
 from src.error import AccessError
 
+# Invite a user to a channel that the current user is in
 def channel_invite_v1(auth_user_id, channel_id, u_id):
     channel_data = data_store.get_data()['channels']
     user_data = data_store.get_data()['users']
@@ -57,6 +58,8 @@ def channel_invite_v1(auth_user_id, channel_id, u_id):
 
     return {}
 
+# Returns a dictionary with the details of the specified channel
+# if the user is part of said channel
 def channel_details_v1(auth_user_id, channel_id):
         # check if the user exists
         # MAYBE NOT NECESSARY!!!!!
@@ -93,7 +96,7 @@ def channel_details_v1(auth_user_id, channel_id):
             return_dictionary['public_status'] = channel['is_public']
             member_ids = channel['users_id']
             owner_ids = channel['owner_id']
-            
+
 
     if not channel_exists:
         raise InputError("Channel ID not valid")
@@ -112,8 +115,7 @@ def channel_details_v1(auth_user_id, channel_id):
     # NOT SURE IF THIS IS THE CORRECT SYNTAX TO ADD TO DICTIONARIES
     # also shiocking time complexity if that matters at all hopefully not though
     user_data = data_store.get_data()['users']
-    user_exists = False
-    
+
     for user in user_data:
         if user['id'] in owner_ids:
             user_exists = True
@@ -132,7 +134,7 @@ def channel_details_v1(auth_user_id, channel_id):
             'name_last': user['name_lasts'],
             'handle_str': user['handle'],
         })
-            
+
     # for user in user_data:
     #     for id in owner_ids:
     #         print("The type is : ", type(user['id']))
@@ -142,7 +144,7 @@ def channel_details_v1(auth_user_id, channel_id):
         #     if id1 == user['id']:
         #         return_dictionary['all_members'].append(user)
 
-    
+
     return return_dictionary
 
     '''
@@ -168,9 +170,9 @@ def channel_details_v1(auth_user_id, channel_id):
         ],
     }
     '''
-
+# Return 50 messages (or the end of the messages) in a dictionary
 def channel_messages_v1(auth_user_id, channel_id, start):
-    
+
     return_dictionary = {
         'messages': [],
     }
@@ -184,7 +186,7 @@ def channel_messages_v1(auth_user_id, channel_id, start):
 
     if not user_exists:
         raise InputError("User doesn't exist")
-    
+
     #check if the channel exists
     channel_data = data_store.get_data()['channels']
     channel_exists = False
@@ -195,17 +197,17 @@ def channel_messages_v1(auth_user_id, channel_id, start):
 
     if not channel_exists:
         raise InputError("Channel doesn't exist")
-    
+
     # check if the user is aready in the channel
     user_valid_member = False
-    
+
     for channel in channel_data:
         if auth_user_id in channel['users_id']:
             user_valid_member = True
 
     if not user_valid_member:
         raise AccessError("User not a member of the channel")
-    
+
     '''
     messages is a list of strings, everytime a new message is sent, .append the
     string to messages. When function is called, call messages.reverse() so that most
@@ -219,26 +221,27 @@ def channel_messages_v1(auth_user_id, channel_id, start):
     for channel in channel_data:
         if channel_id == channel['chan_id']:
             msg.append(channel['messages'])
-    
+
     msg = msg.reverse() # Reversed so that newest message has index of 0
-    
+
     if not msg:
         if start != 0:
-            raise InputError("Start is greater than the total number of messages in the channel") 
+            raise InputError("Start is greater than the total number of messages in the channel")
     elif start > len(msg) - 1:
-        raise InputError("Start is greater than the total number of messages in the channel") 
-    
-    if len(msg) < (start + 50): # If there are e.g. 50 messages and start = 30, can only return 20, end = -1
+        raise InputError("Start is greater than the total number of messages in the channel")
+
+    # If there are e.g. 50 messages and start = 30, can only return 20, end = -1
+    if len(msg) < (start + 50):
         return_messages = msg[start:-1]
         end = -1
     else: # If there are e.g. 100 messages and start = 30, returns 30 up to 80, end = 80
         return_messages = msg[start:start + 50]
         end = start + 50
-    
+
     return_dictionary['messages'].append(return_messages)
     return_dictionary['start'] = start
     return_dictionary['end'] = end
-    
+
     return return_dictionary
     # {
     #     'messages': [
@@ -253,6 +256,8 @@ def channel_messages_v1(auth_user_id, channel_id, start):
     #     'end': 50,
     # }
 
+# Ask everyone else whether I should merge all loops together
+# Add a user to a channel
 def channel_join_v1(auth_user_id, channel_id):
     # The more efficient way would be to loop through the channels and users once then
     # if the channels and user exists remember what index they were at to access them directly

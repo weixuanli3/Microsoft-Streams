@@ -7,13 +7,13 @@ from src.other import clear_v1
 from src.data_store import Datastore
 import pytest
 
-from src.auth import auth_register_v1, generate_handle 
+from src.auth import auth_register_v1, generate_handle
 from src.auth import auth_login_v1
 from src.error import InputError
 from src.data_store import data_store
 
 #------------------------------------------------------------
-# This block of code deals with the auth_register_v1 function 
+# This block of code deals with the auth_register_v1 function
 # from auth.py
 
 # This will be the second user as the first user is the example Admin user
@@ -52,7 +52,7 @@ def test_register_no_password():
 
     # TODO: Possible max password?
     #with pytest.raises(InputError):
-    #   auth_register_v1("john.doe@aunsw.edu.au","1234566789abcdefghijklmnopqrstuvwxyz","John","Doe")
+    #auth_register_v1("john.doe@aunsw.edu.au","1234566789abcdefghijklmnopqrstuvwxyz","John","Doe")
 
 # First name must be between 1 and 50 characters inclusive
 def test_register_first_name_incorrect_length():
@@ -77,6 +77,14 @@ def test_register_password_all_spaces():
     clear_v1()
     with pytest.raises(InputError):
         auth_register_v1("john.doe8@unsw.edu.au","      ","John","Doe")
+
+def test_register_first_name_special_characters():
+    clear_v1()
+    auth_register_v1("john.doe8@unsw.edu.au","password","J%^o&*h#(n#","Doe")
+
+def test_register_last_name_special_characters():
+    clear_v1()
+    auth_register_v1("john.doe8@unsw.edu.au","password","John","$#D^^o%^&^%$e")
 
 #------------------------------------------------------------
 # This tests generating handles
@@ -108,7 +116,7 @@ def test_handle_over_twenty():
 
 #------------------------------------------------------------
 # Log in
-# This block of code deals with the auth_login_v1 function 
+# This block of code deals with the auth_login_v1 function
 # from auth.py
 
 def test_email_not_registered():
@@ -144,7 +152,7 @@ def test_bad_login_then_good_login():
 
     # Should return corrent login user ID
     assert auth_login_v1("john.doe@unsw.edu.au","password") == {'auth_user_id': 1}
-    
+
 def test_password_empty():
     clear_v1()
     auth_register_v1("john.doe12@unsw.edu.au","password","John","Doe")
@@ -157,7 +165,7 @@ def test_pass_different_user():
     auth_register_v1("john.doe2@unsw.edu.au","password2","John","Doe")
     with pytest.raises(InputError):
         auth_login_v1("john.doe1@unsw.edu.au", "password2")
-        
+
 def no_users():
     clear_v1()
     with pytest.raises(InputError):
