@@ -109,5 +109,3 @@ def generate_handle(name_first, name_last):
         i += 1
         is_valid_handle = not user_handle in data_store.get('handle')['handle']
     return user_handle
-
-
