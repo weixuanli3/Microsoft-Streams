@@ -29,7 +29,7 @@ def channel_invite_v1(auth_user_id, channel_id, u_id):
     user_valid_member = True
 
     for channel in channel_data:
-        if u_id in channel['users_id']:
+        if u_id in channel['users_id'] and channel_id == channel['chan_id']:
             user_valid_member = False
 
     if not user_valid_member:
@@ -45,8 +45,15 @@ def channel_invite_v1(auth_user_id, channel_id, u_id):
     if not auth_user_valid:
         raise AccessError("Auth user id does not refer to a valid user")
 
-    # adding user to channel
-    channel_join_v1(u_id, channel_id)
+    # Add user_id to the channel
+    for channel in channel_data:
+        if (channel['chan_id']) == (channel_id):
+            channel['users_id'].append(u_id)
+
+    # Add channel_id to the user
+    for user in user_data:
+        if (user['id']) == (u_id):
+            user['channels'].append(channel_id)
 
     return {}
 
