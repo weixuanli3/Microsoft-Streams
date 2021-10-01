@@ -43,14 +43,13 @@ def channels_list_v1(auth_user_id):
 
     channel_data = data_store.get_data()['channels']
     channel_dict = {}
-    channel_list = []
     for channels in channel_data:
         if channels['chan_id'] in channel_ids and channels['is_public']:
             new_chan = {
                 'channel_id': channels['chan_id'],
                 'name': channels['name']
             }
-            
+
             if 'channels' not in channel_dict:
                 channel_dict['channels'] = [new_chan]
             else:
@@ -99,7 +98,6 @@ def channels_listall_v1(auth_user_id):
 
     channel_data = data_store.get_data()['channels']
     channel_dict = {}
-    channel_list = []
     for channels in channel_data:
         if channels['chan_id'] in channel_ids:
             new_chan = {
