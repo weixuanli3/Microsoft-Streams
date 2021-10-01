@@ -1,8 +1,8 @@
 # John Henderson (z5368143)
 # Tomas Ostroumoff (z5312982)
 
-#from data_store import data_store
-#from error import InputError
+# from data_store import data_store
+# from error import InputError
 
 from src.data_store import data_store
 from src.error import InputError
@@ -35,8 +35,20 @@ def auth_register_v1(email, password, name_first, name_last):
     """
     This function is used to register a user. It will raise an input error 
     if the email, password, name or last name are invalid. If the new_users
-    infomation is corrent, it will return the new users ID {ID}.
+    infomation is corrent, it will return the new users ID {ID}. Strips all
+    special characters from user name.
     """
+    # Do not allow passwords of all white space
+    password_is_all_spaces = password == (len(password) * ' ')
+    if (password_is_all_spaces):
+        raise InputError("Password cannot be all white space")
+
+    # Formating name to remove special characters
+    regex = re.compile(r"[^a-zA-Z0-9-]")
+    name_first = regex.sub("", name_first)
+    name_last = regex.sub("", name_last)
+
+    # name_last = re.sub(illegal_characters, '', name_last)
 
     # Used to check that the email is valid
     regex  = r"^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}$"
@@ -81,7 +93,7 @@ def generate_handle(name_first, name_last):
     short than numbers are added until it is a length of 20. If it is 20 characters 
     and this handle is already taken, then it may go over.
     """
-
+    'Used just to filter out any hyphens in the name'
     user_handle = re.sub(r'\W+', '', name_first + name_last)
     user_handle = user_handle[:20]
     user_handle = user_handle.lower()
@@ -93,7 +105,7 @@ def generate_handle(name_first, name_last):
 
     is_valid_handle = not user_handle in data_store.get('handle')['handle']
     while not is_valid_handle:
-        i += 1
         user_handle += str(i)
+        i += 1
         is_valid_handle = not user_handle in data_store.get('handle')['handle']
     return user_handle
