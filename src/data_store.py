@@ -35,13 +35,14 @@ Example Storage: (Joseph)
                 'passwords': '123123',
                 'handle' : 'AdminUser1234567891011',
                 'channels' : [1, 2]
+                'is_global' : False
             },
         ],
         'channels': [
             {
                 'chan_id': 1,
                 'name': 'Channel 1',
-                'owner_id': 1,
+                'owner_id': [1],
                 'users_id' : [1, 2, 3],
                 'is_public': True
                 'messages': []
