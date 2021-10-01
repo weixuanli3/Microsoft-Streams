@@ -115,7 +115,7 @@ def channel_details_v1(auth_user_id, channel_id):
     user_exists = False
     
     for user in user_data:
-        if owner_ids == user['id']:
+        if user['id'] in owner_ids:
             user_exists = True
             return_dictionary['owner_members'].append({
             'u_id': user['id'],
