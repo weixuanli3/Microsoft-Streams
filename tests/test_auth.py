@@ -72,12 +72,11 @@ def test_register_last_name_incorrect_length():
     with pytest.raises(InputError):
         auth_register_v1("john.doe7@unsw.edu.au","password","John","DoeDoeDoeDoeDoeDoeDoeDoeDoeDoeDoeDoeDoeDoeDoeDoeDoe")
 
-''' FAILING PYTEST
-def test_register_password_spaces():
+
+def test_register_password_all_spaces():
     clear_v1()
     with pytest.raises(InputError):
         auth_register_v1("john.doe8@unsw.edu.au","      ","John","Doe")
-'''
 
 #------------------------------------------------------------
 # This tests generating handles
@@ -89,9 +88,14 @@ def test_corrent_handle():
 
 def test_symbles_handle():
     clear_v1()
-    auth_register_v1("john.doe9@unsw.edu.au","password","/.,/.","/.,/.,@#")
-    assert '01234567891011121314' in data_store.get('handle')['handle']
+    with pytest.raises(InputError):
+        auth_register_v1("john.doe9@unsw.edu.au","password","/.,/.","/.,/.,@#")
 
+def test_corrent_handle_with_hyphen():
+    clear_v1()
+    auth_register_v1("john.doe8@unsw.edu.au","password","John-Doe","Doe")
+    assert 'John-Doe' in data_store.get('names')['names']
+    assert 'johndoedoe0123456789' in data_store.get('handle')['handle']
 #------------------------------------------------------------
 # Log in
 # This block of code deals with the auth_login_v1 function 
