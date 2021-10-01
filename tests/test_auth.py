@@ -96,6 +96,16 @@ def test_corrent_handle_with_hyphen():
     auth_register_v1("john.doe8@unsw.edu.au","password","John-Doe","Doe")
     assert 'John-Doe' in data_store.get('names')['names']
     assert 'johndoedoe0123456789' in data_store.get('handle')['handle']
+
+def test_handle_over_twenty():
+    clear_v1()
+    auth_register_v1("john.doe8@unsw.edu.au","password","John","Doe")
+    auth_register_v1("john.doe9@unsw.edu.au","password","John","Doe")
+    auth_register_v1("john.doe7@unsw.edu.au","password","John","Doe")
+    assert 'johndoe01234567891011' in data_store.get('handle')['handle']
+    assert 'johndoe0123456789101112' in data_store.get('handle')['handle']
+    assert 'johndoe012345678910111213' in data_store.get('handle')['handle']
+
 #------------------------------------------------------------
 # Log in
 # This block of code deals with the auth_login_v1 function 
