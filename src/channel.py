@@ -93,7 +93,7 @@ def channel_details_v1(auth_user_id, channel_id):
         if channel_id == channel['chan_id']:
             channel_exists = True
             return_dictionary['channel_name'] = channel['name']
-            return_dictionary['public_status'] = channel['is_public']
+            return_dictionary['is_public'] = channel['is_public']
             member_ids = channel['users_id']
             owner_ids = channel['owner_id']
 
@@ -272,6 +272,14 @@ def channel_join_v1(auth_user_id, channel_id):
 
     if not user_exists:
         raise InputError("User doesn't exist")
+    
+    #check if the user is a global 
+    # global_data = data_store.get_data()['global_owners']
+    # is_global_owner = False
+    
+    # if auth_user_id in global_data:
+    #     is_global_owner = True
+    
 
     #check if the channel exists
     channel_data = data_store.get_data()['channels']
@@ -280,22 +288,18 @@ def channel_join_v1(auth_user_id, channel_id):
     for channel in channel_data:
         if channel_id == channel['chan_id']:
             channel_exists = True
+            
+            #check if the channel is private
+            # and not is_global_owner:
+            if not channel['is_public']:
+                raise AccessError("Channel is not public")
+            
+            # check if the user is aready in the channel
+            if auth_user_id in channel['users_id']:
+                raise InputError("User already member of channel")
 
     if not channel_exists:
         raise InputError("Channel doesn't exist")
-
-    # check if the channel is private
-    # IMPORTANT still need to check if the user is a global owner
-    # but I do not think that global ownership is implemented in iteration 1
-    for channel in channel_data:
-        if (channel['chan_id']) == (channel_id):
-            if not channel['is_public']:
-                raise AccessError("Channel is not public")
-
-    # check if the user is aready in the channel
-    for channel in channel_data:
-        if auth_user_id in channel['users_id'] and channel_id == channel['chan_id']:
-            raise InputError("User already member of channel")
 
     # Add user_id to the channel
     for channel in channel_data:
