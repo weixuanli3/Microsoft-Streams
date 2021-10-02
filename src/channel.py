@@ -289,14 +289,14 @@ def channel_join_v1(auth_user_id, channel_id):
         if channel_id == channel['chan_id']:
             channel_exists = True
             
-            #check if the channel is private
-            # and not is_global_owner:
-            if not channel['is_public']:
-                raise AccessError("Channel is not public")
-            
             # check if the user is aready in the channel
             if auth_user_id in channel['users_id']:
                 raise InputError("User already member of channel")
+            
+            #check if the channel is private
+            # and not is_global_owner:
+            if not channel['is_public']:
+                raise AccessError("Channel is not public")        
 
     if not channel_exists:
         raise InputError("Channel doesn't exist")
