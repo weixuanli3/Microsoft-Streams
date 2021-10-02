@@ -91,6 +91,7 @@ def generate_handle(name_first, name_last):
     short than numbers are added until it is a length of 20. If it is 20 characters
     and this handle is already taken, then it may go over.
     """
+    
     # Used just to filter out any hyphens in the name
     user_handle = re.sub(r'\W+', '', name_first + name_last)
     user_handle = user_handle[:20]
