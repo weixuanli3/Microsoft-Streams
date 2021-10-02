@@ -28,3 +28,5 @@ def clear_v1():
         'channels': [], 
     }
     data_store.set(store)
+
+    return {}
