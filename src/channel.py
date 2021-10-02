@@ -94,7 +94,7 @@ def channel_details_v1(auth_user_id, channel_id):
 
     return_dictionary = {
         'channel_name' : '',
-        'public_status' : True,
+        'is_public' : True,
         'owner_members' : [],
         'all_members' : [],
     }
