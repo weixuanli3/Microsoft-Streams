@@ -114,7 +114,7 @@ def channels_listall_v1(auth_user_id):
 
 def channels_create_v1(auth_user_id, name, is_public):
     '''
-    Function will take in an user_id and list all the public and private channels \
+    Function will take in an user_id and list all the public and private channels
     the user is in
 
     Arguments:
