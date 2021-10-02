@@ -47,8 +47,6 @@ def auth_register_v1(email, password, name_first, name_last):
     name_first = regex.sub("", name_first)
     name_last = regex.sub("", name_last)
 
-    # name_last = re.sub(illegal_characters, '', name_last)
-
     # Used to check that the email is valid
     regex  = r"^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}$"
     is_valid_email = re.match(regex, email)
@@ -57,10 +55,12 @@ def auth_register_v1(email, password, name_first, name_last):
     user_emails = data_store.get('emails')
     is_not_already_registered = not email in user_emails['emails']
 
+    # Check remaining conditions
     is_valid_password = len(password) >= 6 and len(password) <= 100
     is_valid_name_first = len(name_first) >= 1 and len(name_first) <= 50
     is_valid_name_last = len(name_last) >= 1 and len(name_last) <= 50
 
+    # Check all conditions to see that a user is valid
     if not (is_valid_email and is_valid_password and is_valid_name_last and
             is_valid_name_first and is_not_already_registered):
         # RAISE ERROR
@@ -79,9 +79,15 @@ def auth_register_v1(email, password, name_first, name_last):
             'handle' : generate_handle(name_first, name_last),
             'channels' : []
         })
+        
+        # Adds the first user as a global user
+        global_users = data_store.get_data()['global_owners']
+        if len(global_users) == 0:
+            global_users.append(new_user_id)
+
         return {'auth_user_id': new_user_id}
 
-#Assumption: Possible max handle? throw error if handle is over 30? 100?
+
 def generate_handle(name_first, name_last):
     """
     Given a first and last name, it will generate a handle for the user.
