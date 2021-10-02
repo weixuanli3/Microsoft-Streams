@@ -61,8 +61,25 @@ def channel_invite_v1(auth_user_id, channel_id, u_id):
 # Returns a dictionary with the details of the specified channel
 # if the user is part of said channel
 def channel_details_v1(auth_user_id, channel_id):
-        # check if the user exists
-        # MAYBE NOT NECESSARY!!!!!
+    """
+    This function is used to show the details of a channel the user is in.
+    It will raise an input error if the user is not in the channel or the 
+    channel does not exist. Assuming no errors are raised the function will
+    return a dictionary with:         
+    'channel_name' : '',
+    'public_status' : True,
+    'owner_members' : [],
+    'all_members' : [],
+    
+    and the owner_members and all_memebers are lists with dictionaries: 
+            'u_id': user['id'],
+            'email': user['emails'],
+            'name_first': user['names'],
+            'name_last': user['name_lasts'],
+            'handle_str': user['handle'],
+    """
+    
+    
     '''
     user_data = data_store.get_data()['users']
     user_exists = False
@@ -93,7 +110,7 @@ def channel_details_v1(auth_user_id, channel_id):
         if channel_id == channel['chan_id']:
             channel_exists = True
             return_dictionary['channel_name'] = channel['name']
-            return_dictionary['public_status'] = channel['is_public']
+            return_dictionary['is_public'] = channel['is_public']
             member_ids = channel['users_id']
             owner_ids = channel['owner_id']
 
@@ -103,7 +120,7 @@ def channel_details_v1(auth_user_id, channel_id):
 
     user_valid_member = False
 
-    # check if the user is aready in the channel
+    # check if the user is in the channel
     for channel in channel_data:
         if auth_user_id in channel['users_id']:
             user_valid_member = True
@@ -112,8 +129,6 @@ def channel_details_v1(auth_user_id, channel_id):
         raise AccessError("User not a member of the channel")
 
     # Add the owener_ids and member_ids to the return dictionary
-    # NOT SURE IF THIS IS THE CORRECT SYNTAX TO ADD TO DICTIONARIES
-    # also shiocking time complexity if that matters at all hopefully not though
     user_data = data_store.get_data()['users']
 
     for user in user_data:
@@ -259,9 +274,15 @@ def channel_messages_v1(auth_user_id, channel_id, start):
 # Ask everyone else whether I should merge all loops together
 # Add a user to a channel
 def channel_join_v1(auth_user_id, channel_id):
-    # The more efficient way would be to loop through the channels and users once then
-    # if the channels and user exists remember what index they were at to access them directly
-    # later, however I currently do not know how to access parts of the dictionary directly
+    """
+    This funciton makes a specified user a part of a channel. It will raise
+    an input error if the user or channel ids inputted do not exist or
+    the user is already in the channel. It wil raise an access error if
+    the channel is not a global owner and tries to join a private channel.
+    If no errors are raised it will add the user to the channel's 'user_ids'
+    key's list and the channels to the user's 'channels' key's list.
+    It returns an empty dictionary.
+    """
 
     # check if the user exists
     user_data = data_store.get_data()['users']
@@ -272,6 +293,14 @@ def channel_join_v1(auth_user_id, channel_id):
 
     if not user_exists:
         raise InputError("User doesn't exist")
+    
+    #check if the user is a global 
+    global_data = data_store.get_data()['global_owners']
+    is_global_owner = False
+    
+    if auth_user_id in global_data:
+        is_global_owner = True
+    
 
     #check if the channel exists
     channel_data = data_store.get_data()['channels']
@@ -280,22 +309,18 @@ def channel_join_v1(auth_user_id, channel_id):
     for channel in channel_data:
         if channel_id == channel['chan_id']:
             channel_exists = True
+            
+            # check if the user is aready in the channel
+            if auth_user_id in channel['users_id']:
+                raise InputError("User already member of channel")
+            
+            #check if the channel is private
+            
+            if not channel['is_public'] and not is_global_owner:
+                raise AccessError("Channel is not public")        
 
     if not channel_exists:
         raise InputError("Channel doesn't exist")
-
-    # check if the channel is private
-    # IMPORTANT still need to check if the user is a global owner
-    # but I do not think that global ownership is implemented in iteration 1
-    for channel in channel_data:
-        if (channel['chan_id']) == (channel_id):
-            if not channel['is_public']:
-                raise AccessError("Channel is not public")
-
-    # check if the user is aready in the channel
-    for channel in channel_data:
-        if auth_user_id in channel['users_id'] and channel_id == channel['chan_id']:
-            raise InputError("User already member of channel")
 
     # Add user_id to the channel
     for channel in channel_data:
