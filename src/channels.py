@@ -32,6 +32,7 @@ def channels_list_v1(auth_user_id):
         }
     '''
     user_data = data_store.get_data()['users']
+    # Check if the given user_id exists in the database
     user_exists = False
     for user in user_data:
         if auth_user_id == user['id']:
@@ -42,18 +43,16 @@ def channels_list_v1(auth_user_id):
         raise InputError("User doesn't exist")
 
     channel_data = data_store.get_data()['channels']
-    channel_dict = {}
+    channel_dict = {
+        'channels': []
+    }
+    # Go through the channels, if the user is in the channel and it is public, append it
     for channels in channel_data:
         if channels['chan_id'] in channel_ids and channels['is_public']:
-            new_chan = {
+            channel_dict['channels'].append({
                 'channel_id': channels['chan_id'],
                 'name': channels['name']
-            }
-
-            if 'channels' not in channel_dict:
-                channel_dict['channels'] = [new_chan]
-            else:
-                channel_dict['channels'].append(new_chan)
+            })
 
     return channel_dict
 
@@ -87,6 +86,7 @@ def channels_listall_v1(auth_user_id):
         }
     '''
     user_data = data_store.get_data()['users']
+    # Check if the given user_id exists in the database
     user_exists = False
     for user in user_data:
         if auth_user_id == user['id']:
@@ -97,18 +97,16 @@ def channels_listall_v1(auth_user_id):
         raise InputError("User doesn't exist")
 
     channel_data = data_store.get_data()['channels']
-    channel_dict = {}
+    channel_dict = {
+        'channels': []
+    }
+    # Go through the channels if the user is in the channel, append it
     for channels in channel_data:
         if channels['chan_id'] in channel_ids:
-            new_chan = {
+            channel_dict['channels'].append({
                 'channel_id': channels['chan_id'],
                 'name': channels['name']
-            }
-
-            if 'channels' not in channel_dict:
-                channel_dict['channels'] = [new_chan]
-            else:
-                channel_dict['channels'].append(new_chan)
+            })
 
     return channel_dict
 
@@ -134,6 +132,7 @@ def channels_create_v1(auth_user_id, name, is_public):
         }
     '''
     user_data = data_store.get_data()['users']
+    # Check if the given user_id exists in the database
     user_exists = False
     for user in user_data:
         if auth_user_id == user['id']:
@@ -147,10 +146,10 @@ def channels_create_v1(auth_user_id, name, is_public):
         raise InputError("Invalid channel name")
 
     channel_data = data_store.get_data()['channels']
-
+    # Append the new channel id to the list of channels the user is in
     new_channel_id = len(channel_data) + 1
     curr_user['channels'].append(new_channel_id)
-
+    # Update the channels key in the data dictionary
     channel_data.append({
         'chan_id': new_channel_id,
         'name': name,
