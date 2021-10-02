@@ -18,16 +18,15 @@ def auth_login_v1(email, password):
 
     user_data = data_store.get_data()['users']
     authentic_user = False
+    # -1 should never be an actual user ID
     user_id = -1
     for users in user_data:
         if (users['emails'], users['passwords']) == (email, password):
-            authentic_user = True
             user_id = users['id']
+            return {'auth_user_id': user_id}
 
-    if authentic_user == False:
-        raise InputError("Password or email is incorrect")
+    raise InputError("Password or email is incorrect")
 
-    return {'auth_user_id': user_id}
 
 # Assumptions: Possible max length password?
 # Name cannot contain any characters like .!@#$%^&
@@ -58,19 +57,18 @@ def auth_register_v1(email, password, name_first, name_last):
     user_emails = data_store.get('emails')
     is_not_already_registered = not email in user_emails['emails']
 
-    is_valid_password = len(password) >= 6
+    is_valid_password = len(password) >= 6 and len(password) <= 100
     is_valid_name_first = len(name_first) >= 1 and len(name_first) <= 50
     is_valid_name_last = len(name_last) >= 1 and len(name_last) <= 50
 
     if not (is_valid_email and is_valid_password and is_valid_name_last and
             is_valid_name_first and is_not_already_registered):
         # RAISE ERROR
-        raise InputError("Bad registration data")
+        raise InputError("There was a problem with the user registration data")
 
     else:
         # REGISTER USER
         user_data = data_store.get_data()['users']
-        # User ID is just their place in the system for now
         new_user_id = len(user_data) + 1
         user_data.append({
             'id' : new_user_id,
@@ -98,14 +96,13 @@ def generate_handle(name_first, name_last):
     user_handle = user_handle[:20]
     user_handle = user_handle.lower()
 
-    i = 0
-    while len(user_handle) < 20:
-        user_handle += str(i)
-        i += 1
-
+    # more than 20 if the user is already there
     is_valid_handle = not user_handle in data_store.get('handle')['handle']
+    i = 0
     while not is_valid_handle:
-        user_handle += str(i)
+        is_valid_handle = not (user_handle + str(i)) in data_store.get('handle')['handle']
+        if is_valid_handle:
+            user_handle = user_handle + str(i)
         i += 1
-        is_valid_handle = not user_handle in data_store.get('handle')['handle']
+        
     return user_handle
