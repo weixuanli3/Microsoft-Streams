@@ -18,9 +18,15 @@ print(data_store.get('names'))          # Will print: [Admin]
 def clear_v1():
 
     """
-    Clears all internal data for channels and users. This resets all data, and recreates 
+    Clears all internal data for channels and users. 
+    
+    This resets all data, and recreates 
     the initial object as per the specification.
+    
+    Returns:
+        An empty dictionary.
     """
+
     
     store = data_store.get_data()
     store = {
