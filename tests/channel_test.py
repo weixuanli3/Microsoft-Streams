@@ -86,6 +86,11 @@ def test_channel_invite_user_invites_self():
     with pytest.raises(InputError):
         channel_invite_v1(user1_id, channel1_id, user1_id)
 
+def test_channel_invite_all_invalid():
+    clear_v1()
+    with pytest.raises(AccessError):
+        channel_invite_v1("", "", "")
+
     # The following tests are for channel_join
 def test_channel_join_public_channel():
     clear_v1()
@@ -154,6 +159,11 @@ def test_channel_join_global_user_joins_private():
     channel_id = channels_create_v1(user2_id, "Channel 1", False)['channel_id']
     channel_join_v1(user1_id, channel_id)
 
+def test_channel_join_all_invalid():
+    clear_v1()
+    with pytest.raises(AccessError):
+        channel_join_v1("", "")
+
 # The following tests are for channel_details
 
 def test_channel_details_valid_channel():
@@ -209,6 +219,11 @@ def test_channel_details_channel_id_invalid():
     with pytest.raises(InputError):
         channel_details_v1(user1_id, "")
 
+def test_channel_details_all_invalid():
+    clear_v1()
+    with pytest.raises(AccessError):
+        channel_details_v1("", "")
+
 # The following tests are for channel_messages
 def test_channel_messages_invalid_channel():
     clear_v1()
@@ -253,3 +268,8 @@ def test_channel_messages_invalid_user():
     channel_id = channels_create_v1(user1_id, "Channel 1", True)['channel_id']
     with pytest.raises(AccessError):
         channel_messages_v1(2, channel_id, 0)
+
+def test_channel_messages_all_invalid():
+    clear_v1()
+    with pytest.raises(AccessError):
+        channel_messages_v1("", "", 0)
