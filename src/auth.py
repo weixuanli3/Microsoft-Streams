@@ -14,7 +14,21 @@ def auth_login_v1(email, password):
 
     """
     Returns the user id if a valid email and password pair are entered
+
+
+
+    Args:
+        email: the email of the user
+        password: the password of the user
+
+    Returns:
+        user_id
+
+    Raises:
+        Input Error: - password or email is incorrect
+        
     """
+
 
     user_data = data_store.get_data()['users']
     # -1 should never be an actual user ID
@@ -31,11 +45,29 @@ def auth_login_v1(email, password):
 # Name cannot contain any characters like .!@#$%^&
 def auth_register_v1(email, password, name_first, name_last):
     """
-    This function is used to register a user. It will raise an input error
-    if the email, password, name or last name are invalid. If the new_users
+    This function is used to register a user.  If the new_users
     infomation is corrent, it will return the new users ID {ID}. Strips all
-    special characters from user name.
+    special characters from user name_first and name_last then combines them
+     to create a handle.
+    
+
+    Args:
+        email: the email of the user
+        password: the password of the user
+        name_first: the first name of the user
+        name_last: the last name of the user
+
+    Returns:
+        user_id
+
+    Raises:
+        Input Error: - email invalid.
+                     - password invalid.
+                     - name_first invalid.
+                     - name_last invalid.
+        
     """
+
     # Do not allow passwords of all white space
     password_is_all_spaces = password == (len(password) * ' ')
     if password_is_all_spaces:
@@ -88,12 +120,18 @@ def auth_register_v1(email, password, name_first, name_last):
 def generate_handle(name_first, name_last):
     """
     Given a first and last name, it will generate a handle for the user.
+
     A handle is generated that is the concatenation of their casted-to-lowercase
-    alphanumeric (a-z0-9) first name and last name . If the concatenation is
+    alphanumeric (a-z0-9) first name and last name. If the concatenation is
     longer than 20 characters, it is cut off at 20 characters. If it is too
     short than numbers are added until it is a length of 20. If it is 20 characters
     and this handle is already taken, then it may go over.
+
+    Arguments: - name_first: first name of the user
+               - name_last: last name of the user
+
     """
+
 
     # Used just to filter out any hyphens in the name
     user_handle = re.sub(r'\W+', '', name_first + name_last)

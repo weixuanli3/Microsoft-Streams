@@ -4,6 +4,31 @@ from src.error import AccessError
 
 # Invite a user to a channel that the current user is in
 def channel_invite_v1(auth_user_id, channel_id, u_id):
+    """
+    Invites a user into the a channel that the current user is in.
+
+    Joins the specified user to the specified channel that
+    the auth_user is a part of.
+
+    Args:
+        auth_user_id: The integer id of user inviting the other user to the channel.
+        channel_id: The integer id of the channel that auth_user wants to invite
+        the other user to.
+        u_id: The integer id of the user being invited to the channel.
+
+    Returns:
+        An empty dictionary.
+
+    Raises:
+        Input Error: - The channel id does not exist
+                     - u_id already in the channel
+                     - u_id does not exist
+        
+        Access Error: - The auth_user_id does not exist
+                      - The auth_user_id is not part of the channel.
+    """
+    
+    
     channel_data = data_store.get_data()['channels']
     user_data = data_store.get_data()['users']
 
@@ -69,22 +94,37 @@ def channel_invite_v1(auth_user_id, channel_id, u_id):
 # if the user is part of said channel
 def channel_details_v1(auth_user_id, channel_id):
     """
-    This function is used to show the details of a channel the user is in.
-    It will raise an input error if the user is not in the channel or the
-    channel does not exist. Assuming no errors are raised the function will
-    return a dictionary with:
-    'name' : '',
-    'public_status' : True,
-    'owner_members' : [],
-    'all_members' : [],
+    Returns the details of the specified channel.
 
-    and the owner_members and all_memebers are lists with dictionaries:
+    Accesses the data within the specified channel and returns a
+    dictionary with said details. 
+
+    Args:
+        auth_user_id: The integer id of user displaying the channel details.
+        channel_id: The integer id of the channel that the user wants to get
+        the details of.
+
+    Returns:
+        'name' : '',
+        'public_status' : True,
+        'owner_members' : [],
+        'all_members' : [],
+        
+        and the owner_members and all_memebers are lists with dictionaries: 
             'u_id': user['id'],
             'email': user['emails'],
             'name_first': user['names'],
             'name_last': user['name_lasts'],
-            'handle_str': user['handle'],
+            'handle_str': user['handle']
+
+    Raises:
+        Input Error: - The channel id does not exist
+        
+        Access Error: - The auth_user_id does not exist
+                      - The auth_user_id is not part of the channel.
+        
     """
+
 
 
     # check if the user exists
@@ -187,6 +227,46 @@ def channel_details_v1(auth_user_id, channel_id):
 # Return 50 messages (or the end of the messages) in a dictionary
 def channel_messages_v1(auth_user_id, channel_id, start):
 
+    """
+    Returns the messages sent in the specified channel.
+
+    Accesses the data within the specified channel and returns a
+    dictionary with the details of a range of message. ('start' argument 
+    + 50 messages). If the start argument value passed in is greater than 
+    total messages sent in the channel minus 50 it displays the messages
+    from the start value up until the most first message in the channel sent.
+
+    Args:
+        auth_user_id: The integer id of user displaying the channel messaages.
+        channel_id: The integer id of the channel that the user wants to get
+        the message details of.
+        start: The start index of the messages being displayed, with index 0 is the 
+        most recent message in the channel.
+
+    Returns:
+        A dictionary with:
+                {
+                    'messages': [
+                        {
+                            'message_id': 1,
+                            'u_id': 1,
+                            'message': 'Hello world',
+                            'time_created': 1582426789,
+                        }
+                    ],
+                    'start': 0,
+                    'end': 50,
+                }
+
+    Raises:
+        Input Error: - The channel id does not exist.
+                     - start is greater than the total number of messages in the channel.
+        
+        Access Error: - The auth_user_id does not exist.
+                      - The auth_user_id is not part of the channel.   
+    """
+
+
     return_dictionary = {
         'messages': [],
     }
@@ -269,15 +349,29 @@ def channel_messages_v1(auth_user_id, channel_id, start):
 
 # Add a user to a channel
 def channel_join_v1(auth_user_id, channel_id):
+    """ 
+    This funciton makes a specified user a mamber of a specific channel
+
+    Will add the user to the channel's 'user_ids' key's list and the channels 
+    to the user's 'channels' key's list.
+
+    Args:
+        auth_user_id: The integer id of user displaying the channel details.
+        channel_id: The integer id of the channel that the user wants to get
+        the details of.
+
+    Returns:
+        An empty dictionary.
+
+    Raises:
+        Input Error: - the channel id inputted does not exist
+                     - the auth_user_id is already in the channel
+        
+        Access Error: - The auth_user_id does not exist
+                      - the auth_user is not a global owner and tries to join a private channel
+        
     """
-    This funciton makes a specified user a part of a channel. It will raise
-    an input error if the user or channel ids inputted do not exist or
-    the user is already in the channel. It wil raise an access error if
-    the channel is not a global owner and tries to join a private channel.
-    If no errors are raised it will add the user to the channel's 'user_ids'
-    key's list and the channels to the user's 'channels' key's list.
-    It returns an empty dictionary.
-    """
+
 
     # check if the user exists
     user_data = data_store.get_data()['users']
