@@ -1,12 +1,12 @@
+'''Contains tests for channels.py'''
 import pytest
 
 from src.auth import auth_register_v1
 from src.channels import channels_create_v1, channels_list_v1, channels_listall_v1
-from src.channel import channel_join_v1, channel_messages_v1, channel_invite_v1
+from src.channel import channel_join_v1, channel_invite_v1
 from src.error import InputError
 from src.error import AccessError
 from src.other import clear_v1
-from src.channel import channel_details_v1
 
 # The following tests channels_create_v1
 def test_channels_create_invalid_user_id():
@@ -158,7 +158,7 @@ def test_channels_list_public_private():
             },
             {
                 'channel_id': chan2_id,
-                'name': 'Private Channel 1'                
+                'name': 'Private Channel 1'
             }
         ]
     }
@@ -269,7 +269,7 @@ def test_channels_list_channels_list_default():
         'channels': [
             {
                 'channel_id': chan_priv,
-                'name': 'Private Channel',                
+                'name': 'Private Channel',
             },
             {
                 'channel_id': chan1_id,
@@ -285,7 +285,7 @@ def test_channels_list_channels_list_default():
         'channels': [
             {
                 'channel_id': chan_priv,
-                'name': 'Private Channel',                
+                'name': 'Private Channel',
             },
             {
                 'channel_id': chan1_id,
@@ -295,7 +295,7 @@ def test_channels_list_channels_list_default():
                 'channel_id': chan2_id,
                 'name': 'Public Channel 2',
             }
-        ]        
+        ]
     }
 
 #Regular channels_listall
@@ -346,11 +346,11 @@ def test_channels_list_and_listall_multiple_users():
     }
     pub_user1_chan = {
         'channel_id': pub_user1_chan_id,
-        'name': "Public Channel 1"        
+        'name': "Public Channel 1"
     }
     pub_user2_chan = {
         'channel_id': pub_user2_chan_id,
-        'name': "Public Channel 2"        
+        'name': "Public Channel 2"
     }
     assert channels_list_v1(user1_id) == {
         'channels': [priv_user1_chan, priv_user2_chan, pub_user1_chan, pub_user2_chan]
@@ -360,3 +360,4 @@ def test_channels_list_and_listall_multiple_users():
     }
     assert channels_listall_v1(user1_id) == channels_list_v1(user1_id)
     assert channels_listall_v1(user2_id) == channels_list_v1(user1_id)
+    

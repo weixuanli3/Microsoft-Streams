@@ -1,3 +1,4 @@
+'''Contains tests for channel.py'''
 import pytest
 
 from src.auth import auth_register_v1
@@ -64,7 +65,7 @@ def test_channel_invite_user_id_empty():
     channel1_id = channels_create_v1(user1_id, "Channel 1", True)['channel_id']
     with pytest.raises(InputError):
         channel_invite_v1(user1_id, channel1_id, "")
-  
+
 def test_channel_invite_no_channels():
     clear_v1()
     user1_id = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['auth_user_id']
@@ -137,7 +138,7 @@ def test_channel_join_channel_channel_does_not_exist():
     user_id = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['auth_user_id']
     with pytest.raises(InputError):
         channel_join_v1(user_id, 3333)
-  
+
 def test_channel_join_channel_user_id_empty():
     clear_v1()
     user_id = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['auth_user_id']
@@ -151,7 +152,7 @@ def test_channel_join_channel_channel_id_empty():
     channel_id = channels_create_v1(user_id, "Channel 1", True)['channel_id']
     with pytest.raises(InputError):
         channel_join_v1(user_id, "")
-        
+
 def test_channel_join_global_user_joins_private():
     clear_v1()
     user1_id = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['auth_user_id']
@@ -216,7 +217,7 @@ def test_channel_details_channel_id_invalid():
     user1_id = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['auth_user_id']
     with pytest.raises(InputError):
         channel_details_v1(user1_id, "")
-        
+
 def test_channel_details_user_id_and_channel_id_invalid():
     clear_v1()
     user1_id = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['auth_user_id']

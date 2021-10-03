@@ -1,8 +1,4 @@
-# John Henderson (z5368143)
-# Tomas Ostroumoff (z5312982)
-
-# from data_store import data_store
-# from error import InputError
+'''Contains functions to register new users and login'''
 
 import re
 
@@ -26,7 +22,7 @@ def auth_login_v1(email, password):
 
     Raises:
         Input Error: - password or email is incorrect
-        
+
     """
 
 
@@ -49,7 +45,7 @@ def auth_register_v1(email, password, name_first, name_last):
     infomation is corrent, it will return the new users ID {ID}. Strips all
     special characters from user name_first and name_last then combines them
      to create a handle.
-    
+
 
     Args:
         email: the email of the user
@@ -65,7 +61,7 @@ def auth_register_v1(email, password, name_first, name_last):
                      - password invalid.
                      - name_first invalid.
                      - name_last invalid.
-        
+
     """
 
     # Do not allow passwords of all white space
@@ -146,5 +142,5 @@ def generate_handle(name_first, name_last):
         if is_valid_handle:
             user_handle = user_handle + str(i)
         i += 1
-        
+
     return user_handle
