@@ -16,15 +16,21 @@ def channel_invite_v1(auth_user_id, channel_id, u_id):
     if not auth_user_exists:
         raise AccessError("User doesn't exist")
     
-    #check if the channel exists
+    #check if the channel exists and if the auth_user is in the channel
     channel_exists = False
+    auth_user_in_channel = False
 
     for channel in channel_data:
         if channel_id == channel['chan_id']:
             channel_exists = True
+            if auth_user_id in channel['users_id']:
+                auth_user_in_channel = True
 
     if not channel_exists:
         raise InputError("Channel ID not valid")
+    
+    if not auth_user_in_channel:
+        raise AccessError("User isn't part of the channel")
 
     # check if the u_id refers to a valid user
     user_valid = False

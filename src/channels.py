@@ -124,6 +124,7 @@ def channels_create_v1(auth_user_id, name, is_public):
             Given user_id does not exist in the system
             Channel name is taken
             Channel name is smaller than 1 character or greater than 20
+            Channel name is all spaces
 
     Return Value:
         Returns a dicionary containing the new channel_id
@@ -145,6 +146,11 @@ def channels_create_v1(auth_user_id, name, is_public):
 
     if len(name) < 1 or len(name) > 20:
         raise InputError("Invalid channel name")
+
+    # Do not allow names of all white space
+    name_is_all_spaces = name == (len(name) * ' ')
+    if name_is_all_spaces:
+        raise InputError("Password cannot be all white space")
 
     channel_data = data_store.get_data()['channels']
     # Append the new channel id to the list of channels the user is in
