@@ -90,17 +90,16 @@ def channel_details_v1(auth_user_id, channel_id):
     """
     
     
-    '''
+    # check of the user exists
     user_data = data_store.get_data()['users']
     user_exists = False
     for user in user_data:
-        if auth_user_id == {user['id']}:
+        if auth_user_id == user['id']:
             user_exists = True
 
     if not user_exists:
-        raise InputError("User doesn't exist")
+        raise AccessError("User doesn't exist")
 
-    '''
 
     return_dictionary = {
         'name' : '',
@@ -167,16 +166,6 @@ def channel_details_v1(auth_user_id, channel_id):
             'name_last': user['name_lasts'],
             'handle_str': user['handle'],
         })
-
-    # for user in user_data:
-    #     for id in owner_ids:
-    #         print("The type is : ", type(user['id']))
-    #         if id == user['id']:
-    #             return_dictionary['owner_members'].append(user)
-        # for id1 in user_data:
-        #     if id1 == user['id']:
-        #         return_dictionary['all_members'].append(user)
-
 
     return return_dictionary
 
@@ -289,7 +278,6 @@ def channel_messages_v1(auth_user_id, channel_id, start):
     #     'end': 50,
     # }
 
-# Ask everyone else whether I should merge all loops together
 # Add a user to a channel
 def channel_join_v1(auth_user_id, channel_id):
     """
