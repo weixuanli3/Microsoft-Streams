@@ -66,7 +66,7 @@ def channel_details_v1(auth_user_id, channel_id):
     It will raise an input error if the user is not in the channel or the 
     channel does not exist. Assuming no errors are raised the function will
     return a dictionary with:         
-    'channel_name' : '',
+    'name' : '',
     'public_status' : True,
     'owner_members' : [],
     'all_members' : [],
@@ -93,7 +93,7 @@ def channel_details_v1(auth_user_id, channel_id):
     '''
 
     return_dictionary = {
-        'channel_name' : '',
+        'name' : '',
         'is_public' : True,
         'owner_members' : [],
         'all_members' : [],
@@ -109,7 +109,7 @@ def channel_details_v1(auth_user_id, channel_id):
     for channel in channel_data:
         if channel_id == channel['chan_id']:
             channel_exists = True
-            return_dictionary['channel_name'] = channel['name']
+            return_dictionary['name'] = channel['name']
             return_dictionary['is_public'] = channel['is_public']
             member_ids = channel['users_id']
             owner_ids = channel['owner_id']
