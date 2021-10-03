@@ -47,9 +47,9 @@ def channels_list_v1(auth_user_id):
     channel_dict = {
         'channels': []
     }
-    # Go through the channels, if the user is in the channel and it is public, append it
+    # Go through the channels, if the user is in the channel, append it
     for channels in channel_data:
-        if channels['chan_id'] in channel_ids and channels['is_public']:
+        if channels['chan_id'] in channel_ids:
             channel_dict['channels'].append({
                 'channel_id': channels['chan_id'],
                 'name': channels['name']
@@ -92,7 +92,6 @@ def channels_listall_v1(auth_user_id):
     for user in user_data:
         if auth_user_id == user['id']:
             user_exists = True
-            channel_ids = user['channels']
 
     if not user_exists:
         raise AccessError("User doesn't exist")
@@ -101,13 +100,12 @@ def channels_listall_v1(auth_user_id):
     channel_dict = {
         'channels': []
     }
-    # Go through the channels if the user is in the channel, append it
+    # Append all the channels that exist
     for channels in channel_data:
-        if channels['chan_id'] in channel_ids:
-            channel_dict['channels'].append({
-                'channel_id': channels['chan_id'],
-                'name': channels['name']
-            })
+        channel_dict['channels'].append({
+            'channel_id': channels['chan_id'],
+            'name': channels['name']
+        })
 
     return channel_dict
 
