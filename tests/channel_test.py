@@ -76,7 +76,7 @@ def test_channel_invite_auth_id_invalid():
     clear_v1()
     user1_id = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['auth_user_id']
     channel1_id = channels_create_v1(user1_id, "Channel 1", True)['channel_id']
-    with pytest.raises(InputError):
+    with pytest.raises(AccessError):
         channel_invite_v1("", channel1_id, user1_id)
 
 def test_channel_invite_user_invites_self():
