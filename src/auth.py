@@ -17,7 +17,6 @@ def auth_login_v1(email, password):
     """
 
     user_data = data_store.get_data()['users']
-    authentic_user = False
     # -1 should never be an actual user ID
     user_id = -1
     for users in user_data:
@@ -61,12 +60,8 @@ def auth_register_v1(email, password, name_first, name_last):
     is_valid_name_last = len(name_last) >= 1 and len(name_last) <= 50
 
     # Check all conditions to see that a user is valid
-    if not (is_valid_email and is_valid_password and is_valid_name_last and
+    if (is_valid_email and is_valid_password and is_valid_name_last and
             is_valid_name_first and is_not_already_registered):
-        # RAISE ERROR
-        raise InputError("There was a problem with the user registration data")
-
-    else:
         # REGISTER USER
         user_data = data_store.get_data()['users']
         new_user_id = len(user_data) + 1
@@ -79,13 +74,15 @@ def auth_register_v1(email, password, name_first, name_last):
             'handle' : generate_handle(name_first, name_last),
             'channels' : []
         })
-        
         # Adds the first user as a global user
         global_users = data_store.get_data()['global_owners']
         if len(global_users) == 0:
             global_users.append(new_user_id)
 
         return {'auth_user_id': new_user_id}
+
+    # RAISE ERROR
+    raise InputError("There was a problem with the user registration data")
 
 
 def generate_handle(name_first, name_last):
@@ -97,7 +94,7 @@ def generate_handle(name_first, name_last):
     short than numbers are added until it is a length of 20. If it is 20 characters
     and this handle is already taken, then it may go over.
     """
-    
+
     # Used just to filter out any hyphens in the name
     user_handle = re.sub(r'\W+', '', name_first + name_last)
     user_handle = user_handle[:20]
@@ -107,7 +104,7 @@ def generate_handle(name_first, name_last):
     is_valid_handle = not user_handle in data_store.get('handle')['handle']
     i = 0
     while not is_valid_handle:
-        is_valid_handle = not (user_handle + str(i)) in data_store.get('handle')['handle']
+        is_valid_handle = not user_handle + str(i) in data_store.get('handle')['handle']
         if is_valid_handle:
             user_handle = user_handle + str(i)
         i += 1
