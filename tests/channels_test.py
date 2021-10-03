@@ -65,12 +65,21 @@ def test_channels_listall_no_channels_all():
 def test_channels_list_all_private():
     clear_v1()
     user1_id = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['auth_user_id']
-    channels_create_v1(user1_id, "Private Channel", False)
+    chan1_id = channels_create_v1(user1_id, "Private Channel", False)['channel_id']
     user2_id = auth_register_v1("jade.lee@aunsw.edu.au","password","Jade","Lee")['auth_user_id']
-    chan_id = channels_create_v1(user2_id, "Private Channel 2", False)['channel_id']
-    channel_invite_v1(user2_id, chan_id, user1_id)
+    chan2_id = channels_create_v1(user2_id, "Private Channel 2", False)['channel_id']
+    channel_invite_v1(user2_id, chan2_id, user1_id)
     assert channels_list_v1(user1_id) == {
-        'channels': []
+        'channels': [
+            {
+                'channel_id': chan1_id,
+                'name': 'Private Channel',
+            },
+            {
+                'channel_id': chan2_id,
+                'name': 'Private Channel 2',
+            }
+        ]
     }
 
 #Call channels_list with only public channels
@@ -109,6 +118,10 @@ def test_channels_list_joined():
                 'channel_id': chan1_id,
                 'name': 'Public Channel 1',
             },
+            {
+                'channel_id': chan2_id,
+                'name': 'Private Channel 1',
+            }
         ]
     }
 
@@ -136,13 +149,17 @@ def test_channels_list_public_private():
     clear_v1()
     user1_id = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['auth_user_id']
     chan1_id = channels_create_v1(user1_id, "Public Channel 1", True)['channel_id']
-    channels_create_v1(user1_id, "Private Channel 1", False)
+    chan2_id = channels_create_v1(user1_id, "Private Channel 1", False)['channel_id']
     assert channels_list_v1(user1_id) == {
         'channels': [
             {
                 'channel_id': chan1_id,
                 'name': 'Public Channel 1',
             },
+            {
+                'channel_id': chan2_id,
+                'name': 'Private Channel 1'                
+            }
         ]
     }
 
@@ -244,12 +261,16 @@ def test_channels_list_channels_list_default():
     clear_v1()
     user1_id = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['auth_user_id']
     user2_id = auth_register_v1("jade.lee@aunsw.edu.au","password","Jade","Lee")['auth_user_id']
-    channels_create_v1(user1_id, "Private Channel", False)
+    chan_priv = channels_create_v1(user1_id, "Private Channel", False)['channel_id']
     chan1_id = channels_create_v1(user1_id, "Public Channel 1", True)['channel_id']
     chan2_id = channels_create_v1(user2_id, "Public Channel 2", True)['channel_id']
     channel_join_v1(user1_id, chan2_id)
     assert channels_list_v1(user1_id) == {
         'channels': [
+            {
+                'channel_id': chan_priv,
+                'name': 'Private Channel',                
+            },
             {
                 'channel_id': chan1_id,
                 'name': 'Public Channel 1',
@@ -259,6 +280,22 @@ def test_channels_list_channels_list_default():
                 'name': 'Public Channel 2',
             }
         ]
+    }
+    assert channels_listall_v1(user1_id) == {
+        'channels': [
+            {
+                'channel_id': chan_priv,
+                'name': 'Private Channel',                
+            },
+            {
+                'channel_id': chan1_id,
+                'name': 'Public Channel 1',
+            },
+            {
+                'channel_id': chan2_id,
+                'name': 'Public Channel 2',
+            }
+        ]        
     }
 
 #Regular channels_listall
@@ -286,3 +323,40 @@ def test_channels_listall_default():
             }
         ]
     }
+
+# Call channels_list and channels_listall when we have multiple users
+def test_channels_list_and_listall_multiple_users():
+    clear_v1()
+    user1_id = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['auth_user_id']
+    user2_id = auth_register_v1("jade.lee@aunsw.edu.au","password","Jade","Lee")['auth_user_id']
+    priv_user1_chan_id = channels_create_v1(user1_id, "Private Channel 1", False)['channel_id']
+    priv_user2_chan_id = channels_create_v1(user2_id, "Private Channel 2", False)['channel_id']
+    pub_user1_chan_id = channels_create_v1(user1_id, "Public Channel 1", True)['channel_id']
+    pub_user2_chan_id = channels_create_v1(user2_id, "Public Channel 2", True)['channel_id']
+    channel_join_v1(user1_id, priv_user2_chan_id)
+    channel_join_v1(user1_id, pub_user2_chan_id)
+    channel_invite_v1(user1_id, priv_user1_chan_id, user2_id)
+    priv_user1_chan = {
+        'channel_id': priv_user1_chan_id,
+        'name': "Private Channel 1"
+    }
+    priv_user2_chan = {
+        'channel_id': priv_user2_chan_id,
+        'name': "Private Channel 2"
+    }
+    pub_user1_chan = {
+        'channel_id': pub_user1_chan_id,
+        'name': "Public Channel 1"        
+    }
+    pub_user2_chan = {
+        'channel_id': pub_user2_chan_id,
+        'name': "Public Channel 2"        
+    }
+    assert channels_list_v1(user1_id) == {
+        'channels': [priv_user1_chan, priv_user2_chan, pub_user1_chan, pub_user2_chan]
+    }
+    assert channels_list_v1(user2_id) == {
+        'channels': [priv_user1_chan, priv_user2_chan, pub_user2_chan]
+    }
+    assert channels_listall_v1(user1_id) == channels_list_v1(user1_id)
+    assert channels_listall_v1(user2_id) == channels_list_v1(user1_id)
