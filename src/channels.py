@@ -1,6 +1,7 @@
 ''' Contains the functions to create a new channel and to list pub/priv channels'''
 from src.data_store import data_store
 from src.error import InputError
+from src.error import AccessError
 
 def channels_list_v1(auth_user_id):
     '''
@@ -40,7 +41,7 @@ def channels_list_v1(auth_user_id):
             channel_ids = user['channels']
 
     if not user_exists:
-        raise InputError("User doesn't exist")
+        raise AccessError("User doesn't exist")
 
     channel_data = data_store.get_data()['channels']
     channel_dict = {
@@ -94,7 +95,7 @@ def channels_listall_v1(auth_user_id):
             channel_ids = user['channels']
 
     if not user_exists:
-        raise InputError("User doesn't exist")
+        raise AccessError("User doesn't exist")
 
     channel_data = data_store.get_data()['channels']
     channel_dict = {
@@ -140,7 +141,7 @@ def channels_create_v1(auth_user_id, name, is_public):
             curr_user = user
 
     if not user_exists:
-        raise InputError("User doesn't exist")
+        raise AccessError("User doesn't exist")
 
     if len(name) < 1 or len(name) > 20:
         raise InputError("Invalid channel name")
