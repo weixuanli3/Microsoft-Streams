@@ -7,24 +7,39 @@ def channel_invite_v1(auth_user_id, channel_id, u_id):
     channel_data = data_store.get_data()['channels']
     user_data = data_store.get_data()['users']
 
-    # check if the auth user exists
+    # check if the auth user exists and u_id exists
     auth_user_exists = False
+    user_valid = False
     for user in user_data:
         if auth_user_id == user['id']:
             auth_user_exists = True
+        if u_id == user['id']:
+            user_valid = True
 
     if not auth_user_exists:
         raise AccessError("User doesn't exist")
 
-    #check if the channel exists and if the auth_user is in the channel
+    if not user_valid:
+        raise InputError("user id does not refer to a valid user")
+    
+    
     channel_exists = False
     auth_user_in_channel = False
+    user_valid_member = True
+    auth_user_valid = False
 
     for channel in channel_data:
+        # check if the channel exists and if the auth_user is in the channel
         if channel_id == channel['chan_id']:
             channel_exists = True
             if auth_user_id in channel['users_id']:
                 auth_user_in_channel = True
+        # check if the u_id refers to a user not aready in the channel
+        if u_id in channel['users_id'] and channel_id == channel['chan_id']:
+            user_valid_member = False
+        # check if auth_user refers to a user not in channel
+        if auth_user_id in channel['users_id']:
+            auth_user_valid = True
 
     if not channel_exists:
         raise InputError("Channel ID not valid")
@@ -32,25 +47,11 @@ def channel_invite_v1(auth_user_id, channel_id, u_id):
     if not auth_user_in_channel:
         raise AccessError("User isn't part of the channel")
 
-    # check if the u_id refers to a valid user
-    user_valid = False
-
-    for user in user_data:
-        if u_id == user['id']:
-            user_valid = True
-
-    if not user_valid:
-        raise InputError("user id does not refer to a valid user")
-
-    # check if the u_id refers to a user not aready in the channel
-    user_valid_member = True
-
-    for channel in channel_data:
-        if u_id in channel['users_id'] and channel_id == channel['chan_id']:
-            user_valid_member = False
-
     if not user_valid_member:
         raise InputError("User is already a member of the channel")
+
+    if not auth_user_valid:
+        raise AccessError("Auth user id does not refer to a valid user")
 
     # Add user_id to the channel
     for channel in channel_data:
