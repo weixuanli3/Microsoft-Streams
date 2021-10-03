@@ -14,3 +14,5 @@ Current assumptions for functions:
   characters used in names. Since this is a university app, names should be the real names of students.
 
 - Users can create channels with names that already exist (whether the channel is created by the user or by someone else), just like in the real world.
+
+- Users cannot create channels with names that are empty spaces
