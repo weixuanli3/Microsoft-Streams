@@ -6,6 +6,15 @@ from src.error import AccessError
 def channel_invite_v1(auth_user_id, channel_id, u_id):
     channel_data = data_store.get_data()['channels']
     user_data = data_store.get_data()['users']
+
+    # check if the auth user exists
+    auth_user_exists = False
+    for user in user_data:
+        if auth_user_id == user['id']:
+            auth_user_exists = True
+
+    if not auth_user_exists:
+        raise AccessError("User doesn't exist")
     
     #check if the channel exists
     channel_exists = False
@@ -102,6 +111,16 @@ def channel_details_v1(auth_user_id, channel_id):
     owner_ids = []
     member_ids = []
 
+    # check if the auth user exists
+    user_data = data_store.get_data()['users']
+    auth_user_exists = False
+    for user in user_data:
+        if auth_user_id == user['id']:
+            auth_user_exists = True
+
+    if not auth_user_exists:
+        raise AccessError("User doesn't exist")
+
     #check if the channel exists
     channel_data = data_store.get_data()['channels']
     channel_exists = False
@@ -129,8 +148,6 @@ def channel_details_v1(auth_user_id, channel_id):
         raise AccessError("User not a member of the channel")
 
     # Add the owner_ids and member_ids to the return dictionary
-    user_data = data_store.get_data()['users']
-
     for user in user_data:
         if user['id'] in owner_ids:
             user_exists = True
