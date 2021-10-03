@@ -128,7 +128,7 @@ def channel_details_v1(auth_user_id, channel_id):
     if not user_valid_member:
         raise AccessError("User not a member of the channel")
 
-    # Add the owener_ids and member_ids to the return dictionary
+    # Add the owner_ids and member_ids to the return dictionary
     user_data = data_store.get_data()['users']
 
     for user in user_data:
@@ -200,7 +200,7 @@ def channel_messages_v1(auth_user_id, channel_id, start):
             user_exists = True
 
     if not user_exists:
-        raise InputError("User doesn't exist")
+        raise AccessError("User doesn't exist")
 
     #check if the channel exists
     channel_data = data_store.get_data()['channels']
@@ -292,7 +292,7 @@ def channel_join_v1(auth_user_id, channel_id):
             user_exists = True
 
     if not user_exists:
-        raise InputError("User doesn't exist")
+        raise AccessError("User doesn't exist")
     
     #check if the user is a global 
     global_data = data_store.get_data()['global_owners']
