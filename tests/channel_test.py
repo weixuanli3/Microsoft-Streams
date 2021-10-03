@@ -163,7 +163,7 @@ def test_channel_details_valid_channel():
     channel_id = channels_create_v1(user1_id, "Channel 1", True)['channel_id']
     channel_join_v1(user2_id, channel_id)
     # assert (channel_details_v1(user1_id, channel_id) == {
-    #     'channel_name' : 'Channel 1',
+    #     'name' : 'Channel 1',
     #     'public_status' : True,
     #     'owner_members' : [{'email': 'john.doe@aunsw.edu.au', 'handle_str': 'johndoe01234567891011', 'name_first': 'John', 'name_last': 'Doe', 'u_id': user1_id}],
     #     'all_members' : [{'email': 'john.doe@aunsw.edu.au', 'handle_str': 'johndoe01234567891011', 'name_first': 'John', 'name_last': 'Doe', 'u_id': user1_id}, {'email': 'john.smith@aunsw.edu.au', 'handle_str': 'johnsmith012345678910', 'name_first': 'John', 'name_last': 'Smith', 'u_id': user2_id}],
@@ -176,7 +176,7 @@ def test_channel_details_valid_private_channel():
     channel_id = channels_create_v1(user1_id, "Channel 1", False)['channel_id']
     # channel_join_v1(user2_id, channel_id)
     # assert (channel_details_v1(user1_id, channel_id) == {
-    #     'channel_name' : 'Channel 1',
+    #     'name' : 'Channel 1',
     #     'public_status' : False,
     #     'owner_members' : [{'email': 'john.doe@aunsw.edu.au', 'handle_str': 'johndoe01234567891011', 'name_first': 'John', 'name_last': 'Doe', 'u_id': user1_id}],
     #     'all_members' : [{'email': 'john.doe@aunsw.edu.au', 'handle_str': 'johndoe01234567891011', 'name_first': 'John', 'name_last': 'Doe', 'u_id': user1_id}],
