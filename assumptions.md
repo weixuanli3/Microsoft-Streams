@@ -12,3 +12,5 @@ Current assumptions for functions:
 
 - User names cannot have special characters (such as !@#$%^&*(){}[];;'"<>,./?| ect) but may have a dash and other 
   characters used in names. Since this is a university app, names should be the real names of students.
+
+- Users can create channels with names that already exist (whether the channel is created by the user or by someone else), just like in the real world.
