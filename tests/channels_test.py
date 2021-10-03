@@ -11,7 +11,7 @@ from src.channel import channel_details_v1
 # The following tests channels_create_v1
 def test_channels_create_invalid_user_id():
     clear_v1()
-    with pytest.raises(InputError):
+    with pytest.raises(AccessError):
         channels_create_v1(1, "First Channel", True)
 
 def test_channels_create_empty_channel_name():
@@ -148,7 +148,7 @@ def test_channels_list_public_private():
 
 def test_channels_list_invalid_user():
     clear_v1()
-    with pytest.raises(InputError):
+    with pytest.raises(AccessError):
         channels_list_v1(0)
 
 #Call channels_listall with only private channels
@@ -236,7 +236,7 @@ def test_channels_listall_created():
 
 def test_channels_listall_invalid_user():
     clear_v1()
-    with pytest.raises(InputError):
+    with pytest.raises(AccessError):
         channels_listall_v1(0)
 
 #Call channels_list with both private and public channels
