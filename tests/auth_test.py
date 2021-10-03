@@ -1,16 +1,11 @@
-# John Henderson (z5368143)
-# This will test the auth.py file
+'''Contains tests for auth.py'''
 
-# TODO Make blackbox
-
-from src.other import clear_v1
-from src.data_store import Datastore
 import pytest
 
-from src.auth import auth_register_v1, generate_handle
+from src.other import clear_v1
+from src.auth import auth_register_v1
 from src.auth import auth_login_v1
 from src.error import InputError
-from src.data_store import data_store
 
 #------------------------------------------------------------
 # This block of code deals with the auth_register_v1 function
@@ -49,10 +44,6 @@ def test_auth_register_no_password():
     clear_v1()
     with pytest.raises(InputError):
         auth_register_v1("john.doe3@unsw.edu.au","","John","Doe")
-
-    # TODO: Possible max password?
-    #with pytest.raises(InputError):
-    #auth_register_v1("john.doe@aunsw.edu.au","1234566789abcdefghijklmnopqrstuvwxyz","John","Doe")
 
 # First name must be between 1 and 50 characters inclusive
 def test_auth_register_first_name_incorrect_length():
@@ -172,4 +163,3 @@ def test_auth_login_pass_different_user():
     auth_register_v1("john.doe2@unsw.edu.au","password2","John","Doe")
     with pytest.raises(InputError):
         auth_login_v1("john.doe1@unsw.edu.au", "password2")
-
