@@ -1,4 +1,4 @@
-# =======================Iternation 2 meeting minminutes=======================
+# =================Iternation 2 meeting minminutes=================
 
 | Date        | Time       | Meeting minutes |
 |-------------|------------|-----------------|
