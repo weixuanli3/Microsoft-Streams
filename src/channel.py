@@ -202,29 +202,29 @@ def channel_details_v1(auth_user_id, channel_id):
 
     return return_dictionary
 
-    '''
-    return {
-        'name': 'Hayden',
-        'owner_members': [
-            {
-                'u_id': 1,
-                'email': 'example@gmail.com',
-                'name_first': 'Hayden',
-                'name_last': 'Jacobs',
-                'handle_str': 'haydenjacobs',
-            }
-        ],
-        'all_members': [
-            {
-                'u_id': 1,
-                'email': 'example@gmail.com',
-                'name_first': 'Hayden',
-                'name_last': 'Jacobs',
-                'handle_str': 'haydenjacobs',
-            }
-        ],
-    }
-    '''
+'''
+return {
+    'name': 'Hayden',
+    'owner_members': [
+        {
+            'u_id': 1,
+            'email': 'example@gmail.com',
+            'name_first': 'Hayden',
+            'name_last': 'Jacobs',
+            'handle_str': 'haydenjacobs',
+        }
+    ],
+    'all_members': [
+        {
+            'u_id': 1,
+            'email': 'example@gmail.com',
+            'name_first': 'Hayden',
+            'name_last': 'Jacobs',
+            'handle_str': 'haydenjacobs',
+        }
+    ],
+}
+'''
 # Return 50 messages (or the end of the messages) in a dictionary
 def channel_messages_v1(auth_user_id, channel_id, start):
 
