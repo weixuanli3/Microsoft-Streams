@@ -163,3 +163,24 @@ def test_auth_login_pass_different_user():
     auth_register_v1("john.doe2@unsw.edu.au","password2","John","Doe")
     with pytest.raises(InputError):
         auth_login_v1("john.doe1@unsw.edu.au", "password2")
+        
+#------------------------------------------------------------
+# Log out
+# This block of code deals with the auth_logout_v1 function
+# from auth.py
+
+# def test_invalid_token():
+#     auth_register_v1("john.doe12@unsw.edu.au","password","John","Doe")
+#     token = auth_login_v1("john.doe12@unsw.edu.au","password")[0]
+#     assert auth_logout_v1(923564) == {}
+    
+# def test_empty_token():
+#     auth_register_v1("john.doe12@unsw.edu.au","password","John","Doe")
+#     token = auth_login_v1("john.doe12@unsw.edu.au","password")[0]
+#     assert auth_logout_v1() == {}
+
+# def test_valid_token():
+#     auth_register_v1("john.doe12@unsw.edu.au","password","John","Doe")
+#     token = auth_login_v1("john.doe12@unsw.edu.au","password")[0]
+#     assert auth_logout_v1(token) == {}
+
