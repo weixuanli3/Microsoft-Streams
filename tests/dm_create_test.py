@@ -1,5 +1,4 @@
 import pytest
-from src import config
 from src.auth import auth_register_v2
 from src.dm import dm_create_v1
 
@@ -50,3 +49,17 @@ def test_no_users():
     owner, owner_id, user1, user1_id, user2, user2_id = def_setup()
     with pytest.raises(InputError):
         dm_create_v1(owner, [])
+
+# Assumption, if the dm that is to be created already exists, return the id 
+# of the existing dm
+def test_dm_exists():
+    owner, owner_id, user1, user1_id, user2, user2_id = def_setup()
+    dm_id1 = dm_create_v1(owner, [user1_id, user2_id])['dm_id']
+    dm_id2 = dm_create_v1(owner, [user1_id, user2_id])['dm_id']
+    assert dm_id1 == dm_id2
+
+def test_dm_same_members_diff_owner():
+    owner, owner_id, user1, user1_id, user2, user2_id = def_setup()
+    dm_id1 = dm_create_v1(owner, [user1_id])['dm_id']
+    dm_id2 = dm_create_v1(user1, [owner_id])['dm_id']
+    assert dm_id1 != dm_id2
