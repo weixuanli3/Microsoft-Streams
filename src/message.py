@@ -18,3 +18,7 @@ def message_send_v1(token, message_id):
 def message_senddm_v1(token, dm_id, message):
     pass
     #return type {message_id}
+    
+def message_remove_v1(token, dm_id):
+    pass
+    #return type {}    
