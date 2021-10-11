@@ -1,6 +1,7 @@
 import pytest
 from src.auth import auth_register_v2
 from src.dm import dm_create_v1
+from src.error import AccessError, InputError
 
 @pytest.fixture
 def def_setup():
