@@ -423,3 +423,15 @@ def channel_join_v1(auth_user_id, channel_id):
             user['channels'].append(channel_id)
 
     return {}
+
+def channel_leave_v1(token, channel_id):
+    pass
+    #Return type {}
+
+def channel_add_owner_v1(token, channel_id, u_id):
+    pass
+    #Return type {}
+    
+def channel_remove_owner_v1(token, channel_id, u_id):
+    pass
+    #Return type {}
