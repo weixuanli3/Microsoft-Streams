@@ -48,8 +48,7 @@ def test_diff_dm_id():
 
 def test_no_users():
     owner, owner_id, user1, user1_id, user2, user2_id = def_setup()
-    with pytest.raises(InputError):
-        dm_create_v1(owner, [])
+    dm_create_v1(owner, [])
 
 # Assumption, if the dm that is to be created already exists, return the id 
 # of the existing dm
