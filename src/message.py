@@ -10,10 +10,6 @@ def message_send_v1(token, channel_id, message):
 def message_edit_v1(token, message_id, message):
     pass
     #Return type {}
-
-def message_send_v1(token, message_id):
-    pass
-    #Return type {}
     
 def message_senddm_v1(token, dm_id, message):
     pass
