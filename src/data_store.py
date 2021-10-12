@@ -35,6 +35,7 @@ Example Storage: (Joseph)
                 'passwords': '123123',
                 'handle' : 'AdminUser1234567891011',
                 'channels' : [1, 2]
+                'token': "OLIUEFKSEJF.IEUFHKESF.Iuhflskejhf"
             },
         ],
         'channels': [

@@ -1,68 +1,76 @@
 '''Contains functions to register new users and login'''
 
 import re
+import jwt
 
 from src.data_store import data_store
 from src.error import InputError
 
+# from data_store import data_store
+# from error import InputError
+
+################################
+#    Main functions for auth   #
+################################
+
+"""
+Returns the user id if a valid email and password pair are entered
+
+Args:
+    email: the email of the user
+    password: the password of the user
+
+Returns:
+    user_id
+
+Raises:
+    Input Error: - password or email is incorrect
+
+"""
+
 
 def auth_login_v1(email, password):
-
-    """
-    Returns the user id if a valid email and password pair are entered
-
-
-
-    Args:
-        email: the email of the user
-        password: the password of the user
-
-    Returns:
-        user_id
-
-    Raises:
-        Input Error: - password or email is incorrect
-
-    """
-
+    """Returns ID and a valid token"""
 
     user_data = data_store.get_data()['users']
     # -1 should never be an actual user ID
-    user_id = -1
     for users in user_data:
         if (users['emails'], users['passwords']) == (email, password):
             user_id = users['id']
-            return {'auth_user_id': user_id}
+            return {
+                'token': generate_token(users),
+                'auth_user_id': user_id
+            }
 
     raise InputError("Password or email is incorrect")
 
 
-# Assumptions: Possible max length password?
-# Name cannot contain any characters like .!@#$%^&
+"""
+This function is used to register a user.  If the new_users
+infomation is corrent, it will return the new users ID {ID}. Strips all
+special characters from user name_first and name_last then combines them
+    to create a handle.
+
+Args:
+    email: the email of the user
+    password: the password of the user
+    name_first: the first name of the user
+    name_last: the last name of the user
+
+Returns:
+    user_id
+
+Raises:
+    Input Error: - email invalid.
+                    - password invalid.
+                    - name_first invalid.
+                    - name_last invalid.
+
+"""
+
+
 def auth_register_v1(email, password, name_first, name_last):
-    """
-    This function is used to register a user.  If the new_users
-    infomation is corrent, it will return the new users ID {ID}. Strips all
-    special characters from user name_first and name_last then combines them
-     to create a handle.
-
-
-    Args:
-        email: the email of the user
-        password: the password of the user
-        name_first: the first name of the user
-        name_last: the last name of the user
-
-    Returns:
-        user_id
-
-    Raises:
-        Input Error: - email invalid.
-                     - password invalid.
-                     - name_first invalid.
-                     - name_last invalid.
-
-    """
+    """Registers a new user and enters them into the database. Returns ID and token"""
 
     # Do not allow passwords of all white space
     password_is_all_spaces = password == (len(password) * ' ')
@@ -75,7 +83,7 @@ def auth_register_v1(email, password, name_first, name_last):
     name_last = regex.sub("", name_last)
 
     # Used to check that the email is valid
-    regex  = r"^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}$"
+    regex = r"^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}$"
     is_valid_email = re.match(regex, email)
 
     # Gets a dictionary for the emails ie: 'emails' : [...]
@@ -90,44 +98,72 @@ def auth_register_v1(email, password, name_first, name_last):
     # Check all conditions to see that a user is valid
     if (is_valid_email and is_valid_password and is_valid_name_last and
             is_valid_name_first and is_not_already_registered):
+
         # REGISTER USER
         user_data = data_store.get_data()['users']
         new_user_id = len(user_data) + 1
-        user_data.append({
-            'id' : new_user_id,
-            'names' : name_first,
-            'name_lasts' : name_last,
-            'emails' : email,
+
+        new_user = {
+            'id': new_user_id,
+            'names': name_first,
+            'name_lasts': name_last,
+            'emails': email,
             'passwords': password,
-            'handle' : generate_handle(name_first, name_last),
-            'channels' : []
-        })
+            'handle': generate_handle(name_first, name_last),
+            'channels': [],
+        }
+
+        token = generate_token(new_user)
+        new_user['token'] = token
+
+        user_data.append(new_user)
+
         # Adds the first user as a global user
         global_users = data_store.get_data()['global_owners']
         if len(global_users) == 0:
             global_users.append(new_user_id)
 
-        return {'auth_user_id': new_user_id}
+        return {
+            'token': token,
+            'auth_user_id': new_user_id
+        }
 
     # RAISE ERROR
     raise InputError("There was a problem with the user registration data")
 
 
+def auth_logout_v1(token):
+    """logs the user out. Removes their token from the data base"""
+
+    user_data = data_store.get_data()['users']
+    for user in user_data:
+        if user['token'] == token:
+            user.pop('token')
+            return {}
+    raise InputError('Incorrect token')
+
+################################
+#   Helper functions for auth  #
+################################
+
+
+"""
+Given a first and last name, it will generate a handle for the user.
+
+A handle is generated that is the concatenation of their casted-to-lowercase
+alphanumeric (a-z0-9) first name and last name. If the concatenation is
+longer than 20 characters, it is cut off at 20 characters. If it is too
+short than numbers are added until it is a length of 20. If it is 20 characters
+and this handle is already taken, then it may go over.
+
+Arguments: - name_first: first name of the user
+            - name_last: last name of the user
+
+"""
+
+
 def generate_handle(name_first, name_last):
-    """
-    Given a first and last name, it will generate a handle for the user.
-
-    A handle is generated that is the concatenation of their casted-to-lowercase
-    alphanumeric (a-z0-9) first name and last name. If the concatenation is
-    longer than 20 characters, it is cut off at 20 characters. If it is too
-    short than numbers are added until it is a length of 20. If it is 20 characters
-    and this handle is already taken, then it may go over.
-
-    Arguments: - name_first: first name of the user
-               - name_last: last name of the user
-
-    """
-
+    """Given a users first and last name, generate a handle"""
 
     # Used just to filter out any hyphens in the name
     user_handle = re.sub(r'\W+', '', name_first + name_last)
@@ -138,13 +174,31 @@ def generate_handle(name_first, name_last):
     is_valid_handle = not user_handle in data_store.get('handle')['handle']
     i = 0
     while not is_valid_handle:
-        is_valid_handle = not user_handle + str(i) in data_store.get('handle')['handle']
+        is_valid_handle = not user_handle + \
+            str(i) in data_store.get('handle')['handle']
         if is_valid_handle:
             user_handle = user_handle + str(i)
         i += 1
 
     return user_handle
 
-def auth_logout_v1(token):
-    pass
-    #Return type {}
+
+def generate_token(user):
+    "Uses JWT to generate token based on user information"
+
+    SECRET = "IAmNotSureReally"
+
+    payload = {
+        "handle": user['handle'],
+        "email": user['emails']
+    }
+
+    token = str(
+        jwt.encode(
+            payload,
+            SECRET,
+            algorithm='HS256'
+        )
+    )
+
+    return token
