@@ -172,7 +172,7 @@ def test_auth_login_pass_different_user():
 def test_invalid_token():
     clear_v1()
     auth_register_v1("john.doe12@unsw.edu.au","password","John","Doe")
-    token = auth_login_v1("john.doe12@unsw.edu.au","password")['token']
+    auth_login_v1("john.doe12@unsw.edu.au","password")['token']
     with pytest.raises(InputError): 
       auth_logout_v1(923564)
 
