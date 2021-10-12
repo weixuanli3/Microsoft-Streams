@@ -137,8 +137,8 @@ def test_auth_login_incorrect_password():
 
 def test_auth_login_correct_password():
     clear_v1()
-    user_id = auth_register_v1("john.doe13@unsw.edu.au","password","John","Doe")
-    assert auth_login_v1("john.doe13@unsw.edu.au","password") == user_id
+    return_value = auth_register_v1("john.doe13@unsw.edu.au","password","John","Doe")
+    assert auth_login_v1("john.doe13@unsw.edu.au","password") == return_value
 
 def test_auth_login_bad_login_good_login():
     clear_v1()
