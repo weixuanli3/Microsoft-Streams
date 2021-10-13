@@ -332,7 +332,7 @@ def test_channel_messages_all_invalid():
 #     with pytest.raises(AccessError):
 #         channel_addowner_v1(token2, chan_id, user_id)
 
- the following tests are for channel_removeowner
+# the following tests are for channel_removeowner
 # def test_channel_removeowner_channel_invalid():
 #     clear_v1()
 #     token = auth_register_v2("john.doe@aunsw.edu.au","password","John","Doe")['token']
