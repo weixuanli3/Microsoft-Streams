@@ -144,3 +144,7 @@ def generate_handle(name_first, name_last):
         i += 1
 
     return user_handle
+
+def auth_logout_v1(token):
+    pass
+    #Return type {}
