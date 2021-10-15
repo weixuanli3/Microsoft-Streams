@@ -114,12 +114,12 @@ def update_datastore_object():
 
     # If the database has nothing in it, then it does not contiue
     if len(filehandler) == 0:
-        raise KeyError
+        return
 
     # If the data_store object has more data than the data base, then it 
     # cannot continue
     if len(filehandler['users']) < len(data_store.get_data()['users']):
-        raise KeyError
+        return
 
     data_base = data_store.get_data()
     new_data_base = dict()
