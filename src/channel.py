@@ -1,5 +1,5 @@
 '''Conatins functions to invite to channel, joins channel, return channel messages and return channel details'''
-from src.data_store import data_store
+from src.data_store import data_store, update_permanent_storage
 from src.error import InputError
 from src.error import AccessError
 
@@ -89,6 +89,7 @@ def channel_invite_v1(auth_user_id, channel_id, u_id):
         if (user['id']) == (u_id):
             user['channels'].append(channel_id)
 
+    update_permanent_storage()
     return {}
 
 # Returns a dictionary with the details of the specified channel
@@ -422,6 +423,7 @@ def channel_join_v1(auth_user_id, channel_id):
         if (user['id']) == (auth_user_id):
             user['channels'].append(channel_id)
 
+    update_permanent_storage()
     return {}
 
 def channel_leave_v1(token, channel_id):

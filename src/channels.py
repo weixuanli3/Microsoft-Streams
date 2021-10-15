@@ -1,5 +1,5 @@
 ''' Contains the functions to create a new channel and to list pub/priv channels'''
-from src.data_store import data_store
+from src.data_store import data_store, update_permanent_storage
 from src.error import InputError
 from src.error import AccessError
 
@@ -163,6 +163,7 @@ def channels_create_v1(auth_user_id, name, is_public):
         'is_public': is_public,
         'messages': [],
     })
+    update_permanent_storage()
     return {
         'channel_id': new_channel_id,
     }
