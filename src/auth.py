@@ -2,8 +2,12 @@
 
 import re
 
-from src.data_store import data_store
+from src.data_store import data_store, update_permanent_storage
 from src.error import InputError
+
+# from data_store import data_store
+# from error import InputError
+# from src.data_store import update_datastore_object, update_permanent_storage
 
 
 def auth_login_v1(email, password):
@@ -107,6 +111,7 @@ def auth_register_v1(email, password, name_first, name_last):
         if len(global_users) == 0:
             global_users.append(new_user_id)
 
+        update_permanent_storage()
         return {'auth_user_id': new_user_id}
 
     # RAISE ERROR
