@@ -52,7 +52,7 @@ def admin_userpermission_change_v1(token, u_id, permission_id):
         raise InputError('Invalid permission ID')
 
     # u_id does not refer to a valid user
-    all_u_ids = data_store.get('id')
+    all_u_ids = data_store.get('id')['id']
     if u_id not in all_u_ids:
         raise InputError('Not valid ID')
 
