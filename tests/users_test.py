@@ -29,6 +29,7 @@ The following tests make some assumptions based on the gitlab doc!
 #     expected = {}
 #     assert result == expected
 def test_invlaid_token():
+    clear_v1()
     registered_user_token = 'HMMMMM'
   
     with pytest.raises(InputError):
