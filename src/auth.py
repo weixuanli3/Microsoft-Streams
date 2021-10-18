@@ -3,10 +3,10 @@
 import re
 import jwt
 
-from src.data_store import data_store
+from src.data_store import data_store, update_permanent_storage
 from src.error import InputError
 
-# from data_store import data_store
+# from data_store import data_store, update_permanent_storage
 # from error import InputError
 
 ################################
@@ -40,7 +40,9 @@ def auth_login_v1(email, password):
 
             token = generate_token(users)
             users['token'].append(token)
-
+            
+            update_permanent_storage()
+            
             return {
                 'token': token,
                 'auth_user_id': user_id
@@ -132,6 +134,8 @@ def auth_register_v1(email, password, name_first, name_last):
             'token': token,
             'auth_user_id': new_user_id
         }
+        
+        update_permanent_storage()
 
     # RAISE ERROR
     raise InputError("There was a problem with the user registration data")
