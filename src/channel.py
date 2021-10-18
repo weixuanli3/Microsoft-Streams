@@ -2,6 +2,7 @@
 from src.data_store import data_store, update_permanent_storage
 from src.error import InputError
 from src.error import AccessError
+from src.data_store import get_u_id
 
 # Invite a user to a channel that the current user is in
 def channel_invite_v1(auth_user_id, channel_id, u_id):
@@ -431,9 +432,166 @@ def channel_leave_v1(token, channel_id):
     #Return type {}
 
 def channel_add_owner_v1(token, channel_id, u_id):
-    pass
+    
+    channel_data = data_store.get_data()['channels']
+    user_data = data_store.get_data()['users']
+    global_data = data_store.get_data()['global_owners']
+    
+    # check if token user exists
+    token_exists = False
+    for user in user_data:
+        if token == user['token']:
+            token_exists = True
+    
+    # check if the user exists
+    user_exists = False
+    for user in user_data:
+        if u_id == user['id']:
+            user_exists = True
+            
+    if not token_exists:
+        raise AccessError("User doesn't exist")
+
+    if not user_exists:
+        raise InputError("u_id does not refer to a valid user")
+    
+    channel_exists = False
+    token_in_channel = False
+    user_in_channel = False
+    
+    for channel in channel_data:
+        # check if the channel exists and if the auth_user is in the channel
+        if channel_id == channel['chan_id']:
+            channel_exists = True
+            if get_u_id(token) in channel['users_id']:
+                token_in_channel = True
+            if u_id in channel['users_id']:
+                user_in_channel = True    
+                
+    if not token_in_channel:
+        raise AccessError("User isn't part of the channel")
+                
+    if not channel_exists:
+        raise InputError("Channel ID not valid")
+
+    if not user_in_channel:
+        raise InputError("u_id isn't part of the channel")
+    
+    token_is_owner = False
+    user_is_owner = False
+    
+    # check if global owner
+    if get_u_id(token) in global_data:
+        token_is_owner = True
+    if u_id in global_data:
+        user_is_owner = True
+    
+    # check if channel owner
+    for channel in channel_data:
+        if channel['chan_id'] == channel_id:
+            if get_u_id(token) in channel['owner_id']:
+                token_is_owner = True
+            if u_id in channel['owner_id']:
+                user_is_owner = True
+                
+    if not token_is_owner:
+        raise AccessError("User does not have owner permissions in the channel")
+    
+    if user_is_owner:
+        raise InputError("u_id is already an owner in this channel")
+    
+    # add u_id as channel owner
+    for channel in channel_data:
+        if channel['chan_id'] == channel_id:
+            channel['owner_id'].append(u_id)
+            
+    return {}
     #Return type {}
     
 def channel_remove_owner_v1(token, channel_id, u_id):
-    pass
+    
+    channel_data = data_store.get_data()['channels']
+    user_data = data_store.get_data()['users']
+    global_data = data_store.get_data()['global_owners']
+    
+    # check if token user exists
+    token_exists = False
+    for user in user_data:
+        if token == user['token']:
+            token_exists = True
+    
+    # check if the user exists
+    user_exists = False
+    for user in user_data:
+        if u_id == user['id']:
+            user_exists = True
+            
+    if not token_exists:
+        raise AccessError("User doesn't exist")
+
+    if not user_exists:
+        raise InputError("u_id does not refer to a valid user")
+    
+    channel_exists = False
+    token_in_channel = False
+    user_in_channel = False
+    
+    for channel in channel_data:
+        # check if the channel exists and if the auth_user is in the channel
+        if channel_id == channel['chan_id']:
+            channel_exists = True
+            if get_u_id(token) in channel['users_id']:
+                token_in_channel = True
+            if u_id in channel['users_id']:
+                user_in_channel = True    
+                
+    if not token_in_channel:
+        raise AccessError("User isn't part of the channel")
+                
+    if not channel_exists:
+        raise InputError("Channel ID not valid")
+
+    if not user_in_channel:
+        raise InputError("u_id isn't part of the channel")
+    
+    token_is_owner = False
+    user_is_owner = False
+    
+    # check if global owner
+    if get_u_id(token) in global_data:
+        token_is_owner = True
+    if u_id in global_data:
+        user_is_owner = True
+    
+    # check if channel owner
+    for channel in channel_data:
+        if channel['chan_id'] == channel_id:
+            if get_u_id(token) in channel['owner_id']:
+                token_is_owner = True
+            if u_id in channel['owner_id']:
+                user_is_owner = True
+                
+    if not token_is_owner:
+        raise AccessError("User does not have owner permissions in the channel")
+    
+    if not user_is_owner:
+        raise InputError("u_id is not an owner of this channel")
+    
+    only_owner = True
+    
+    # check if only owner
+    for channel in channel_data:
+        if channel['chan_id'] == channel_id:
+            if channel['owner_id'] != [u_id]:
+                only_owner = False
+    
+    if only_owner:
+        raise InputError("u_id is the only owner of the channel")
+    
+    # remove u_id as channel owner
+    for channel in channel_data:
+        if channel['chan_id'] == channel_id:
+            channel['owner_id'].remove(u_id)
+            
+    return {}
     #Return type {}
