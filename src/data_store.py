@@ -62,6 +62,7 @@ initial_object = {
     'users': [],
     'channels': [], 
     'global_owners': [],
+    'num_msgs' : 0,
 }
 
 ## YOU SHOULD MODIFY THIS OBJECT ABOVE
