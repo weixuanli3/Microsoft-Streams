@@ -463,6 +463,8 @@ def channel_leave_v1(token, channel_id):
     
     if auth_user_id in channel_data[channel_id]['owner_id']:
         channel_data[channel_id]['owner_id'].remove(auth_user_id)
+        
+    update_permanent_storage()
     
     return {}
 
