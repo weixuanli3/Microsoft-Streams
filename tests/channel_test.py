@@ -405,6 +405,7 @@ def test_channel_messages_all_invalid():
 
 # Tests for channel_leave
 def test_channel_leave_invalid_token():
+    clear_v1()
     user1_token = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['token']
     user2_token = auth_register_v1("john.smith@aunsw.edu.au", "naisud", "John", "Smith")['token']
     chan_id = channels_create_v1(user1_token, "Channel 1", True)['channel_id']
@@ -412,12 +413,14 @@ def test_channel_leave_invalid_token():
             channel_leave_v1(user2_token, chan_id)
 
 def test_channel_leave_empty_token():
+    clear_v1()
     user1_token = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['token']
     chan_id = channels_create_v1(user1_token, "Channel 1", True)['channel_id']
     with pytest.raises(AccessError):
             channel_leave_v1("", chan_id)
 
 def test_channel_leave_invalid_channel_id():
+    clear_v1()
     user1_token = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['token']
     user2_token = auth_register_v1("john.smith@aunsw.edu.au", "naisud", "John", "Smith")['token']
     chan_id = channels_create_v1(user2_token, "Channel 1", True)['channel_id']
@@ -425,12 +428,14 @@ def test_channel_leave_invalid_channel_id():
             channel_leave_v1(user1_token, chan_id)
 
 def test_channel_leave_empty_channel_id():
+    clear_v1()
     user1_token = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['token']
     channels_create_v1(user1_token, "Channel 1", True)['channel_id']
     with pytest.raises(InputError):
             channel_leave_v1(user1_token, "")
 
 def test_channel_leave_valid_token_and_channel():
+    clear_v1()
     user1_token = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['token']
     user2_token = auth_register_v1("john.smith@aunsw.edu.au", "naisud", "John", "Smith")['token']
     chan_id = channels_create_v1(user1_token, "Channel 1", True)['channel_id']
