@@ -10,6 +10,8 @@ from src.channel import channel_invite_v1, channel_details_v1, channel_messages_
 from src.channel import channel_join_v1, channel_leave_v1, channel_add_owner_v1, channel_remove_owner_v1
 from src.channels import  channels_list_v1, channels_listall_v1, channels_create_v1
 from src.dm import dm_create_v1, dm_list_v1, dm_remove_v1, dm_details_v1, dm_leave_v1, dm_messages_v1
+from src.user import users_all_v1, user_profile_v1, user_profile_setname_v1, user_profile_setemail_v1, user_profile_sethandle_v1
+from src.message import message_send_v1, message_edit_v1, message_senddm_v1, message_remove_v1
 from src.other import clear_v1
 import src.data_store
 import json
@@ -71,7 +73,7 @@ def auth_logout():
 @APP.route("/channel/invite/v2", methods=['POST'])
 def channel_invite():
     request_data = request.get_json(force = True)
-    return json.dumps(channel_invite_v1(request_data['token'], request_data['channel_id']))
+    return json.dumps(channel_invite_v1(request_data['token'], request_data['channel_id'], request_data['u_id']))
 
 # Get channel details
 @APP.route("/channel/details/v2", methods=['GET'])
@@ -126,7 +128,7 @@ def channels_listall():
 
 # Create a channel
 @APP.route("/channels/channels_create/v2", methods=['POST'])
-def channels_create_v1():
+def channels_create():
     request_data = request.get_json(force = True)
     return json.dumps(channels_create_v1(request_data['token'], request_data['name'], request_data['is_public']))
 
@@ -154,7 +156,7 @@ def dm_remove():
 @APP.route("/channels/dm_details/v1", methods=['GET'])
 def dm_details():
     request_data = request.get_json()
-    return json.dumps(dm_details(request_data['token'], request_data['dm_id']))
+    return json.dumps(dm_details_v1(request_data['token'], request_data['dm_id']))
 
 # Make a user leave a channel
 @APP.route("/channels/dm_leave/v1", methods=['POST'])
@@ -236,7 +238,7 @@ def message_edit():
 @APP.route("/message/remove/v1", methods=['DELETE'])
 def message_delete():
     request_data = request.get_json(force = True)
-    return json.dumps(message_delete_v1(request_data['token'],request_data['message_id']))
+    return json.dumps(message_remove_v1(request_data['token'],request_data['message_id']))
 
 @APP.route("/message/senddm/v1", methods=['POST'])
 def message_senddm():
@@ -249,8 +251,3 @@ def message_senddm():
 if __name__ == "__main__":
     signal.signal(signal.SIGINT, quit_gracefully) # For coverage
     APP.run(port=config.port, debug=True) # Do not edit this port
-    
-    ## 1 All good
-    ## 2 tests for each idv func
-    ## 3 EVERYTHING goes wrong
- 
