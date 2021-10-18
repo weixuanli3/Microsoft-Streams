@@ -1,3 +1,5 @@
+import jwt
+from src.error import InputError
 '''
 data_store.py
 
@@ -59,6 +61,14 @@ initial_object = {
 }
 
 ## YOU SHOULD MODIFY THIS OBJECT ABOVE
+
+def get_u_id(token):
+    """given a token, return user ID"""
+    '''Will raise error if token does not exist, so make sure to 
+    only input valid tokens, or to try, except'''
+    decoded_token = jwt.decode(token, "IAmNotSureReally", algorithms=["HS256"])
+    return decoded_token['u_id']
+
 
 class Datastore:
     def __init__(self):
