@@ -3,7 +3,7 @@ import pytest
 
 from src.auth import auth_register_v1
 from src.channels import channels_create_v1
-from src.channel import channel_invite_v1, channel_messages_v1
+from src.channel import channel_invite_v1, channel_leave_v1, channel_messages_v1
 from src.channel import channel_join_v1
 from src.channel import channel_details_v1
 from src.error import InputError
@@ -403,3 +403,43 @@ def test_channel_messages_all_invalid():
 #     channel_addowner_v1(user1_data['token'], chan_id, user2_data['user_id'])
 #     assert channel_removeowner_v1(user1_data['token'], chan_id, user1_data['user_id']) == {}
 
+# Tests for channel_leave
+def test_channel_leave_invalid_token():
+    user1_token = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['token']
+    user2_token = auth_register_v1("john.smith@aunsw.edu.au", "naisud", "John", "Smith")['token']
+    chan_id = channels_create_v1(user1_token, "Channel 1", True)['channel_id']
+    with pytest.raises(AccessError):
+            channel_leave_v1(user2_token, chan_id)
+
+def test_channel_leave_empty_token():
+    user1_token = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['token']
+    chan_id = channels_create_v1(user1_token, "Channel 1", True)['channel_id']
+    with pytest.raises(AccessError):
+            channel_leave_v1("", chan_id)
+
+def test_channel_leave_invalid_channel_id():
+    user1_token = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['token']
+    user2_token = auth_register_v1("john.smith@aunsw.edu.au", "naisud", "John", "Smith")['token']
+    chan_id = channels_create_v1(user2_token, "Channel 1", True)['channel_id']
+    with pytest.raises(InputError):
+            channel_leave_v1(user1_token, chan_id)
+
+def test_channel_leave_empty_channel_id():
+    user1_token = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['token']
+    channels_create_v1(user1_token, "Channel 1", True)['channel_id']
+    with pytest.raises(InputError):
+            channel_leave_v1(user1_token, "")
+
+def test_channel_leave_valid_token_and_channel():
+    user1_token = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['token']
+    user2_token = auth_register_v1("john.smith@aunsw.edu.au", "naisud", "John", "Smith")['token']
+    chan_id = channels_create_v1(user1_token, "Channel 1", True)['channel_id']
+    channel_join_v1(user2_token, chan_id)
+    channel_leave_v1(user2_token, chan_id)
+    assert (channel_details_v1(user1_token, chan_id) == {
+        'name' : 'Channel 1',
+        'is_public' : True,
+        'owner_members' : [{'email': 'john.doe@aunsw.edu.au', 'handle_str': 'johndoe', 'name_first': 'John', 'name_last': 'Doe', 'u_id': get_u_id(user1_token)}],
+        'all_members' : [{'email': 'john.doe@aunsw.edu.au', 'handle_str': 'johndoe', 'name_first': 'John', 'name_last': 'Doe', 'u_id': get_u_id(user1_token)}],
+    })
+    
