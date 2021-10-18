@@ -130,12 +130,13 @@ def auth_register_v1(email, password, name_first, name_last):
         if len(global_users) == 0:
             global_users.append(new_user_id)
 
+        update_permanent_storage()
+        
         return {
             'token': token,
             'auth_user_id': new_user_id
         }
         
-        update_permanent_storage()
 
     # RAISE ERROR
     raise InputError("There was a problem with the user registration data")
