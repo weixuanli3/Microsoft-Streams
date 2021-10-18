@@ -505,6 +505,8 @@ def channel_add_owner_v1(token, channel_id, u_id):
         if channel['chan_id'] == channel_id:
             channel['owner_id'].append(u_id)
             
+    update_permanent_storage()
+            
     return {}
     #Return type {}
     
@@ -592,6 +594,8 @@ def channel_remove_owner_v1(token, channel_id, u_id):
     for channel in channel_data:
         if channel['chan_id'] == channel_id:
             channel['owner_id'].remove(u_id)
-            
+        
+    update_permanent_storage()
+    
     return {}
     #Return type {}
