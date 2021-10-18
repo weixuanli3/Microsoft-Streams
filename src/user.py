@@ -4,6 +4,8 @@ from src.error import InputError
 from src.error import AccessError
 
 def users_all_v1(token):
+    # Check if the user has been removed first
+    # If they have, dont display
     pass
     #Return type {users}
 
