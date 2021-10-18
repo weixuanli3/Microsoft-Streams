@@ -9,6 +9,7 @@ from src.channel import channel_details_v1
 from src.error import InputError
 from src.error import AccessError
 from src.other import clear_v1
+from src.data_store import get_u_id
 
 # The following tests are for channel_invite_v1
 def test_channel_invite_channel_invalid():
@@ -165,63 +166,63 @@ def test_channel_join_all_invalid():
     with pytest.raises(AccessError):
         channel_join_v1("", "")
 
-# The following tests are for channel_details
+# The following tests are for channel_details iteration 1
 
 def test_channel_details_valid_channel():
     clear_v1()
-    user1_id = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['auth_user_id']
-    user2_id = auth_register_v1("john.smith@aunsw.edu.au", "naisud", "John", "Smith")['auth_user_id']
-    channel_id = channels_create_v1(user1_id, "Channel 1", True)['channel_id']
-    channel_join_v1(user2_id, channel_id)
-    assert (channel_details_v1(user1_id, channel_id) == {
+    user1_token = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['token']
+    user2_token = auth_register_v1("john.smith@aunsw.edu.au", "naisud", "John", "Smith")['token']
+    channel_id = channels_create_v1(user1_token, "Channel 1", True)['channel_id']
+    channel_join_v1(user2_token, channel_id)
+    assert (channel_details_v1(user1_token, channel_id) == {
         'name' : 'Channel 1',
         'is_public' : True,
-        'owner_members' : [{'email': 'john.doe@aunsw.edu.au', 'handle_str': 'johndoe', 'name_first': 'John', 'name_last': 'Doe', 'u_id': user1_id}],
-        'all_members' : [{'email': 'john.doe@aunsw.edu.au', 'handle_str': 'johndoe', 'name_first': 'John', 'name_last': 'Doe', 'u_id': user1_id}, {'email': 'john.smith@aunsw.edu.au', 'handle_str': 'johnsmith', 'name_first': 'John', 'name_last': 'Smith', 'u_id': user2_id}],
+        'owner_members' : [{'email': 'john.doe@aunsw.edu.au', 'handle_str': 'johndoe', 'name_first': 'John', 'name_last': 'Doe', 'u_id': get_u_id(user1_token)}],
+        'all_members' : [{'email': 'john.doe@aunsw.edu.au', 'handle_str': 'johndoe', 'name_first': 'John', 'name_last': 'Doe', 'u_id': get_u_id(user1_token)}, {'email': 'john.smith@aunsw.edu.au', 'handle_str': 'johnsmith', 'name_first': 'John', 'name_last': 'Smith', 'u_id': get_u_id(user2_token)}],
     })
 
 def test_channel_details_valid_private_channel():
     clear_v1()
-    user1_id = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['auth_user_id']
-    channel_id = channels_create_v1(user1_id, "Channel 1", False)['channel_id']
-    assert (channel_details_v1(user1_id, channel_id) == {
+    user1_token = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['token']
+    channel_id = channels_create_v1(user1_token, "Channel 1", False)['channel_id']
+    assert (channel_details_v1(user1_token, channel_id) == {
         'name' : 'Channel 1',
         'is_public' : False,
-        'owner_members' : [{'email': 'john.doe@aunsw.edu.au', 'handle_str': 'johndoe', 'name_first': 'John', 'name_last': 'Doe', 'u_id': user1_id}],
-        'all_members' : [{'email': 'john.doe@aunsw.edu.au', 'handle_str': 'johndoe', 'name_first': 'John', 'name_last': 'Doe', 'u_id': user1_id}],
+        'owner_members' : [{'email': 'john.doe@aunsw.edu.au', 'handle_str': 'johndoe', 'name_first': 'John', 'name_last': 'Doe', 'u_id': get_u_id(user1_token)}],
+        'all_members' : [{'email': 'john.doe@aunsw.edu.au', 'handle_str': 'johndoe', 'name_first': 'John', 'name_last': 'Doe', 'u_id': get_u_id(user1_token)}],
     })
     
 def test_channel_details_non_existant_channel():
     clear_v1()
-    user_id = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['auth_user_id']
+    user_token = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['token']
     with pytest.raises(InputError):
-        channel_details_v1(user_id, 33)
+        channel_details_v1(user_token, 33)
 
 def test_channel_details_not_in_channel():
     clear_v1()
-    user1_id = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['auth_user_id']
-    user2_id = auth_register_v1("john.smith@aunsw.edu.au", "naisud", "John", "Smith")['auth_user_id']
-    channel_id = channels_create_v1(user1_id, "Channel 1", True)['channel_id']
+    user1_token = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['token']
+    user2_token = auth_register_v1("john.smith@aunsw.edu.au", "naisud", "John", "Smith")['token']
+    channel_id = channels_create_v1(user1_token, "Channel 1", True)['channel_id']
     with pytest.raises(AccessError):
-        channel_details_v1(user2_id, channel_id)
+        channel_details_v1(user2_token, channel_id)
 
 def test_channel_details_user_id_invalid():
     clear_v1()
-    user1_id = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['auth_user_id']
-    channel_id = channels_create_v1(user1_id, "Channel 1", True)['channel_id']
+    user1_token = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['token']
+    channel_id = channels_create_v1(user1_token, "Channel 1", True)['channel_id']
     with pytest.raises(AccessError):
         channel_details_v1("", channel_id)
 
 def test_channel_details_channel_id_invalid():
     clear_v1()
-    user1_id = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['auth_user_id']
+    user1_token = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['token']
     with pytest.raises(InputError):
-        channel_details_v1(user1_id, "")
+        channel_details_v1(user1_token, "")
 
 def test_channel_details_user_id_and_channel_id_invalid():
     clear_v1()
-    user1_id = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['auth_user_id']
-    channels_create_v1(user1_id, "Channel 1", True)['channel_id']
+    user1_token = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['token']
+    channels_create_v1(user1_token, "Channel 1", True)['channel_id']
     with pytest.raises(AccessError):
         channel_details_v1("", "")
 
@@ -401,3 +402,4 @@ def test_channel_messages_all_invalid():
 #     channel_join_v2(user2_data['token'], chan_id)
 #     channel_addowner_v1(user1_data['token'], chan_id, user2_data['user_id'])
 #     assert channel_removeowner_v1(user1_data['token'], chan_id, user1_data['user_id']) == {}
+
