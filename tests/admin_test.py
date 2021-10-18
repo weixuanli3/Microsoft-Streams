@@ -48,6 +48,10 @@ def test_admin_userpermission_change_not_global_owner():
 
 def test_admin_userpermission_change_permission_same():
     clear_v1()
+    user1_token = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['token']
+    user2_token = auth_register_v1("john.smith@aunsw.edu.au", "naisud", "John", "Smith")['token']
+    with pytest.raises(InputError):
+        admin_userpermission_change_v1(user1_token, user2_token, 2)
 
 def test_admin_userpermission_change_self_change():
     clear_v1()
