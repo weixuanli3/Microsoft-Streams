@@ -2,6 +2,7 @@
 from src.data_store import data_store, update_permanent_storage, get_u_id
 from src.error import InputError
 from src.error import AccessError
+from src.data_store import get_u_id
 
 # Invite a user to a channel that the current user is in
 def channel_invite_v1(token, channel_id, u_id):
@@ -552,7 +553,7 @@ def channel_remove_owner_v1(token, channel_id, u_id):
     channel_data = data_store.get_data()['channels']
     user_data = data_store.get_data()['users']
     global_data = data_store.get_data()['global_owners']
-    
+
     # # check if token user exists
     # token_exists = False
     # for user in user_data:

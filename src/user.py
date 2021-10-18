@@ -4,6 +4,8 @@ from src.error import InputError, AccessError
 import re
 
 def users_all_v1(token):
+    # Check if the user has been removed first
+    # If they have, dont display
     user_data = data_store.get_data()['users']
 
     valid_token = False
@@ -16,13 +18,14 @@ def users_all_v1(token):
 
     user_dict = {'users': []}
     for user in user_data:
-        user_dict['users'].append({
-            'u_id': user['id'],
-            'email': user['emails'],
-            'name_first': user['names'],
-            'name_last': user['name_lasts'],
-            'handle_str': user['handle']
-        })
+        if user['is_removed'] == False:
+            user_dict['users'].append({
+                'u_id': user['id'],
+                'email': user['emails'],
+                'name_first': user['names'],
+                'name_last': user['name_lasts'],
+                'handle_str': user['handle']
+            })
     return user_dict
     #Return type {users}
 
