@@ -37,8 +37,12 @@ def auth_login_v1(email, password):
     for users in user_data:
         if (users['emails'], users['passwords']) == (email, password):
             user_id = users['id']
+
+            token = generate_token(users)
+            users['token'].append(token)
+
             return {
-                'token': generate_token(users),
+                'token': token,
                 'auth_user_id': user_id
             }
 
@@ -111,10 +115,11 @@ def auth_register_v1(email, password, name_first, name_last):
             'passwords': password,
             'handle': generate_handle(name_first, name_last),
             'channels': [],
+            'token' : []
         }
 
         token = generate_token(new_user)
-        new_user['token'] = token
+        new_user['token'].append(token)
 
         user_data.append(new_user)
 
@@ -137,10 +142,10 @@ def auth_logout_v1(token):
 
     user_data = data_store.get_data()['users']
     for user in user_data:
-        if user['token'] == token:
-            user.pop('token')
+        if token in user['token']:
+            user['token'].remove(token)
             return {}
-    raise InputError('Incorrect token')
+    raise InputError('Could not find token')
 
 ################################
 #   Helper functions for auth  #
@@ -184,13 +189,13 @@ def generate_handle(name_first, name_last):
 
 
 def generate_token(user):
-    "Uses JWT to generate token based on user information"
+    """Uses JWT to generate token based on user information"""
 
     SECRET = "IAmNotSureReally"
 
     payload = {
-        "handle": user['handle'],
-        "email": user['emails']
+        "u_id" : user['id'],
+        "User_session" : len(user['token']) + 1
     }
 
     token = str(
