@@ -3,8 +3,7 @@
 import pytest
 
 from src.other import clear_v1
-from src.auth import auth_register_v1
-from src.auth import auth_login_v1
+from src.auth import auth_register_v1, auth_login_v1, auth_logout_v1
 from src.error import InputError
 
 #------------------------------------------------------------
@@ -169,15 +168,24 @@ from src.error import InputError
 # This block of code deals with the auth_logout_v1 function
 # from auth.py
 
+# # POSSIBLE ASSUMPTION RASIE INPUT ERROR?
 # def test_invalid_token():
-    # clear_v1()
+#     clear_v1()
 #     auth_register_v1("john.doe12@unsw.edu.au","password","John","Doe")
-#     token = auth_login_v1("john.doe12@unsw.edu.au","password")['token']
-    # with pytest.raises(InputError): 
+#     auth_login_v1("john.doe12@unsw.edu.au","password")['token']
+#     with pytest.raises(InputError): 
 #       auth_logout_v1(923564)
 
+# CANNOT CALL FUNCTION WITHOUT PROPER INPUT, ERROR NOT ON SERVER SIDE   
+# def test_empty_token():
+#     clear_v1()
+#     auth_register_v1("john.doe12@unsw.edu.au","password","John","Doe")
+#     token = auth_login_v1("john.doe12@unsw.edu.au","password")['token']
+#     with pytest.raises(InputError): 
+#       auth_logout_v1()
+
 # def test_valid_token():
-    # clear_v1()
+#     clear_v1()
 #     auth_register_v1("john.doe12@unsw.edu.au","password","John","Doe")
 #     token = auth_login_v1("john.doe12@unsw.edu.au","password")['token']
 #     assert auth_logout_v1(token) == {}
