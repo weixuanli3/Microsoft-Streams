@@ -149,7 +149,6 @@ def test_sethandle_none_alphanumeric(registered_user):
     with pytest.raises(InputError):
         user_profile_sethandle_v1(registered_user_token, "johnDoe#@")
 def test_sethandle_handle_already_used(registered_user):
-    registered_user1_token = registered_user['token']
     registered_user2_token = auth_register_v1('john.doe1@unsw.edu.au', '123123', 'John', 'Doe')['token']
     # Make sure that user1 has the handle "johndoe". This is done to keep the test blackbox
     with pytest.raises(InputError):
