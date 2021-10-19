@@ -4,6 +4,7 @@ import pytest
 from src.auth import auth_register_v1
 from src.channels import channels_create_v1, channels_list_v1, channels_listall_v1
 from src.channel import channel_join_v1, channel_invite_v1
+from src.dm import dm_create_v1
 from src.error import InputError
 from src.error import AccessError
 from src.other import clear_v1
@@ -26,19 +27,15 @@ from src.message import message_send_v1, message_edit_v1, message_send_v1, messa
 
 def test_message_send_channel_id_invalid():
     clear_v1()
-    return1 = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")
-    token1 = return1['token']
-    user1_id = return1['auth_user_id']
-    channels_create_v1(token1, user1_id, "Channel 1", True)['channel_id']
+    token1 = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['token']
+    channels_create_v1(token1, "Channel 1", True)['channel_id']
     with pytest.raises(InputError): 
         message_send_v1(token1, 7643829, "Hi there!")
 
 def test_message_send_channel_id_empty():
     clear_v1()
-    return1 = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")
-    token1 = return1['token']
-    user1_id = return1['auth_user_id']
-    channels_create_v1(user1_id, "Channel 1", True)['channel_id']
+    token1 = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['token']
+    channels_create_v1(token1, "Channel 1", True)['channel_id']
     with pytest.raises(InputError):
         message_send_v1(token1, "", "Hi there!")
 
@@ -50,38 +47,30 @@ def test_message_send_no_channels_exists():
 
 def test_message_send_send_multi_msgs():
     clear_v1()
-    return1 = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")
-    token1 = return1['token']
-    user1_id = return1['auth_user_id']
-    channel_id = channels_create_v1(token1, user1_id, "Channel 1", True)['channel_id']
+    token1 = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['token']
+    channel_id = channels_create_v1(token1, "Channel 1", True)['channel_id']
     msg1_id = message_send_v1(token1, channel_id, "Hi there!")
     msg2_id = message_send_v1(token1, channel_id, "Hi there!")
     assert msg1_id != msg2_id
 
 def test_message_send_send_single_msgs():
     clear_v1()
-    return1 = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")
-    token1 = return1['token']
-    user1_id = return1['auth_user_id']
-    channel_id = channels_create_v1(token1, user1_id, "Channel 1", True)['channel_id'] 
+    token1 = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['token']
+    channel_id = channels_create_v1(token1, "Channel 1", True)['channel_id'] 
     message_send_v1(token1, channel_id, "Hi there!")
 
 
 def test_message_send_msg_length_too_small():
     clear_v1()
-    return1 = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")
-    token1 = return1['token']
-    user1_id = return1['auth_user_id']
-    channel_id = channels_create_v1(token1, user1_id, "Channel 1", True)['channel_id']  
+    token1 = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['token']
+    channel_id = channels_create_v1(token1, "Channel 1", True)['channel_id']  
     with pytest.raises(InputError): 
         message_send_v1(token1, channel_id, "")
 
 def test_message_send_msg_length_too_big():
     clear_v1()
-    return1 = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")
-    token1 = return1['token']
-    user1_id = return1['auth_user_id']
-    channel_id = channels_create_v1(token1, user1_id, "Channel 1", True)['channel_id']
+    token1 = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['token']
+    channel_id = channels_create_v1(token1, "Channel 1", True)['channel_id']
     with pytest.raises(InputError): 
         message_edit_v1(token1, channel_id, """Altruism is the principle and moral practice of concern for 
             happiness of other human beings or other animals, resulting in a quality of life both material and spiritual. 
@@ -96,28 +85,22 @@ def test_message_send_msg_length_too_big():
     
 def test_message_send_token_invalid():
     clear_v1()
-    return1 = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")
-    token1 = return1['token']
-    user1_id = return1['auth_user_id']
-    channel_id = channels_create_v1(token1, user1_id, "Channel 1", True)['channel_id']
+    token1 = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['token']
+    channel_id = channels_create_v1(token1, "Channel 1", True)['channel_id']
     with pytest.raises(InputError): 
         message_send_v1(78534290, channel_id, "Hi there!")
 
 def test_message_send_token_empty():
     clear_v1()
-    return1 = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")
-    token1 = return1['token']
-    user1_id = return1['auth_user_id']
-    channel_id = channels_create_v1(token1, user1_id, "Channel 1", True)['channel_id']
+    token1 = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['token']
+    channel_id = channels_create_v1(token1, "Channel 1", True)['channel_id']
     with pytest.raises(InputError): 
         message_send_v1("", channel_id, "Hi there!")
 
 def test_message_send_user_not_part_of_channel():  # NEED TO CHECK FOR GLOBAL USERS
     clear_v1()
-    return1 = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")
-    token1 = return1['token']
-    user1_id = return1['auth_user_id']
-    channel_id = channels_create_v1(token1, user1_id, "Channel 1", True)['channel_id']
+    token1 = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['token']
+    channel_id = channels_create_v1(token1, "Channel 1", True)['channel_id']
     with pytest.raises(AccessError): 
         message_send_v1(token1, channel_id, "Hi there!")
     
@@ -125,20 +108,16 @@ def test_message_send_user_not_part_of_channel():  # NEED TO CHECK FOR GLOBAL US
 
 def test_message_edit_msg_empty_string():
     clear_v1()
-    return1 = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")
-    token1 = return1['token']
-    user1_id = return1['auth_user_id']
-    channel_id = channels_create_v1(token1, user1_id, "Channel 1", True)['channel_id']
+    token1 = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['token']
+    channel_id = channels_create_v1(token1, "Channel 1", True)['channel_id']
     msg_id = message_send_v1(token1, channel_id, "Hi there!")
     with pytest.raises(InputError): 
-        message_edit_v1(token1, msg_id, "")    
+        message_edit_v1(token1, msg_id, "")
 
 def test_message_edit_msg_length_too_big():
     clear_v1()
-    return1 = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")
-    token1 = return1['token']
-    user1_id = return1['auth_user_id']
-    channel_id = channels_create_v1(token1, user1_id, "Channel 1", True)['channel_id']
+    token1 = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['token']
+    channel_id = channels_create_v1(token1, "Channel 1", True)['channel_id']
     msg_id = message_send_v1(token1, channel_id, "Hi there!")
     with pytest.raises(InputError): 
         message_edit_v1(token1, msg_id, """Altruism is the principle and moral practice of concern for 
@@ -155,44 +134,34 @@ def test_message_edit_msg_length_too_big():
 
 def test_message_edit_token_invalid():
     clear_v1()
-    return1 = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")
-    token1 = return1['token']
-    user1_id = return1['auth_user_id']
-    channel_id = channels_create_v1(token1, user1_id, "Channel 1", True)['channel_id']
+    token1 = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['token']
+    channel_id = channels_create_v1(token1, "Channel 1", True)['channel_id']
     msg_id = message_send_v1(token1, channel_id, "Hi there!")
     with pytest.raises(InputError): 
         message_edit_v1(546783, msg_id, "Hi there!")
 
 def test_message_edit_token_empty():
     clear_v1()
-    return1 = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")
-    token1 = return1['token']
-    user1_id = return1['auth_user_id']
-    channel_id = channels_create_v1(token1, user1_id, "Channel 1", True)['channel_id']
+    token1 = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['token']
+    channel_id = channels_create_v1(token1, "Channel 1", True)['channel_id']
     msg_id = message_send_v1(token1, channel_id, "Hi there!")
     with pytest.raises(InputError): 
         message_edit_v1("", msg_id, "Hi there!")
 
 def test_message_edit_msg_id_does_not_exist():
     clear_v1()
-    return1 = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")
-    token1 = return1['token']
-    user1_id = return1['auth_user_id']
-    channel_id = channels_create_v1(token1, user1_id, "Channel 1", True)['channel_id']
+    token1 = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['token']
+    channel_id = channels_create_v1(token1, "Channel 1", True)['channel_id']
     message_send_v1(token1, channel_id, "Hi there!")
     with pytest.raises(InputError): 
         message_edit_v1(token1, 5462, "Hi there!")
 
 def test_message_edit_msg_not_part_of_channel():
     clear_v1()
-    return1 = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")
-    return2 = auth_register_v1("john.smith@aunsw.edu.au", "naisud", "John", "Smith")
-    token1 = return1['token']
-    token2 = return2['token']
-    user1_id = return1['auth_user_id']
-    user2_id = return2['auth_user_id']
-    channel1_id = channels_create_v1(token1, user1_id, "Channel 1", True)['channel_id']
-    channel2_id = channels_create_v1(token2, user2_id, "Channel 1", True)['channel_id']
+    token1 = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['token']
+    token2 = auth_register_v1("john.smith@aunsw.edu.au", "naisud", "John", "Smith")['token']
+    channel1_id = channels_create_v1(token1, "Channel 1", True)['channel_id']
+    channel2_id = channels_create_v1(token2, "Channel 1", True)['channel_id']
     message_send_v1(token1, channel1_id, "Hi there!")
     msg2_id = message_send_v1(token1, channel2_id, "Hi there!")
     with pytest.raises(InputError): 
@@ -200,15 +169,11 @@ def test_message_edit_msg_not_part_of_channel():
     
 def test_message_edit_msg_not_part_of_DM_user_in():
     clear_v1()
-    return1 = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")
+    token1 = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['token']
     return2 = auth_register_v1("john.smith@aunsw.edu.au", "naisud", "John", "Smith")
-    return3 = auth_register_v1("john.bob@aunsw.edu.au", "naisud", "John", "Bob")
-    token1 = return1['token']
+    token3 = auth_register_v1("john.bob@aunsw.edu.au", "naisud", "John", "Bob")['token']
     token2 = return2['token']
-    token3 = return3['token']
-    user1_id = return1['auth_user_id']
     user2_id = return2['auth_user_id']
-    user3_id = return3['auth_user_id']
     dm1_id = dm_create_v1(token1, user2_id)
     message_senddm_v1(token1, dm1_id, "Hi there!")
     msg2_id = message_senddm_v1(token2, dm1_id, "Hi there!")
@@ -227,23 +192,19 @@ def test_message_edit_msg_DM_valid():
 
 def test_message_edit_msg_valid():
     clear_v1()
-    return1 = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")
-    token1 = return1['token']
-    user1_id = return1['auth_user_id']
-    channel_id = channels_create_v1(token1, user1_id, "Channel 1", True)['channel_id']
+    token1 = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['token']
+    channel_id = channels_create_v1(token1, "Channel 1", True)['channel_id']
     msg_id = message_send_v1(token1, channel_id, "Hi there!")
     with pytest.raises(InputError): 
         message_edit_v1(token1, msg_id, "Hi there!")
 
 def test_message_edit_msg_id_not_sent_by_non_owner():
     clear_v1()
-    return1 = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")
+    token1 = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['token']
     return2 = auth_register_v1("john.smith@aunsw.edu.au", "naisud", "John", "Smith")
-    token1 = return1['token']
     token2 = return2['token']
-    user1_id = return1['auth_user_id']
     user2_id = return2['auth_user_id']
-    channel_id = channels_create_v1(token1, user1_id, "Channel 1", True)['channel_id']
+    channel_id = channels_create_v1(token1, "Channel 1", True)['channel_id']
     channel_join_v1(user2_id, channel_id)
     message_send_v1(token1, channel_id, "Hi there!")
     msg1_id = message_send_v1(token1, channel_id, "Hi there!")
@@ -255,13 +216,11 @@ def test_message_edit_msg_id_sent_by_global_owner(): # NOT SURE ABOUT WHAT GLOBA
 
 def test_message_edit_msg_id_not_sent_by_owner():
     clear_v1()
-    return1 = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")
+    token1 = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['token']
     return2 = auth_register_v1("john.smith@aunsw.edu.au", "naisud", "John", "Smith")
-    token1 = return1['token']
     token2 = return2['token']
-    user1_id = return1['auth_user_id']
     user2_id = return2['auth_user_id']
-    channel_id = channels_create_v1(token1, user1_id, "Channel 1", True)['channel_id']
+    channel_id = channels_create_v1(token1, "Channel 1", True)['channel_id']
     channel_join_v1(user2_id, channel_id)
     message_send_v1(token1, channel_id, "Hi there!")
     msg1_id = message_send_v1(token2, channel_id, "Hi there!")
@@ -271,14 +230,10 @@ def test_message_edit_msg_id_not_sent_by_owner():
 
 def test_message_remove_msg_not_part_of_channel():
     clear_v1()
-    return1 = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")
-    return2 = auth_register_v1("john.smith@aunsw.edu.au", "naisud", "John", "Smith")
-    token1 = return1['token']
-    token2 = return2['token']
-    user1_id = return1['auth_user_id']
-    user2_id = return2['auth_user_id']
-    channel1_id = channels_create_v1(token1, user1_id, "Channel 1", True)['channel_id']
-    channel2_id = channels_create_v1(token2, user2_id, "Channel 1", True)['channel_id']
+    token1 = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['token']
+    token2 = auth_register_v1("john.smith@aunsw.edu.au", "naisud", "John", "Smith")['token']
+    channel1_id = channels_create_v1(token1, "Channel 1", True)['channel_id']
+    channel2_id = channels_create_v1(token2, "Channel 1", True)['channel_id']
     message_send_v1(token1, channel1_id, "Hi there!")
     msg2_id = message_send_v1(token2, channel2_id, "Hi there!")
     with pytest.raises(InputError): 
@@ -311,13 +266,11 @@ def test_message_remove_msg_DM_valid():
 
 def test_message_remove_valid_channel():
     clear_v1()
-    return1 = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")
+    token1 = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['token']
     return2 = auth_register_v1("john.smith@aunsw.edu.au", "naisud", "John", "Smith")
-    token1 = return1['token']
     token2 = return2['token']
-    user1_id = return1['auth_user_id']
     user2_id = return2['auth_user_id']
-    channel_id = channels_create_v1(token1, user1_id, "Channel 1", True)['channel_id']
+    channel_id = channels_create_v1(token1, "Channel 1", True)['channel_id']
     channel_join_v1(user2_id, channel_id)
     msg_id = message_send_v1(token2, channel_id, "Hi there!")
     message_edit_v1(token2, msg_id)
@@ -327,8 +280,8 @@ def test_message_remove_token_invalid():
     return1 = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")
     token1 = return1['token']
     user1_id = return1['auth_user_id']
-    channel_id = channels_create_v1(token1, user1_id, "Channel 1", True)['channel_id']
-    channel_join_v1(user2_id, channel_id)
+    channel_id = channels_create_v1(token1, "Channel 1", True)['channel_id']
+    channel_join_v1(user1_id, channel_id)
     msg_id = message_send_v1(token2, channel_id, "Hi there!")
     with pytest.raises(InputError): 
         message_edit_v1(37480259, msg_id)
@@ -338,9 +291,9 @@ def test_message_remove_token_empty():
     return1 = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")
     token1 = return1['token']
     user1_id = return1['auth_user_id']
-    channel_id = channels_create_v1(token1, user1_id, "Channel 1", True)['channel_id']
-    channel_join_v1(user2_id, channel_id)
-    msg_id = message_send_v1(token2, channel_id, "Hi there!")
+    channel_id = channels_create_v1(token1, "Channel 1", True)['channel_id']
+    channel_join_v1(user1_id, channel_id)
+    msg_id = message_send_v1(token1, channel_id, "Hi there!")
     with pytest.raises(InputError): 
         message_edit_v1("", msg_id)
 
@@ -349,21 +302,19 @@ def test_message_remove_msg_id_does_not_exist():
     return1 = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")
     token1 = return1['token']
     user1_id = return1['auth_user_id']
-    channel_id = channels_create_v1(token1, user1_id, "Channel 1", True)['channel_id']
-    channel_join_v1(user2_id, channel_id)
-    message_send_v1(token2, channel_id, "Hi there!")
+    channel_id = channels_create_v1(token1, "Channel 1", True)['channel_id']
+    channel_join_v1(user1_id, channel_id)
+    message_send_v1(token1, channel_id, "Hi there!")
     with pytest.raises(InputError): 
         message_edit_v1(token1, 984735)
 
 def test_message_remove_msg_id_not_sent_by_non_owner():
     clear_v1()
-    return1 = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")
+    token1 = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['token']
     return2 = auth_register_v1("john.smith@aunsw.edu.au", "naisud", "John", "Smith")
-    token1 = return1['token']
     token2 = return2['token']
-    user1_id = return1['auth_user_id']
     user2_id = return2['auth_user_id']
-    channel_id = channels_create_v1(token1, user1_id, "Channel 1", True)['channel_id']
+    channel_id = channels_create_v1(token1, "Channel 1", True)['channel_id']
     channel_join_v1(user2_id, channel_id)
     message_send_v1(token1, channel_id, "Hi there!")
     msg1_id = message_send_v1(token1, channel_id, "Hi there!")
@@ -375,13 +326,11 @@ def test_message_remove_msg_id_sent_by_global_owner():  # NOT SURE ABOUT WHAT GL
 
 def test_message_remove_msg_id_sent_by_owner():
     clear_v1()
-    return1 = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")
+    token1 = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['token']
     return2 = auth_register_v1("john.smith@aunsw.edu.au", "naisud", "John", "Smith")
-    token1 = return1['token']
     token2 = return2['token']
-    user1_id = return1['auth_user_id']
     user2_id = return2['auth_user_id']
-    channel_id = channels_create_v1(token1, user1_id, "Channel 1", True)['channel_id']
+    channel_id = channels_create_v1(token1, "Channel 1", True)['channel_id']
     channel_join_v1(user2_id, channel_id)
     message_send_v1(token1, channel_id, "Hi there!")
     msg1_id = message_send_v1(token2, channel_id, "Hi there!")
@@ -424,7 +373,7 @@ def test_message_senddm_send_single_msg():
 
 def test_message_senddm_token_invalid():
     clear_v1()
-    return1 = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")
+    token1 = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")
     return2 = auth_register_v1("john.smith@aunsw.edu.au", "naisud", "John", "Smith")
     user2_id = return2['auth_user_id']
     dm1_id = dm_create_v1(token1, user2_id)
@@ -432,7 +381,7 @@ def test_message_senddm_token_invalid():
 
 def test_message_senddm_token_empty():
     clear_v1()
-    return1 = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")
+    token1 = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")
     return2 = auth_register_v1("john.smith@aunsw.edu.au", "naisud", "John", "Smith")
     user2_id = return2['auth_user_id']
     dm1_id = dm_create_v1(token1, user2_id)
