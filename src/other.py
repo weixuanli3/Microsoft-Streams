@@ -34,6 +34,7 @@ def clear_v1():
         'users': [],
         'channels': [],
         'global_owners' : [],
+        'DMs': []
     }
     data_store.set(store)
 
