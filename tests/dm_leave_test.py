@@ -50,11 +50,11 @@ def test_normal_leave(def_setup):
    dm_leave_v1(u2_tok, dm_id3)
 
    assert dm_details_v1(u1_tok, dm_id1) == {
-       'name': 'johndoe, patrickliang, johncitizen',
+       'name': 'johncitizen, johndoe, patrickliang',
        'members': [user1, user2]
    }
    assert dm_details_v1(u1_tok, dm_id2) == {
-       'name': 'patrickliang, johncitizen',
+       'name': 'johncitizen, patrickliang',
        'members': [user1]
    }
    with pytest.raises(AccessError):

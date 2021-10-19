@@ -47,15 +47,15 @@ def test_valid_details(def_setup):
        'handle_str': "johncitizen"
    }
    assert dm_details_v1(own_tok, dm_id1) == {
-       'name': 'johndoe, patrickliang, johncitizen',
+       'name': 'johncitizen, johndoe, patrickliang',
        'members': [owner, user1, user2]
    }
    assert dm_details_v1(u1_tok, dm_id1) == {
-       'name': 'johndoe, patrickliang, johncitizen',
+       'name': 'johncitizen, johndoe, patrickliang',
        'members': [owner, user1, user2]
    }
    assert dm_details_v1(u1_tok, dm_id2) == {
-       'name': 'patrickliang, johncitizen',
+       'name': 'johncitizen, patrickliang',
        'members': [user1, user2]
    }
 
