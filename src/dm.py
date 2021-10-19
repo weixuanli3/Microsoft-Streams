@@ -6,18 +6,23 @@ from src.error import AccessError
 def dm_create_v1(token, *u_ids):
     
     user_data = data_store.get_data()['users']
+    user_data_ids = data_store.get('id')
     
-    all_valid = False
+    for id in user_data_ids:
+        if id not in user_data_ids:
+            raise InputError("At least one of the u_ids is invalid")
     
-    # check all u_ids are valid
-    for u_id in u_ids:
-        for user in user_data:
-            if u_id == user['id']:
-                all_valid = True
-            else:
-                all_valid = False
-    if not all_valid:
-        raise InputError("At least one of the u_ids is invalid")
+    # all_valid = False
+    
+    # # check all u_ids are valid
+    # for u_id in u_ids:
+    #     for user in user_data:
+    #         if u_id == user['id']:
+    #             all_valid = True
+    #         else:
+    #             all_valid = False
+    # if not all_valid:
+    #     raise InputError("At least one of the u_ids is invalid")
     
     dm_data = data_store.get_data()['DMs']
     dm_id = len(dm_data) + 1
