@@ -30,13 +30,20 @@ def channel_invite_v1(token, channel_id, u_id):
                       - The auth_user_id is not part of the channel.
     """
 
+    # Check if a token is valid
+    all_tokens = data_store.get('token')['token']
+    token_exists = False
+
+    for user_tokens in all_tokens:
+        if token in user_tokens:
+            token_exists = True
+
+    if not token_exists:
+        raise AccessError("Token doesn't exist")
 
     channel_data = data_store.get_data()['channels']
     user_data = data_store.get_data()['users']
-    try:
-        auth_user_id = get_u_id(token)
-    except :
-        raise AccessError("Token not valid") from get_u_id(token)
+    auth_user_id = get_u_id(token)
 
     # check if the auth user exists and u_id exists
     auth_user_exists = False
