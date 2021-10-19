@@ -24,7 +24,7 @@ def def_setup():
    return (own_tok, own_id, u1_tok, u1_id, u2_tok, u2_id, u3_tok, u3_id, dm_id1, dm_id2)
 
 def test_valid_details(def_setup):
-   own_tok, own_id, u1_tok, u1_id, u2_tok, u2_id, u3_tok, u3_id, dm_id1, dm_id2 = def_setup
+   own_tok, own_id, u1_tok, u1_id, u2_id,  dm_id1, dm_id2 = def_setup
    owner = {
        'u_id': own_id,
        'email': "john.doe@unsw.com",
@@ -60,14 +60,14 @@ def test_valid_details(def_setup):
    }
 
 def test_invalid_dm_id(def_setup):
-   own_tok, own_id, u1_tok, u1_id, u2_tok, u2_id, u3_tok, u3_id, dm_id1, dm_id2 = def_setup
+   u1_tok, dm_id1, dm_id2 = def_setup
    with pytest.raises(InputError):
        dm_details_v1(u1_tok, dm_id1 + dm_id2 + 1)
    with pytest.raises(InputError):
        dm_details_v1(u1_tok, -1)
 
 def test_valid_dm_not_member(def_setup):
-   own_tok, own_id, u1_tok, u1_id, u2_tok, u2_id, u3_tok, u3_id, dm_id1, dm_id2 = def_setup
+   own_tok, u3_tok, dm_id1, dm_id2 = def_setup
    with pytest.raises(AccessError):
        dm_details_v1(u3_tok, dm_id1)
    with pytest.raises(AccessError):
