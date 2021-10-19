@@ -10,6 +10,7 @@ def def_setup():
    owner = auth_register_v1("john.doe@unsw.com", "bruhdems", "John", "Doe")
    user1 = auth_register_v1("patrick.liang@unsw.com", "katrick", "Patrick", "Liang")
    user2 = auth_register_v1("john.citizen@unsw.com", "password", "John", "Citizen")
+   user3 = auth_register_v1("nangston.w@unsw.com", "nangwei", "Wynston", "Wang")
    own_tok = owner['token']
    own_id = owner['auth_user_id']
    u1_tok = user1['token']
@@ -22,8 +23,14 @@ def def_setup():
    return (own_tok, own_id, u1_tok, u1_id, u2_tok, u2_id, dm_id1, dm_id2, dm_id3)
 
 def test_normal_leave(def_setup):
-   own_tok,  u1_tok, u1_id, u2_tok, u2_id, dm_id1, dm_id2, dm_id3 = def_setup
-
+   own_tok, own_id, u1_tok, u1_id, u2_tok, u2_id, dm_id1, dm_id2, dm_id3 = def_setup
+   owner = {
+       'u_id': own_id,
+       'email': "john.doe@unsw.com",
+       'name_first': "John",
+       'name_last': "Doe",
+       'handle_str': "johndoe"
+   }
    user1 = {
        'u_id': u1_id,
        'email': "patrick.liang@unsw.com",
@@ -54,16 +61,17 @@ def test_normal_leave(def_setup):
        dm_leave_v1(u1_tok, dm_id3)
 
 def test_invalid_dm_id(def_setup):
-   u1_tok, dm_id1, dm_id2 = def_setup
+   own_tok, own_id, u1_tok, u1_id, u2_tok, u2_id, dm_id1, dm_id2, dm_id3 = def_setup
    with pytest.raises(InputError):
        dm_leave_v1(u1_tok, dm_id1 + dm_id2 + 1)
    with pytest.raises(InputError):
        dm_leave_v1(u1_tok, -1)
 
 def test_valid_dm_id_not_a_member(def_setup):
-   own_tok, dm_id1, dm_id2 = def_setup
+   own_tok, own_id, u1_tok, u1_id, u2_tok, u2_id, dm_id1, dm_id2, dm_id3 = def_setup
    user3 = auth_register_v1("nangstonkjn.w@unsw.com", "nangwei", "Wynston", "Wang")
    u3_tok = user3['token']
+   u3_id = user3['auth_user_id']
    with pytest.raises(AccessError):
        dm_leave_v1(u3_tok, dm_id1)
    with pytest.raises(AccessError):

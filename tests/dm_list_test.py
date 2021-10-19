@@ -24,18 +24,18 @@ def def_setup():
    return (own_tok, own_id, u1_tok, u1_id, u2_tok, u2_id, u3_tok, u3_id, dm_id1, dm_id2)
 
 def test_dm_list_no_dms(def_setup):
-   u3_tok = def_setup
+   own_tok, own_id, u1_tok, u1_id, u2_tok, u2_id, u3_tok, u3_id, dm_id1, dm_id2 = def_setup
    assert dm_list_v1(u3_tok) == {'dms': []}
 
 # Not going to test the handle yet, as it requires dm_details_v1
 def test_dm_list_one_dm(def_setup):
-   own_tok, dm_id1 = def_setup
+   own_tok, own_id, u1_tok, u1_id, u2_tok, u2_id, u3_tok, u3_id, dm_id1, dm_id2 = def_setup
    assert dm_list_v1(own_tok)['dms'][0]['dm_id'] == dm_id1
 
 def test_dm_list_two_dms(def_setup):
-   u1_tok, dm_id1, dm_id2 = def_setup
+   own_tok, own_id, u1_tok, u1_id, u2_tok, u2_id, u3_tok, u3_id, dm_id1, dm_id2 = def_setup
    assert dm_list_v1(u1_tok)['dms'][0]['dm_id'] == dm_id1
    assert dm_list_v1(u1_tok)['dms'][1]['dm_id'] == dm_id2
 
-#    assert dm_list_v1(u2_tok)['dms'][0]['dm_id'] == dm_id1
-#    assert dm_list_v1(u2_tok)['dms'][1]['dm_id'] == dm_id2
+   assert dm_list_v1(u2_tok)['dms'][0]['dm_id'] == dm_id1
+   assert dm_list_v1(u2_tok)['dms'][1]['dm_id'] == dm_id2

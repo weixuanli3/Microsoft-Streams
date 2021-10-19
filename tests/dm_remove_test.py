@@ -24,12 +24,12 @@ def def_setup():
    return (own_tok, own_id, u1_tok, u1_id, u2_tok, u2_id, u3_tok, u3_id, dm_id1, dm_id2)
 
 def test_valid_removal(def_setup):
-   own_tok, u1_tok, dm_id1, dm_id2 = def_setup
+   own_tok, own_id, u1_tok, u1_id, u2_tok, u2_id, u3_tok, u3_id, dm_id1, dm_id2 = def_setup
    dm_remove_v1(own_tok, dm_id1)
    dm_remove_v1(u1_tok, dm_id2)
 
 def test_invalid_dm_id(def_setup):
-   own_tok, u1_tok, u2_tok, u3_tok, dm_id1, dm_id2 = def_setup
+   own_tok, own_id, u1_tok, u1_id, u2_tok, u2_id, u3_tok, u3_id, dm_id1, dm_id2 = def_setup
    dm_id3 = dm_id1 + dm_id2 + 3123
    with pytest.raises(InputError):
        dm_remove_v1(own_tok, dm_id3)
@@ -42,7 +42,7 @@ def test_invalid_dm_id(def_setup):
 
 
 def test_valid_dm_id_not_owner(def_setup):
-   own_tok, u1_tok, u2_tok, u3_tok, dm_id1, dm_id2 = def_setup
+   own_tok, own_id, u1_tok, u1_id, u2_tok, u2_id, u3_tok, u3_id, dm_id1, dm_id2 = def_setup
    with pytest.raises(AccessError):
        dm_remove_v1(own_tok, dm_id2)
    with pytest.raises(AccessError):

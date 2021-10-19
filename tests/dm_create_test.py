@@ -25,14 +25,14 @@ def test_normal(def_setup):
    dm_create_v1(user2, [owner_id])
 
 def test_invalid_token(def_setup):
-   owner_id, user1_id, user2_id = def_setup
-   with pytest.raises(AccessError):
+   owner, owner_id, user1, user1_id, user2, user2_id = def_setup
+   with pytest.raises(InputError):
        dm_create_v1("owneradfse", [owner_id])
-   with pytest.raises(AccessError):
+   with pytest.raises(InputError):
        dm_create_v1("bruhdems", [owner_id, user1_id, user2_id])
 
 def test_u_id_does_not_exist(def_setup):
-   owner, user1_id, user2_id = def_setup
+   owner, owner_id, user1, user1_id, user2, user2_id = def_setup
    with pytest.raises(InputError):
        dm_create_v1(owner, [-3, -2])
    with pytest.raises(InputError):
@@ -48,7 +48,7 @@ def test_diff_dm_id(def_setup):
    assert dm_id3 != dm_id1
 
 def test_no_users(def_setup):
-   owner = def_setup
+   owner, owner_id, user1, user1_id, user2, user2_id = def_setup
    dm_create_v1(owner, [])
 
 # Assumption, if the dm that is to be created already exists, return the id 
@@ -60,7 +60,7 @@ def test_no_users(def_setup):
 #    assert dm_id1 == dm_id2
 
 def test_dm_same_members_diff_owner(def_setup):
-   owner, owner_id, user1, user1_id = def_setup
+   owner, owner_id, user1, user1_id, user2, user2_id = def_setup
    dm_id1 = dm_create_v1(owner, [user1_id])['dm_id']
    dm_id2 = dm_create_v1(user1, [owner_id])['dm_id']
    assert dm_id1 != dm_id2
