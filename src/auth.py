@@ -96,6 +96,13 @@ def auth_register_v1(email, password, name_first, name_last):
     user_emails = data_store.get('emails')
     is_not_already_registered = not email in user_emails['emails']
 
+    # Checks that a used email does not belong to a removed user
+    if not is_not_already_registered:
+        all_users = data_store.get_data()['users']
+        for user in all_users:
+            if user['emails'] == email and user['is_removed'] == True:
+                is_not_already_registered == True
+
     # Check remaining conditions
     is_valid_password = len(password) >= 6 and len(password) <= 100
     is_valid_name_first = len(name_first) >= 1 and len(name_first) <= 50
@@ -117,7 +124,8 @@ def auth_register_v1(email, password, name_first, name_last):
             'passwords': password,
             'handle': generate_handle(name_first, name_last),
             'channels': [],
-            'token' : []
+            'token' : [],
+            'is_removed' : False
         }
 
         token = generate_token(new_user)
@@ -152,10 +160,10 @@ def auth_logout_v1(token):
             return {}
     raise InputError('Could not find token')
 
+
 ################################
 #   Helper functions for auth  #
 ################################
-
 
 """
 Given a first and last name, it will generate a handle for the user.
@@ -182,6 +190,14 @@ def generate_handle(name_first, name_last):
 
     # more than 20 if the user is already there
     is_valid_handle = not user_handle in data_store.get('handle')['handle']
+
+    # If a handle is already used, but by a removed user, then it is valid
+    if not is_valid_handle:
+        all_users = data_store.get_data()['users']
+        for user in all_users:
+            if user['handle'] == user_handle and user['is_removed'] == True:
+                is_valid_handle == True
+
     i = 0
     while not is_valid_handle:
         is_valid_handle = not user_handle + \

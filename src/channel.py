@@ -1,11 +1,11 @@
 '''Conatins functions to invite to channel, joins channel, return channel messages and return channel details'''
-from src.data_store import data_store, update_permanent_storage
+from src.data_store import data_store, update_permanent_storage, get_u_id
 from src.error import InputError
 from src.error import AccessError
 from src.data_store import get_u_id
 
 # Invite a user to a channel that the current user is in
-def channel_invite_v1(auth_user_id, channel_id, u_id):
+def channel_invite_v1(token, channel_id, u_id):
     """
     Invites a user into the a channel that the current user is in.
 
@@ -33,6 +33,8 @@ def channel_invite_v1(auth_user_id, channel_id, u_id):
 
     channel_data = data_store.get_data()['channels']
     user_data = data_store.get_data()['users']
+    
+    auth_user_id = get_u_id(token)
 
     # check if the auth user exists and u_id exists
     auth_user_exists = False
@@ -95,7 +97,7 @@ def channel_invite_v1(auth_user_id, channel_id, u_id):
 
 # Returns a dictionary with the details of the specified channel
 # if the user is part of said channel
-def channel_details_v1(auth_user_id, channel_id):
+def channel_details_v1(token, channel_id):
     """
     Returns the details of the specified channel.
 
@@ -131,6 +133,7 @@ def channel_details_v1(auth_user_id, channel_id):
 
 
     # check if the user exists
+    auth_user_id = get_u_id(token)
     user_data = data_store.get_data()['users']
     user_exists = False
     for user in user_data:
@@ -228,7 +231,7 @@ return {
 }
 '''
 # Return 50 messages (or the end of the messages) in a dictionary
-def channel_messages_v1(auth_user_id, channel_id, start):
+def channel_messages_v1(token, channel_id, start):
 
     """
     Returns the messages sent in the specified channel.
@@ -273,6 +276,8 @@ def channel_messages_v1(auth_user_id, channel_id, start):
     return_dictionary = {
         'messages': [],
     }
+
+    auth_user_id = get_u_id(token)
 
     # check if the user exists
     user_data = data_store.get_data()['users']
@@ -350,7 +355,7 @@ def channel_messages_v1(auth_user_id, channel_id, start):
     # }
 
 # Add a user to a channel
-def channel_join_v1(auth_user_id, channel_id):
+def channel_join_v1(token, channel_id):
     """
     This funciton makes a specified user a mamber of a specific channel
 
@@ -374,6 +379,8 @@ def channel_join_v1(auth_user_id, channel_id):
 
     """
 
+    # turn token into user 
+    auth_user_id = get_u_id(token)
 
     # check if the user exists
     user_data = data_store.get_data()['users']
@@ -426,9 +433,40 @@ def channel_join_v1(auth_user_id, channel_id):
     update_permanent_storage()
     return {}
 
+
 def channel_leave_v1(token, channel_id):
-    pass
-    #Return type {}
+    
+    # turn token into user 
+    auth_user_id = get_u_id(token)
+    
+    #check if the channel exists
+    channel_data = data_store.get_data()['channels']
+    channel_exists = False
+    user_in_channel = False
+
+    for channel in channel_data:
+        if channel_id == channel['chan_id']:
+            channel_exists = True
+            
+        # check if the user is aready in the channel
+            if auth_user_id in channel['users_id']:
+                user_in_channel = True
+            
+    if not channel_exists:
+        raise InputError("Channel doesn't exist")
+    
+    if not user_in_channel:
+        raise AccessError("User not part of the channel")
+    
+    # remove the user from the channel
+    channel_data[channel_id]['users_id'].remove(auth_user_id)
+    
+    if auth_user_id in channel_data[channel_id]['owner_id']:
+        channel_data[channel_id]['owner_id'].remove(auth_user_id)
+        
+    update_permanent_storage()
+    
+    return {}
 
 def channel_add_owner_v1(token, channel_id, u_id):
     
@@ -437,10 +475,10 @@ def channel_add_owner_v1(token, channel_id, u_id):
     global_data = data_store.get_data()['global_owners']
     
     # check if token user exists
-    token_exists = False
-    for user in user_data:
-        if token == user['token']:
-            token_exists = True
+    # token_exists = False
+    # for user in user_data:
+    #     if token == user['token']:
+    #         token_exists = True
     
     # check if the user exists
     user_exists = False
@@ -448,8 +486,8 @@ def channel_add_owner_v1(token, channel_id, u_id):
         if u_id == user['id']:
             user_exists = True
             
-    if not token_exists:
-        raise AccessError("User doesn't exist")
+    # if not token_exists:
+    #     raise AccessError("User doesn't exist")
 
     if not user_exists:
         raise InputError("u_id does not refer to a valid user")
@@ -514,12 +552,12 @@ def channel_remove_owner_v1(token, channel_id, u_id):
     channel_data = data_store.get_data()['channels']
     user_data = data_store.get_data()['users']
     global_data = data_store.get_data()['global_owners']
-    
-    # check if token user exists
-    token_exists = False
-    for user in user_data:
-        if token == user['token']:
-            token_exists = True
+
+    # # check if token user exists
+    # token_exists = False
+    # for user in user_data:
+    #     if token == user['token']:
+    #         token_exists = True
     
     # check if the user exists
     user_exists = False
@@ -527,8 +565,8 @@ def channel_remove_owner_v1(token, channel_id, u_id):
         if u_id == user['id']:
             user_exists = True
             
-    if not token_exists:
-        raise AccessError("User doesn't exist")
+    # if not token_exists:
+    #     raise AccessError("User doesn't exist")
 
     if not user_exists:
         raise InputError("u_id does not refer to a valid user")
@@ -597,4 +635,3 @@ def channel_remove_owner_v1(token, channel_id, u_id):
     update_permanent_storage()
     
     return {}
-    #Return type {}

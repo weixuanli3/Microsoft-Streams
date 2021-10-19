@@ -26,9 +26,9 @@ def test_normal(def_setup):
 
 def test_invalid_token(def_setup):
    owner, owner_id, user1, user1_id, user2, user2_id = def_setup
-   with pytest.raises(InputError):
+   with pytest.raises(AccessError):
        dm_create_v1("owneradfse", [owner_id])
-   with pytest.raises(InputError):
+   with pytest.raises(AccessError):
        dm_create_v1("bruhdems", [owner_id, user1_id, user2_id])
 
 def test_u_id_does_not_exist(def_setup):
