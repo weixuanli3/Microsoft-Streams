@@ -16,8 +16,8 @@ def dm_create_v1(token, *u_ids):
                 all_valid = True
             else:
                 all_valid = False
-        if not all_valid:
-            raise InputError("At least one of the u_ids is invalid")
+    if not all_valid:
+        raise InputError("At least one of the u_ids is invalid")
     
     dm_data = data_store.get_data()['DMs']
     dm_id = len(dm_data) + 1
@@ -175,7 +175,6 @@ def dm_messages_v1(token, dm_id, start):
         if dm_id == dm['dm_id']:
             dm_id_valid = True
             if user_id in dm['members']:
-                
                 user_in_dm = True
 
     if not user_in_dm:
@@ -184,5 +183,34 @@ def dm_messages_v1(token, dm_id, start):
     if not dm_id_valid:
         raise InputError("dm_id does not refer to a valid DM")
     
+    msg = []
+    
+    for dm in dm_data:
+        if dm_id == dm['dm_id']:
+            msg.append(dm['messages'])
+    
+    msg = msg.reverse()
+    
+    if start < 0:
+        raise InputError("Start cannot be negative")
+    elif not msg:
+        raise InputError("Start is greater than the total number of messages in the channel")
+    elif start > len(msg) - 1:
+        raise InputError("Start is greater than the total number of messages in the channel")
+
+    # If there are e.g. 50 messages and start = 30, can only return 20, end = -1
+    if len(msg) < (start + 50):
+        return_messages = msg[start:-1]
+        end = -1
+    else: # If there are e.g. 100 messages and start = 30, returns 30 up to 80, end = 80
+        return_messages = msg[start:start + 50]
+        end = start + 50
+
+    return_dictionary['messages'].append(return_messages)
+    return_dictionary['start'] = start
+    return_dictionary['end'] = end
+
+    return return_dictionary
+        
     #Return type {messages, start, end}
     
