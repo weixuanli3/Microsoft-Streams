@@ -33,7 +33,10 @@ def channel_invite_v1(token, channel_id, u_id):
 
     channel_data = data_store.get_data()['channels']
     user_data = data_store.get_data()['users']
-    auth_user_id = get_u_id(token)
+    try:
+        auth_user_id = get_u_id(token)
+    except:
+        raise AccessError("Token not valid")
 
     # check if the auth user exists and u_id exists
     auth_user_exists = False
