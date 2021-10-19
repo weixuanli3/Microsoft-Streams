@@ -62,7 +62,8 @@ initial_object = {
     'users': [],
     'channels': [], 
     'global_owners': [],
-    'num_msgs' : 0,
+    'DMs': [],
+    'msgs' : []
 }
 
 ## YOU SHOULD MODIFY THIS OBJECT ABOVE
@@ -110,11 +111,11 @@ data_store = Datastore()
 
 def update_permanent_storage():
     """Updates the permanent storage to contain the same content as in the datastore object"""
-    '''filehandler = shelve.open(DATABASE_FILE_NAME)
+    filehandler = shelve.open(DATABASE_FILE_NAME)
     for item in data_store.get_data():
         # print("Storing:", data_store.get_data()[item])
         filehandler[item] = data_store.get_data()[item]
-    filehandler.close()'''
+    filehandler.close()
 
 def update_datastore_object():
     """
@@ -122,7 +123,7 @@ def update_datastore_object():
     Only runs if datastore contains more users than the data_store object.
     """
 
-    '''filehandler = shelve.open(DATABASE_FILE_NAME)
+    filehandler = shelve.open(DATABASE_FILE_NAME)
 
     # If the database has nothing in it, then it does not contiue
     if len(filehandler) == 0:
@@ -145,4 +146,4 @@ def update_datastore_object():
     data_store.set(new_data_base)
     
 update_datastore_object()
-print('Loading Datastore...')'''
+print('Loading Datastore...')
