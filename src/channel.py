@@ -319,8 +319,7 @@ def channel_messages_v1(auth_user_id, channel_id, start):
     if start < 0:
         raise InputError("Start cannot be negative")
     elif not msg:
-        if start != 0:
-            raise InputError("Start is greater than the total number of messages in the channel")
+        raise InputError("Start is greater than the total number of messages in the channel")
     elif start > len(msg) - 1:
         raise InputError("Start is greater than the total number of messages in the channel")
 
