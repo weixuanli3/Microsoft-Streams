@@ -210,6 +210,8 @@ def dm_messages_v1(token, dm_id, start):
     return_dictionary['start'] = start
     return_dictionary['end'] = end
 
+    update_permanent_storage()
+
     return return_dictionary
         
     #Return type {messages, start, end}
