@@ -19,7 +19,7 @@ def def_setup():
    u2_id = user2['auth_user_id']
    u3_tok = user3['token']
    u3_id = user3['auth_user_id']
-   dm_id1 = dm_create_v1(owner, u1_id, u2_id)['dm_id']
+   dm_id1 = dm_create_v1(owner, [u1_id, u2_id])['dm_id']
    dm_id2 = dm_create_v1(u1_id, [u2_id])['dm_id']
    return (own_tok, own_id, u1_tok, u1_id, u2_tok, u2_id, u3_tok, u3_id, dm_id1, dm_id2)
 

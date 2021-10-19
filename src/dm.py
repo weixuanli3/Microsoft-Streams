@@ -3,14 +3,22 @@ from src.data_store import data_store, get_u_id, update_permanent_storage
 from src.error import InputError
 from src.error import AccessError
 
-def dm_create_v1(token, *u_ids):
-    
+def dm_create_v1(token, u_ids):
+
     user_data = data_store.get_data()['users']
-    user_data_ids = data_store.get('id')
+        
+    user_exists = []
+    for user in user_data:
+        for u_id in u_ids:
+            if u_id == user['id']:
+                user_exists.append(1)
+
+    if user_exists.count(1) != len(u_ids):
+        raise InputError("User doesn't exist")
     
-    for id in user_data_ids:
-        if id not in user_data_ids:
-            raise InputError("At least one of the u_ids is invalid")
+    # for id in user_data_ids:
+    #     if id not in user_data_ids:
+    #         raise InputError("At least one of the u_ids is invalid")
     
     # all_valid = False
     
@@ -23,6 +31,15 @@ def dm_create_v1(token, *u_ids):
     #             all_valid = False
     # if not all_valid:
     #     raise InputError("At least one of the u_ids is invalid")
+    
+    # check if token is valid
+    valid_token = False
+    for user in user_data:
+        if token in user['token']:
+            valid_token = True
+
+    if not valid_token:
+        raise InputError("Invalid Token")
     
     dm_data = data_store.get_data()['DMs']
     dm_id = len(dm_data) + 1
@@ -64,7 +81,7 @@ def dm_create_v1(token, *u_ids):
     
     update_permanent_storage()
     
-    return dm_id
+    return {'dm_id': dm_id}
     #Return type {dm_id}
 
 def dm_list_v1(token):
