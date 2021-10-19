@@ -96,7 +96,7 @@ def dm_list_v1(token):
     
     update_permanent_storage()
     
-    return dms
+    return {'dms': dms}
     #Return type {dms}
     
 def dm_remove_v1(token, dm_id):
@@ -168,7 +168,7 @@ def dm_leave_v1(token, dm_id):
                 dm['members'].remove(user_id)
                 user_in_dm = True
 
-    if not user_in_dm:
+    if dm_id_valid and not user_in_dm:
         raise AccessError("User is not a member of the DM")
 
     if not dm_id_valid:
