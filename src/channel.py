@@ -2,7 +2,6 @@
 from src.data_store import data_store, update_permanent_storage, get_u_id
 from src.error import InputError
 from src.error import AccessError
-from src.data_store import get_u_id
 
 # Invite a user to a channel that the current user is in
 def channel_invite_v1(token, channel_id, u_id):
@@ -33,6 +32,15 @@ def channel_invite_v1(token, channel_id, u_id):
 
     channel_data = data_store.get_data()['channels']
     user_data = data_store.get_data()['users']
+    user_data = data_store.get_data()['users']
+    
+    valid_token = False
+    for user in user_data:
+        if token in user['token']:
+            valid_token = True
+
+    if not valid_token:
+        raise AccessError("Invalid Token")
     
     auth_user_id = get_u_id(token)
 
@@ -130,10 +138,19 @@ def channel_details_v1(token, channel_id):
 
     """
 
+    user_data = data_store.get_data()['users']
+    
+    valid_token = False
+    for user in user_data:
+        if token in user['token']:
+            valid_token = True
 
+    if not valid_token:
+        raise AccessError("Invalid Token")
 
     # check if the user exists
     auth_user_id = get_u_id(token)
+    
     user_data = data_store.get_data()['users']
     user_exists = False
     for user in user_data:
@@ -277,6 +294,18 @@ def channel_messages_v1(token, channel_id, start):
         'messages': [],
     }
 
+
+    
+    user_data = data_store.get_data()['users']
+    
+    valid_token = False
+    for user in user_data:
+        if token in user['token']:
+            valid_token = True
+
+    if not valid_token:
+        raise AccessError("Invalid Token")
+    
     auth_user_id = get_u_id(token)
 
     # check if the user exists
@@ -324,7 +353,8 @@ def channel_messages_v1(token, channel_id, start):
     if start < 0:
         raise InputError("Start cannot be negative")
     elif not msg:
-        raise InputError("Start is greater than the total number of messages in the channel")
+        if start != 0:
+            raise InputError("Start is greater than the total number of messages in the channel")
     elif start > len(msg) - 1:
         raise InputError("Start is greater than the total number of messages in the channel")
 
@@ -378,10 +408,20 @@ def channel_join_v1(token, channel_id):
                       - the auth_user is not a global owner and tries to join a private channel
 
     """
+    
+    user_data = data_store.get_data()['users']
+    
+    valid_token = False
+    for user in user_data:
+        if token in user['token']:
+            valid_token = True
 
-    # turn token into user 
+    if not valid_token:
+        raise AccessError("Invalid Token")
+    
+     # turn token into user 
     auth_user_id = get_u_id(token)
-
+    
     # check if the user exists
     user_data = data_store.get_data()['users']
     user_exists = False
@@ -436,6 +476,16 @@ def channel_join_v1(token, channel_id):
 
 def channel_leave_v1(token, channel_id):
     
+    user_data = data_store.get_data()['users']
+    
+    valid_token = False
+    for user in user_data:
+        if token in user['token']:
+            valid_token = True
+
+    if not valid_token:
+        raise AccessError("Invalid Token")
+    
     # turn token into user 
     auth_user_id = get_u_id(token)
     
@@ -459,10 +509,10 @@ def channel_leave_v1(token, channel_id):
         raise AccessError("User not part of the channel")
     
     # remove the user from the channel
-    channel_data[channel_id]['users_id'].remove(auth_user_id)
+    channel_data[channel_id - 1]['users_id'].remove(auth_user_id)
     
-    if auth_user_id in channel_data[channel_id]['owner_id']:
-        channel_data[channel_id]['owner_id'].remove(auth_user_id)
+    if auth_user_id in channel_data[channel_id - 1]['owner_id']:
+        channel_data[channel_id - 1]['owner_id'].remove(auth_user_id)
         
     update_permanent_storage()
     
@@ -473,6 +523,30 @@ def channel_add_owner_v1(token, channel_id, u_id):
     channel_data = data_store.get_data()['channels']
     user_data = data_store.get_data()['users']
     global_data = data_store.get_data()['global_owners']
+    user_data = data_store.get_data()['users']
+    
+    channel_exists = False
+    
+    for channel in channel_data:
+        # check if the channel exists and if the auth_user is in the channel
+        if channel_id == channel['chan_id']:
+            channel_exists = True
+            if get_u_id(token) in channel['users_id']:
+                token_in_channel = True
+            if u_id in channel['users_id']:
+                user_in_channel = True    
+                 
+    if not channel_exists:
+        raise InputError("Channel ID not valid")
+
+    
+    valid_token = False
+    for user in user_data:
+        if token in user['token']:
+            valid_token = True
+
+    if not valid_token:
+        raise AccessError("Invalid Token")
     
     # check if token user exists
     # token_exists = False
@@ -492,14 +566,12 @@ def channel_add_owner_v1(token, channel_id, u_id):
     if not user_exists:
         raise InputError("u_id does not refer to a valid user")
     
-    channel_exists = False
     token_in_channel = False
     user_in_channel = False
     
     for channel in channel_data:
         # check if the channel exists and if the auth_user is in the channel
         if channel_id == channel['chan_id']:
-            channel_exists = True
             if get_u_id(token) in channel['users_id']:
                 token_in_channel = True
             if u_id in channel['users_id']:
@@ -507,9 +579,6 @@ def channel_add_owner_v1(token, channel_id, u_id):
                 
     if not token_in_channel:
         raise AccessError("User isn't part of the channel")
-                
-    if not channel_exists:
-        raise InputError("Channel ID not valid")
 
     if not user_in_channel:
         raise InputError("u_id isn't part of the channel")
@@ -552,7 +621,16 @@ def channel_remove_owner_v1(token, channel_id, u_id):
     channel_data = data_store.get_data()['channels']
     user_data = data_store.get_data()['users']
     global_data = data_store.get_data()['global_owners']
+    user_data = data_store.get_data()['users']
+    
+    valid_token = False
+    for user in user_data:
+        if token in user['token']:
+            valid_token = True
 
+    if not valid_token:
+        raise AccessError("Invalid Token")
+    
     # # check if token user exists
     # token_exists = False
     # for user in user_data:
