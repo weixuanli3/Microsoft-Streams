@@ -173,13 +173,13 @@ def channel_details_v1(token, channel_id):
 
     # check if the auth user exists
     user_data = data_store.get_data()['users']
-    auth_user_exists = False
-    for user in user_data:
-        if auth_user_id == user['id']:
-            auth_user_exists = True
+    # auth_user_exists = False
+    # for user in user_data:
+    #     if auth_user_id == user['id']:
+    #         auth_user_exists = True
 
-    if not auth_user_exists:
-        raise AccessError("User doesn't exist")
+    # if not auth_user_exists:
+    #     raise AccessError("User doesn't exist")
 
     #check if the channel exists and if the auth_user is in the channel
     channel_data = data_store.get_data()['channels']
