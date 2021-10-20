@@ -205,7 +205,7 @@ def channel_details_v1(token, channel_id):
     # Add the owner_ids and member_ids to the return dictionary
     for user in user_data:
         if user['id'] in owner_ids:
-            user_exists = True
+            # user_exists = True
             return_dictionary['owner_members'].append({
             'u_id': user['id'],
             'email': user['emails'],
