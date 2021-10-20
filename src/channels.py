@@ -86,6 +86,16 @@ def channels_listall_v1(token):
             ]
         }
     '''
+    user_data = data_store.get_data()['users']
+    # Check if the given user_id exists in the database
+    user_exists = False
+    for user in user_data:
+        if token in user['token']:
+            user_exists = True
+
+    if not user_exists:
+        raise AccessError("User doesn't exist")
+
     channel_data = data_store.get_data()['channels']
     channel_dict = {
         'channels': []
@@ -139,7 +149,7 @@ def channels_create_v1(token, name, is_public):
     # Do not allow names of all white space
     name_is_all_spaces = name == (len(name) * ' ')
     if name_is_all_spaces:
-        raise InputError("Password cannot be all white space")
+        raise InputError("Name cannot be all white space")
 
     channel_data = data_store.get_data()['channels']
     # Append the new channel id to the list of channels the user is in
