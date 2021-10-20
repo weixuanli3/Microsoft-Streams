@@ -19,21 +19,21 @@
 #    u2_id = user2['auth_user_id']
 #    u3_tok = user3['token']
 #    u3_id = user3['auth_user_id']
-#    dm_id1 = dm_create_v1(owner, [u1_id, u2_id])['dm_id']
-#    dm_id2 = dm_create_v1(u1_id, [u2_id])['dm_id']
+#    dm_id1 = dm_create_v1(own_tok, [u1_id, u2_id])['dm_id']
+#    dm_id2 = dm_create_v1(u1_tok, [u2_id])['dm_id']
 #    return (own_tok, own_id, u1_tok, u1_id, u2_tok, u2_id, u3_tok, u3_id, dm_id1, dm_id2)
 
 # def test_dm_list_no_dms(def_setup):
-#    own_tok, own_id, u1_tok, u1_id, u2_tok, u2_id, u3_tok, u3_id, dm_id1, dm_id2 = def_setup()
+#    own_tok, own_id, u1_tok, u1_id, u2_tok, u2_id, u3_tok, u3_id, dm_id1, dm_id2 = def_setup
 #    assert dm_list_v1(u3_tok) == {'dms': []}
 
 # # Not going to test the handle yet, as it requires dm_details_v1
 # def test_dm_list_one_dm(def_setup):
-#    own_tok, own_id, u1_tok, u1_id, u2_tok, u2_id, u3_tok, u3_id, dm_id1, dm_id2 = def_setup()
+#    own_tok, own_id, u1_tok, u1_id, u2_tok, u2_id, u3_tok, u3_id, dm_id1, dm_id2 = def_setup
 #    assert dm_list_v1(own_tok)['dms'][0]['dm_id'] == dm_id1
 
 # def test_dm_list_two_dms(def_setup):
-#    own_tok, own_id, u1_tok, u1_id, u2_tok, u2_id, u3_tok, u3_id, dm_id1, dm_id2 = def_setup()
+#    own_tok, own_id, u1_tok, u1_id, u2_tok, u2_id, u3_tok, u3_id, dm_id1, dm_id2 = def_setup
 #    assert dm_list_v1(u1_tok)['dms'][0]['dm_id'] == dm_id1
 #    assert dm_list_v1(u1_tok)['dms'][1]['dm_id'] == dm_id2
 

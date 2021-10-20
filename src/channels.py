@@ -3,7 +3,7 @@ from src.data_store import data_store, update_permanent_storage
 from src.error import InputError
 from src.error import AccessError
 
-def channels_list_v1(auth_user_id):
+def channels_list_v1(token):
     '''
     Function will take in an user_id and list all the public channels the user is in
 
@@ -36,7 +36,7 @@ def channels_list_v1(auth_user_id):
     # Check if the given user_id exists in the database
     user_exists = False
     for user in user_data:
-        if auth_user_id == user['id']:
+        if token in user['token']:
             user_exists = True
             channel_ids = user['channels']
 
@@ -57,7 +57,7 @@ def channels_list_v1(auth_user_id):
 
     return channel_dict
 
-def channels_listall_v1(auth_user_id):
+def channels_listall_v1(token):
     '''
     Function will take in an user_id and list all the public and private channels
     the user is in
@@ -86,16 +86,6 @@ def channels_listall_v1(auth_user_id):
             ]
         }
     '''
-    user_data = data_store.get_data()['users']
-    # Check if the given user_id exists in the database
-    user_exists = False
-    for user in user_data:
-        if auth_user_id == user['id']:
-            user_exists = True
-
-    if not user_exists:
-        raise AccessError("User doesn't exist")
-
     channel_data = data_store.get_data()['channels']
     channel_dict = {
         'channels': []
@@ -109,7 +99,7 @@ def channels_listall_v1(auth_user_id):
 
     return channel_dict
 
-def channels_create_v1(auth_user_id, name, is_public):
+def channels_create_v1(token, name, is_public):
     '''
     Function will take in an user_id and list all the public and private channels
     the user is in
@@ -135,8 +125,9 @@ def channels_create_v1(auth_user_id, name, is_public):
     # Check if the given user_id exists in the database
     user_exists = False
     for user in user_data:
-        if auth_user_id == user['id']:
+        if token in user['token']:
             user_exists = True
+            auth_user_id = user['id']
             curr_user = user
 
     if not user_exists:

@@ -225,4 +225,5 @@ def test_valid_token():
     auth_register_v1("john.doe12@unsw.edu.au","password","John","Doe")
     token = auth_login_v1("john.doe12@unsw.edu.au","password")['token']
     assert auth_logout_v1(token) == {}
+    clear_v1()
 
