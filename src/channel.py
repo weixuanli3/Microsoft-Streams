@@ -45,16 +45,16 @@ def channel_invite_v1(token, channel_id, u_id):
     auth_user_id = get_u_id(token)
 
     # check if the auth user exists and u_id exists
-    auth_user_exists = False
+    # auth_user_exists = False
     user_valid = False
     for user in user_data:
-        if auth_user_id == user['id']:
-            auth_user_exists = True
+        # if auth_user_id == user['id']:
+        #     auth_user_exists = True
         if u_id == user['id']:
             user_valid = True
 
-    if not auth_user_exists:
-        raise AccessError("User doesn't exist")
+    # if not auth_user_exists:
+    #     raise AccessError("User doesn't exist")
 
     if not user_valid:
         raise InputError("user id does not refer to a valid user")
@@ -152,13 +152,13 @@ def channel_details_v1(token, channel_id):
     auth_user_id = get_u_id(token)
     
     user_data = data_store.get_data()['users']
-    user_exists = False
-    for user in user_data:
-        if auth_user_id == user['id']:
-            user_exists = True
+    # user_exists = False
+    # for user in user_data:
+    #     if auth_user_id == user['id']:
+    #         user_exists = True
 
-    if not user_exists:
-        raise AccessError("User doesn't exist")
+    # if not user_exists:
+    #     raise AccessError("User doesn't exist")
 
 
     return_dictionary = {
@@ -310,13 +310,13 @@ def channel_messages_v1(token, channel_id, start):
 
     # check if the user exists
     user_data = data_store.get_data()['users']
-    user_exists = False
-    for user in user_data:
-        if auth_user_id == user['id']:
-            user_exists = True
+    # user_exists = False
+    # for user in user_data:
+    #     if auth_user_id == user['id']:
+    #         user_exists = True
 
-    if not user_exists:
-        raise AccessError("User doesn't exist")
+    # if not user_exists:
+        # raise AccessError("User doesn't exist")
 
     #check if the channel exists and if the auth_user is in the channel
     channel_data = data_store.get_data()['channels']
@@ -349,7 +349,10 @@ def channel_messages_v1(token, channel_id, start):
         if channel_id == channel['chan_id']:
             msg.append(channel['messages'])
 
-    msg = msg.reverse() # Reversed so that newest message has index of 0
+    print(msg)
+    print(len(msg))
+    msg.reverse() # Reversed so that newest message has index of 0
+    print(msg)
     if start < 0:
         raise InputError("Start cannot be negative")
     elif not msg:
