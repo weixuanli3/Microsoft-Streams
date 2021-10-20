@@ -6,6 +6,7 @@ from src.channels import channels_create_v1
 from src.channel import channel_invite_v1, channel_leave_v1, channel_messages_v1
 from src.channel import channel_join_v1, channel_remove_owner_v1, channel_add_owner_v1
 from src.channel import channel_details_v1
+from src.message import message_send_v1
 from src.error import InputError
 from src.error import AccessError
 from src.other import clear_v1
@@ -280,6 +281,25 @@ def test_channel_messages_all_invalid():
     clear_v1()
     with pytest.raises(AccessError):
         channel_messages_v1("", "", 0)
+        
+def test_channel_messages_valid():
+    clear_v1()
+    user1 = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")
+    user1_token = user1['token']
+    # user1_id = user1['auth_user_id']
+    # user2_token = auth_register_v1("john.smith@aunsw.edu.au", "naisud", "John", "Smith")['token']
+    chan_id = channels_create_v1(user1_token, "Channel 1", True)['channel_id']
+    message_send_v1(user1_token, chan_id, "oogoa booga")
+    message_send_v1(user1_token, chan_id, "Hi there")
+    message_send_v1(user1_token, chan_id, "#@$%^RT&Y*UIOJNK")
+    channel_messages_v1(user1_token, chan_id, 0)
+    # assert channel_messages_v1(user1_token, chan_id, 1) == {
+    #     'messages': [{'message_id' : msg1, 'u_id' : user1_id, 'message' : "oogoa booga", 'time_created' : timestamp}],
+    #     'start': 1,
+    #     'end': 3,  
+    # }
+
+
 
 # the following tests are for channel_addowner
 def test_channel_addowner_channel_invalid():
