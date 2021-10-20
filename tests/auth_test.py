@@ -5,6 +5,7 @@ import pytest
 from src.other import clear_v1
 from src.auth import auth_register_v1, auth_login_v1, auth_logout_v1
 from src.error import InputError
+from src.admin import admin_user_remove_id
 
 #------------------------------------------------------------
 # This block of code deals with the auth_register_v1 function
@@ -62,7 +63,6 @@ def test_auth_register_last_name_incorrect_length():
     with pytest.raises(InputError):
         auth_register_v1("john.doe7@unsw.edu.au","password","John","DoeDoeDoeDoeDoeDoeDoeDoeDoeDoeDoeDoeDoeDoeDoeDoeDoe")
 
-
 def test_auth_register_password_all_spaces():
     clear_v1()
     with pytest.raises(InputError):
@@ -74,7 +74,43 @@ def test_auth_register_first_name_special_characters():
 
 def test_auth_register_last_name_special_characters():
     clear_v1()
-    auth_register_v1("john.doe8@unsw.edu.au","password","John","$#D^^o%^&^%$e")
+    auth_register_v1("john.doe8@unsw.edu.au","password","John","Doe")
+
+# Tests wether an email is being useed, but by a removed user, thus
+# Still making it valid 
+def test_auth_register_email_used_by_removed_user():
+    clear_v1()
+    # User one should become a global admin
+    user1 = auth_register_v1("john.doe@unsw.edu.au","password","John","Doe")
+    user2 = auth_register_v1("john.do2@unsw.edu.au","password","John","Doe")
+
+    # remove the user2
+    admin_user_remove_id(user1['token'], user2['auth_user_id'])
+
+    # Register another user with the same email
+    auth_register_v1("john.do2@unsw.edu.au","password","Jane","Doe")
+
+# Tests wether a handle is being useed, but by a removed user, thus
+# Still making it valid 
+def test_auth_register_handle_used_by_removed_user():
+    clear_v1()
+
+    user1 = auth_register_v1("john.doe@unsw.edu.au","password","John","Doe")
+    user2 = auth_register_v1("john.do2@unsw.edu.au","password","Jane","Doe")
+
+    # remove the user2
+    admin_user_remove_id(user1['token'], user2['auth_user_id'])
+
+    # Register another user with the same handle
+    auth_register_v1("john.do3@unsw.edu.au","password","Jane","Doe")
+
+# Cannot test for exact in blackbox, but can test if it throws an error
+def test_longer_handle():
+    clear_v1()
+
+    auth_register_v1("john.doe@unsw.edu.au","password","John","Doe")
+    auth_register_v1("john.do2@unsw.edu.au","password","John","Doe")
+    auth_register_v1("john.do3@unsw.edu.au","password","John","Doe")
 
 #------------------------------------------------------------
 # This tests generating handles NOT BLACKBOX
@@ -189,4 +225,5 @@ def test_valid_token():
     auth_register_v1("john.doe12@unsw.edu.au","password","John","Doe")
     token = auth_login_v1("john.doe12@unsw.edu.au","password")['token']
     assert auth_logout_v1(token) == {}
+    clear_v1()
 
