@@ -27,14 +27,14 @@ def test_normal_leave(def_setup):
     u1_id = user1['auth_user_id']
     u2_tok = user2['token']
     u2_id = user2['auth_user_id']
-    user1 = {
+    u1 = {
         'u_id': u1_id,
         'email': "patrick.liang@unsw.com",
         'name_first': "Patrick",
         'name_last': "Liang",
         'handle_str': "patrickliang"
     }
-    user2 = {
+    u2 = {
         'u_id': u2_id,
         'email': "john.citizen@unsw.com",
         'name_first': "John",
@@ -47,11 +47,11 @@ def test_normal_leave(def_setup):
 
     assert dm_details_v1(u1_tok, dm_id1) == {
         'name': 'johncitizen, johndoe, patrickliang',
-        'members': [user1, user2]
+        'members': [u1, u2]
     }
     assert dm_details_v1(u1_tok, dm_id2) == {
         'name': 'johncitizen, patrickliang',
-        'members': [user1]
+        'members': [u1]
     }
     with pytest.raises(AccessError):
         dm_leave_v1(u1_tok, dm_id3)
