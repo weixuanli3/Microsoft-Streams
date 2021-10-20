@@ -284,13 +284,20 @@ def test_channel_messages_all_invalid():
         
 def test_channel_messages_valid():
     clear_v1()
-    user1_token = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['token']
+    user1 = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")
+    user1_token = user1['token']
+    user1_id = user1['auth_user_id']
     # user2_token = auth_register_v1("john.smith@aunsw.edu.au", "naisud", "John", "Smith")['token']
     chan_id = channels_create_v1(user1_token, "Channel 1", True)['channel_id']
-    message_send_v1(user1_token, chan_id, "oogoa booga")
-    message_send_v1(user1_token, chan_id, "Hi there")
-    message_send_v1(user1_token, chan_id, "#@$%^RT&Y*UIOJNK")
-    channel_messages_v1(user1_token, chan_id, 1)
+    msg1 = message_send_v1(user1_token, chan_id, "oogoa booga")
+    msg2 = message_send_v1(user1_token, chan_id, "Hi there")
+    msg3 = message_send_v1(user1_token, chan_id, "#@$%^RT&Y*UIOJNK")
+    channel_messages_v1(user1_token, chan_id, 0)
+    # assert channel_messages_v1(user1_token, chan_id, 1) == {
+    #     'messages': [{'message_id' : msg1, 'u_id' : user1_id, 'message' : "oogoa booga", 'time_created' : timestamp}],
+    #     'start': 1,
+    #     'end': 3,  
+    # }
 
 
 

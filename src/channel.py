@@ -347,12 +347,9 @@ def channel_messages_v1(token, channel_id, start):
 
     for channel in channel_data:
         if channel_id == channel['chan_id']:
-            msg.append(channel['messages'])
+            msg = channel['messages']
 
-    print(msg)
-    print(len(msg))
     msg.reverse() # Reversed so that newest message has index of 0
-    print(msg)
     if start < 0:
         raise InputError("Start cannot be negative")
     elif not msg:
