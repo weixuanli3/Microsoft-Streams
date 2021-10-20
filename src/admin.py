@@ -43,7 +43,7 @@ def admin_user_remove_id(token, u_id):
     # Scan though all chats, if they are in it, replace all their messages with 'Removed user'
     for chat in all_dms:
         if u_id in chat['members']:
-            # chat['members'].remove(u_id)
+            chat['members'].remove(u_id)
             messages = chat['messages']
 
             for message in messages:
