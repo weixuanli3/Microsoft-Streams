@@ -16,3 +16,7 @@ Current assumptions for functions:
 - Users can create channels with names that already exist (whether the channel is created by the user or by someone else), just like in the real world.
 
 - Users cannot create channels with names that are empty spaces
+
+- The tokens given will be strings
+
+- The tokens given will be of valid length
