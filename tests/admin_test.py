@@ -144,7 +144,7 @@ def test_admin_userpermission_change_only_global_owner():
 
 def test_admin_userpermission_invliad_token():
     clear_v1()
-    user1 = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")
+    auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")
     user2 = auth_register_v1("john.smith@aunsw.edu.au", "naisud", "John", "Smith")
     with pytest.raises(InputError):
         admin_userpermission_change_v1("ABC", user2['auth_user_id'], 2)
