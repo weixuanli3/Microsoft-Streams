@@ -1,4 +1,5 @@
 '''Contains function clear which clears all previously stored data'''
+# from data_store import data_store, update_permanent_storage
 from src.data_store import data_store, update_permanent_storage
 
 '''
@@ -34,6 +35,7 @@ def clear_v1():
         'users': [],
         'channels': [],
         'global_owners' : [],
+        'DMs' : []
     }
     data_store.set(store)
 

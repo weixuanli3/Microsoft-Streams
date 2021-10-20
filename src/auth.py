@@ -8,6 +8,7 @@ from src.error import InputError
 
 # from data_store import data_store, update_permanent_storage
 # from error import InputError
+# from other import clear_v1
 
 ################################
 #    Main functions for auth   #
@@ -100,8 +101,9 @@ def auth_register_v1(email, password, name_first, name_last):
     if not is_not_already_registered:
         all_users = data_store.get_data()['users']
         for user in all_users:
+            print(user['emails'], user['is_removed'])
             if user['emails'] == email and user['is_removed'] == True:
-                is_not_already_registered == True
+                is_not_already_registered = True
 
     # Check remaining conditions
     is_valid_password = len(password) >= 6 and len(password) <= 100
@@ -196,12 +198,11 @@ def generate_handle(name_first, name_last):
         all_users = data_store.get_data()['users']
         for user in all_users:
             if user['handle'] == user_handle and user['is_removed'] == True:
-                is_valid_handle == True
+                is_valid_handle = True
 
     i = 0
     while not is_valid_handle:
-        is_valid_handle = not user_handle + \
-            str(i) in data_store.get('handle')['handle']
+        is_valid_handle = not user_handle + str(i) in data_store.get('handle')['handle']
         if is_valid_handle:
             user_handle = user_handle + str(i)
         i += 1

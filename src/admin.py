@@ -3,15 +3,21 @@ from src.data_store import data_store, get_u_id
 from src.error import InputError
 from src.error import AccessError
 
+# from data_store import data_store, get_u_id
+# from error import InputError
+# from error import AccessError
+# from auth import auth_register_v1
+# from other import clear_v1
+
 def admin_user_remove_id(token, u_id):
 
     global_users = data_store.get_data()['global_owners']
 
-    if len(global_users == 1) and u_id in global_users:
+    if len(global_users) == 1 and u_id in global_users:
         raise AccessError('You cannot remove the only global user')
 
     user_ids = data_store.get('id')['id']
-    if u_id in user_ids:
+    if u_id not in user_ids:
         raise InputError('User does not exist')
 
     # Changes the user info
@@ -19,12 +25,13 @@ def admin_user_remove_id(token, u_id):
     for user in all_users:
         if user['id'] == u_id:
 
-            user['name_first'] = 'Removed'
-            user['name_last'] = 'user'
+            print("Removing",user['names'])
 
+            user['names'] = 'Removed'
+            user['name_lasts'] = 'user'
             user['channels'] = []
-
             user['is_removed'] = True
+            user['token'] = []
 
     # Remove user from all channels
     all_channels = data_store.get_data()['channels']
@@ -56,6 +63,16 @@ def admin_userpermission_change_v1(token, u_id, permission_id):
     if u_id not in all_u_ids:
         raise InputError('Not valid ID')
 
+    # Check a token is valid
+    all_tokens = data_store.get('token')['token']
+    token_exists = False
+    for user_tokens in all_tokens:
+        if token in user_tokens:
+            token_exists = True
+
+    if not token_exists:
+        raise InputError
+
     # u_id refers to a user who is the only global owner and they are being demoted to a user
     global_owners = data_store.get_data()['global_owners']
     if len(global_owners) == 1 and u_id in global_owners and permission_id == 2:
@@ -78,4 +95,3 @@ def admin_userpermission_change_v1(token, u_id, permission_id):
             raise InputError('You are changing a user to a user')
 
     return {}
-    

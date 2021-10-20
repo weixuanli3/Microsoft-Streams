@@ -1,5 +1,4 @@
 import jwt
-from src.error import InputError
 import shelve
 
 DATABASE_FILE_NAME = "src/data_base_files/database"
@@ -62,14 +61,15 @@ initial_object = {
     'users': [],
     'channels': [], 
     'global_owners': [],
+    'DMs' : []
 }
 
 ## YOU SHOULD MODIFY THIS OBJECT ABOVE
 
 def get_u_id(token):
-    """given a token, return user ID"""
-    '''Will raise error if token does not exist, so make sure to 
+    '''given a token, return user ID Will raise error if token does not exist, so make sure to 
     only input valid tokens, or to try, except'''
+
     decoded_token = jwt.decode(token, "IAmNotSureReally", algorithms=["HS256"])
     return decoded_token['u_id']
 
