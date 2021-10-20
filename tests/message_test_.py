@@ -183,7 +183,9 @@ def test_message_edit_msg_DM_valid():
     user2_id = auth_register_v1("john.smith@aunsw.edu.au", "naisud", "John", "Smith")['auth_user_id']
     dm1_id = dm_create_v1(token1, [user2_id])['dm_id']
     msg1_id = message_senddm_v1(token1, dm1_id, "Hi there!")['message_id']
+    msg2_id = message_senddm_v1(token1, dm1_id, "Hey there!")['message_id']
     message_edit_v1(token1, msg1_id, "Hi there!")
+    message_edit_v1(token1, msg2_id, "Hi there!")
 
 def test_message_edit_msg_valid():
     clear_v1()
@@ -192,13 +194,39 @@ def test_message_edit_msg_valid():
     msg_id = message_send_v1(token1, channel_id, "Hi there!")['message_id']
     message_edit_v1(token1, msg_id, "Hi there!")
 
-def test_message_edit_msg_id_not_sent_by_non_owner():
+def test_message_edit_msg_empty():
+    clear_v1()
+    token1 = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['token']
+    channel_id = channels_create_v1(token1, "Channel 1", True)['channel_id']
+    msg_id = message_send_v1(token1, channel_id, "Hi there!")['message_id']
+    message_edit_v1(token1, msg_id, "")
+
+def test_message_edit_dm_msg_empty():
+    clear_v1()
+    token1 = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['token']
+    user2_id = auth_register_v1("john.smith@aunsw.edu.au", "naisud", "John", "Smith")['auth_user_id']
+    dm1_id = dm_create_v1(token1, [user2_id])['dm_id']
+    msg_id = message_senddm_v1(token1, dm1_id, "Hi there!")['message_id']
+    message_edit_v1(token1, msg_id, "")
+
+def test_message_edit_msg_id_not_sent_by_non_owner_channel():
     clear_v1()
     token1 = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['token']
     token2 = auth_register_v1("john.smith@aunsw.edu.au", "naisud", "John", "Smith")['token']
     channel_id = channels_create_v1(token1, "Channel 1", True)['channel_id']
     channel_join_v1(token2, channel_id)
     msg1_id = message_send_v1(token1, channel_id, "Hi there!")['message_id']
+    with pytest.raises(AccessError): 
+        message_edit_v1(token2, msg1_id, "Hi there!")
+
+def test_message_edit_msg_id_not_sent_by_non_owner_dm():
+    clear_v1()
+    token1 = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['token']
+    return2 = auth_register_v1("john.smith@aunsw.edu.au", "naisud", "John", "Smith")
+    token2 = return2['token']
+    user2_id = return2['auth_user_id']
+    dm_id = dm_create_v1(token1, [user2_id])['dm_id']
+    msg1_id = message_senddm_v1(token1, dm_id, "Hi there!")['message_id']
     with pytest.raises(AccessError): 
         message_edit_v1(token2, msg1_id, "Hi there!")
 
@@ -231,17 +259,13 @@ def test_message_remove_msg_not_part_of_channel():
 def test_message_remove_msg_not_part_of_DM_user_in():
     clear_v1()
     return1 = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")
-    return2 = auth_register_v1("john.smith@aunsw.edu.au", "naisud", "John", "Smith")
+    token2 = auth_register_v1("john.smith@aunsw.edu.au", "naisud", "John", "Smith")['token']
     token1 = return1['token']
-    token2 = return2['token']
     user1_id = return1['auth_user_id']
-    user2_id = return2['auth_user_id']
-    dm1_id = dm_create_v1(token1, [user1_id])['dm_id']
-    dm2_id = dm_create_v1(token1, [user2_id])['dm_id']
-    message_senddm_v1(token1, dm1_id, "Hi there!")
-    msg2_id = message_senddm_v1(token2, dm2_id, "Hi there!")
+    dm1_id = dm_create_v1(token2, [user1_id])['dm_id']
+    msg1_id = message_senddm_v1(token2, dm1_id, "Hi there!")
     with pytest.raises(InputError): 
-        message_remove_v1(token1, msg2_id)
+        message_remove_v1(token1, msg1_id)
 
 def test_message_remove_msg_DM_valid():
     clear_v1()
@@ -251,6 +275,8 @@ def test_message_remove_msg_DM_valid():
     user2_id = return2['auth_user_id']
     dm1_id = dm_create_v1(token1, [user2_id])['dm_id']
     msg1_id = message_senddm_v1(token1, dm1_id, "Hi there!")['message_id']
+    msg2_id = message_senddm_v1(token1, dm1_id, "Hey there!")['message_id']
+    message_remove_v1(token1, msg2_id)
     message_remove_v1(token1, msg1_id)
 
 def test_message_remove_valid_channel():
@@ -286,7 +312,7 @@ def test_message_remove_msg_id_does_not_exist():
     with pytest.raises(InputError): 
         message_remove_v1(token1, 984735)
 
-def test_message_remove_msg_id_not_sent_by_non_owner():
+def test_message_remove_msg_id_not_sent_by_non_owner_channel():
     clear_v1()
     token1 = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['token']
     token2 = auth_register_v1("john.smith@aunsw.edu.au", "naisud", "John", "Smith")['token']
@@ -294,6 +320,17 @@ def test_message_remove_msg_id_not_sent_by_non_owner():
     channel_join_v1(token2, channel_id)
     message_send_v1(token1, channel_id, "Hi there!")
     msg1_id = message_send_v1(token1, channel_id, "Hi there!")['message_id']
+    with pytest.raises(AccessError): 
+        message_remove_v1(token2, msg1_id)
+
+def test_message_remove_msg_id_not_sent_by_non_owner_dm():
+    clear_v1()
+    token1 = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['token']
+    return2 = auth_register_v1("john.smith@aunsw.edu.au", "naisud", "John", "Smith")
+    token2 = return2['token']
+    user2_id = return2['auth_user_id']
+    dm_id = dm_create_v1(token1, [user2_id])['dm_id']
+    msg1_id = message_senddm_v1(token1, dm_id, "Hi there!")['message_id']
     with pytest.raises(AccessError): 
         message_remove_v1(token2, msg1_id)
 
@@ -343,7 +380,9 @@ def test_message_senddm_send_single_msg():
     token1 = return1['token']
     user2_id = return2['auth_user_id']
     dm1_id = dm_create_v1(token1, [user2_id])['dm_id']
+    dm2_id = dm_create_v1(token1, [user2_id])['dm_id']
     message_senddm_v1(token1, dm1_id, "Hi there!")
+    message_senddm_v1(token1, dm2_id, "Hi there!")
 
 def test_message_senddm_token_invalid():
     clear_v1()
