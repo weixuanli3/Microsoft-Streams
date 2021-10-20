@@ -53,7 +53,9 @@ Example Storage: (Joseph)
                 'messages': []
             },
         ],
-        'global_owners':[]
+        'global_owners':[],
+        'DMs' : [],
+        'msgs' : []
     }
 '''
 ## YOU SHOULD MODIFY THIS OBJECT BELOW
