@@ -92,7 +92,6 @@ def channels_listall_v1(token):
     for user in user_data:
         if token in user['token']:
             user_exists = True
-            channel_ids = user['channels']
 
     if not user_exists:
         raise AccessError("User doesn't exist")
