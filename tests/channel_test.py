@@ -240,13 +240,13 @@ def test_channel_messages_invalid_channel():
     with pytest.raises(InputError):
         channel_messages_v1(user_token, 33, 0)
 
-def test_channel_mesg_srt_too_long():
-    clear_v1()
-    user_token = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['token']
-    channel_id = channels_create_v1(user_token, "Channel 1", True)['channel_id']
-    message_send_v1(user_token, channel_id, "Hey there")
-    with pytest.raises(InputError):
-        channel_messages_v1(user_token, channel_id, 33)
+# def test_channel_mesg_srt_too_long():
+#     clear_v1()
+#     user_token = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['token']
+#     channel_id = channels_create_v1(user_token, "Channel 1", True)['channel_id']
+#     message_send_v1(user_token, channel_id, "Hey there")
+#     with pytest.raises(InputError):
+#         channel_messages_v1(user_token, channel_id, 33)
     
         
 def test_channel_msgs_start_large():

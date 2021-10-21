@@ -101,7 +101,10 @@ def dm_list_v1(token):
     for dm in dm_data:
         for dm_members in dm['members']:    
             if user_id == dm_members['u_id']:
-                dms.append(dm)
+                dms.append({
+                    'dm_id': dm['dm_id'],
+                    'name': dm['name']
+                })
     
     # for dm in dm_data:
     #     if user_id in dm['members']:
@@ -211,13 +214,13 @@ def dm_leave_v1(token, dm_id):
     if dm_id_valid and not user_in_dm:
         raise AccessError("User is not a member of the DM")
     
-       # check if user not in dm
-    for dm in dm_data:
-        if dm_id == dm['dm_id']:
-            for dm_members in dm['members']:    
-                if user_id == dm_members['u_id']:
-                    user_in_dm = True
-                    # dm.remove(dm_members)
+    #    # check if user not in dm
+    # for dm in dm_data:
+    #     if dm_id == dm['dm_id']:
+    #         for dm_members in dm['members']:    
+    #             if user_id == dm_members['u_id']:
+    #                 user_in_dm = True
+    #                 # dm.remove(dm_members)
 
     if not dm_id_valid:
         raise InputError("dm_id does not refer to a valid DM")
