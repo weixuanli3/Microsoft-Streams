@@ -63,7 +63,7 @@ def channel_invite_v1(token, channel_id, u_id):
     channel_exists = False
     auth_user_in_channel = False
     user_valid_member = True
-    auth_user_valid = False
+    # auth_user_valid = False
 
     for channel in channel_data:
         # check if the channel exists and if the auth_user is in the channel
@@ -76,8 +76,8 @@ def channel_invite_v1(token, channel_id, u_id):
         if u_id in channel['users_id'] and channel_id == channel['chan_id']:
             user_valid_member = False
         # check if auth_user refers to a user not in channel
-        if auth_user_id in channel['users_id']:
-            auth_user_valid = True
+        # if auth_user_id in channel['users_id']:
+        #     auth_user_valid = True
 
     if not channel_exists:
         raise InputError("Channel ID not valid")
