@@ -63,20 +63,21 @@ def channel_invite_v1(token, channel_id, u_id):
     channel_exists = False
     auth_user_in_channel = False
     user_valid_member = True
-    auth_user_valid = False
+    # auth_user_valid = False
 
     for channel in channel_data:
         # check if the channel exists and if the auth_user is in the channel
         if channel_id == channel['chan_id']:
             channel_exists = True
+            curr_channel = channel
             if auth_user_id in channel['users_id']:
                 auth_user_in_channel = True
         # check if the u_id refers to a user not aready in the channel
         if u_id in channel['users_id'] and channel_id == channel['chan_id']:
             user_valid_member = False
         # check if auth_user refers to a user not in channel
-        if auth_user_id in channel['users_id']:
-            auth_user_valid = True
+        # if auth_user_id in channel['users_id']:
+        #     auth_user_valid = True
 
     if not channel_exists:
         raise InputError("Channel ID not valid")
@@ -87,13 +88,11 @@ def channel_invite_v1(token, channel_id, u_id):
     if not user_valid_member:
         raise InputError("User is already a member of the channel")
 
-    if not auth_user_valid:
-        raise AccessError("Auth user id does not refer to a valid user")
+    # if not auth_user_valid:
+    #     raise AccessError("Auth user id does not refer to a valid user")
 
     # Add user_id to the channel
-    for channel in channel_data:
-        if (channel['chan_id']) == (channel_id):
-            channel['users_id'].append(u_id)
+    curr_channel['users_id'].append(u_id)
 
     # Add channel_id to the user
     for user in user_data:
@@ -326,6 +325,7 @@ def channel_messages_v1(token, channel_id, start):
     for channel in channel_data:
         if channel_id == channel['chan_id']:
             channel_exists = True
+            curr_channel = channel
             if auth_user_id in channel['users_id']:
                 auth_user_in_channel = True
 
@@ -345,11 +345,10 @@ def channel_messages_v1(token, channel_id, start):
 
     msg = []
 
-    for channel in channel_data:
-        if channel_id == channel['chan_id']:
-            msg = channel['messages']
+    msg = curr_channel['messages']
 
     msg.reverse() # Reversed so that newest message has index of 0
+    print(msg)
     if start < 0:
         raise InputError("Start cannot be negative")
     elif not msg:
@@ -424,13 +423,13 @@ def channel_join_v1(token, channel_id):
     
     # check if the user exists
     user_data = data_store.get_data()['users']
-    user_exists = False
-    for user in user_data:
-        if auth_user_id == user['id']:
-            user_exists = True
+    # user_exists = False
+    # for user in user_data:
+    #     if auth_user_id == user['id']:
+    #         user_exists = True
 
-    if not user_exists:
-        raise AccessError("User doesn't exist")
+    # if not user_exists:
+    #     raise AccessError("User doesn't exist")
 
     #check if the user is a global
     global_data = data_store.get_data()['global_owners']
@@ -447,6 +446,7 @@ def channel_join_v1(token, channel_id):
     for channel in channel_data:
         if channel_id == channel['chan_id']:
             channel_exists = True
+            curr_channel = channel
 
             # check if the user is aready in the channel
             if auth_user_id in channel['users_id']:
@@ -461,9 +461,7 @@ def channel_join_v1(token, channel_id):
         raise InputError("Channel doesn't exist")
 
     # Add user_id to the channel
-    for channel in channel_data:
-        if (channel['chan_id']) == (channel_id):
-            channel['users_id'].append(auth_user_id)
+    curr_channel['users_id'].append(auth_user_id)
 
     # Add channel_id to the user
     for user in user_data:
@@ -531,6 +529,7 @@ def channel_add_owner_v1(token, channel_id, u_id):
         # check if the channel exists and if the auth_user is in the channel
         if channel_id == channel['chan_id']:
             channel_exists = True
+            curr_channel = channel
             if get_u_id(token) in channel['users_id']:
                 token_in_channel = True
             if u_id in channel['users_id']:
@@ -566,22 +565,9 @@ def channel_add_owner_v1(token, channel_id, u_id):
     if not user_exists:
         raise InputError("u_id does not refer to a valid user")
     
+    
     token_in_channel = False
     user_in_channel = False
-    
-    for channel in channel_data:
-        # check if the channel exists and if the auth_user is in the channel
-        if channel_id == channel['chan_id']:
-            if get_u_id(token) in channel['users_id']:
-                token_in_channel = True
-            if u_id in channel['users_id']:
-                user_in_channel = True    
-                
-    if not token_in_channel:
-        raise AccessError("User isn't part of the channel")
-
-    if not user_in_channel:
-        raise InputError("u_id isn't part of the channel")
     
     token_is_owner = False
     user_is_owner = False
@@ -589,16 +575,30 @@ def channel_add_owner_v1(token, channel_id, u_id):
     # check if global owner
     if get_u_id(token) in global_data:
         token_is_owner = True
+        token_in_channel = True
     if u_id in global_data:
         user_is_owner = True
+        user_in_channel = True
+    
+   
+        # check if the channel exists and if the auth_user is in the channel
+    if get_u_id(token) in curr_channel['users_id']:
+        token_in_channel = True
+    if u_id in curr_channel['users_id']:
+        user_in_channel = True    
+                
+    if not token_in_channel:
+        raise AccessError("User isn't part of the channel")
+
+    if not user_in_channel:
+        raise InputError("u_id isn't part of the channel")
+    
     
     # check if channel owner
-    for channel in channel_data:
-        if channel['chan_id'] == channel_id:
-            if get_u_id(token) in channel['owner_id']:
-                token_is_owner = True
-            if u_id in channel['owner_id']:
-                user_is_owner = True
+    if get_u_id(token) in curr_channel['owner_id']:
+        token_is_owner = True
+    if u_id in curr_channel['owner_id']:
+        user_is_owner = True
                 
     if not token_is_owner:
         raise AccessError("User does not have owner permissions in the channel")
@@ -607,9 +607,7 @@ def channel_add_owner_v1(token, channel_id, u_id):
         raise InputError("u_id is already an owner in this channel")
     
     # add u_id as channel owner
-    for channel in channel_data:
-        if channel['chan_id'] == channel_id:
-            channel['owner_id'].append(u_id)
+    curr_channel['owner_id'].append(u_id)
             
     update_permanent_storage()
             
@@ -657,16 +655,17 @@ def channel_remove_owner_v1(token, channel_id, u_id):
         # check if the channel exists and if the auth_user is in the channel
         if channel_id == channel['chan_id']:
             channel_exists = True
+            curr_channel = channel
             if get_u_id(token) in channel['users_id']:
                 token_in_channel = True
             if u_id in channel['users_id']:
                 user_in_channel = True    
                 
-    if not token_in_channel:
-        raise AccessError("User isn't part of the channel")
-                
     if not channel_exists:
         raise InputError("Channel ID not valid")
+    
+    if not token_in_channel:
+        raise AccessError("User isn't part of the channel")
 
     if not user_in_channel:
         raise InputError("u_id isn't part of the channel")
@@ -681,12 +680,10 @@ def channel_remove_owner_v1(token, channel_id, u_id):
         user_is_owner = True
     
     # check if channel owner
-    for channel in channel_data:
-        if channel['chan_id'] == channel_id:
-            if get_u_id(token) in channel['owner_id']:
-                token_is_owner = True
-            if u_id in channel['owner_id']:
-                user_is_owner = True
+    if get_u_id(token) in curr_channel['owner_id']:
+        token_is_owner = True
+    if u_id in channel['owner_id']:
+        user_is_owner = True
                 
     if not token_is_owner:
         raise AccessError("User does not have owner permissions in the channel")
@@ -697,18 +694,14 @@ def channel_remove_owner_v1(token, channel_id, u_id):
     only_owner = True
     
     # check if only owner
-    for channel in channel_data:
-        if channel['chan_id'] == channel_id:
-            if channel['owner_id'] != [u_id]:
-                only_owner = False
+    if channel['owner_id'] != [u_id]:
+        only_owner = False
     
     if only_owner:
         raise InputError("u_id is the only owner of the channel")
     
     # remove u_id as channel owner
-    for channel in channel_data:
-        if channel['chan_id'] == channel_id:
-            channel['owner_id'].remove(u_id)
+    curr_channel['owner_id'].remove(u_id)
         
     update_permanent_storage()
     
