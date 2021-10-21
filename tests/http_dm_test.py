@@ -26,20 +26,17 @@ def default_setup():
         "name_first": "John",
         "name_last": "Doe"
     }
-    resp = requests.post(f"{url}auth/register/v2", data=json.dumps(user1)).json()
-    u1_tok = resp['token']
-    u1_id = resp['auth_user_id']
-    resp = requests.post(f"{url}auth/register/v2", data=json.dumps(user2)).json()
-    u2_tok = resp['token']
-    u2_id = resp['auth_user_id']
-    resp = requests.post(f"{url}auth/register/v2", data=json.dumps(user3)).json()
-    u3_tok = resp['token']
-    u3_id = resp['auth_user_id']
-    return (u1_tok, u1_id, u2_tok, u2_id, u3_tok, u3_id)
+    u1 = requests.post(f"{url}auth/register/v2", data=json.dumps(user1)).json()
+    u2 = requests.post(f"{url}auth/register/v2", data=json.dumps(user2)).json()
+    u3 = requests.post(f"{url}auth/register/v2", data=json.dumps(user3)).json()
+    return (u1, u2, u3)
 
 
 def test_dm_create_invalid_id(default_setup):
-    u1_tok, u1_id, u2_tok, u2_id, u3_tok, u3_id = default_setup
+    u1, u2, u3 = default_setup
+    u1_tok = u1['token']
+    u2_id = u2['auth_user_id']
+    u3_id = u3['auth_user_id']
     input0 = {
         "token": u1_tok,
         "u_ids": [u3_id + u2_id]
@@ -55,7 +52,11 @@ def test_dm_create_invalid_id(default_setup):
     assert response1.status_code == InputError.code
 
 def test_dm_create_valid(default_setup):
-    u1_tok, u1_id, u2_tok, u2_id, u3_tok, u3_id = default_setup
+    u1, u2, u3 = default_setup
+    u1_tok = u1['token']
+    u2_tok = u2['token']
+    u2_id = u2['auth_user_id']
+    u3_id = u3['auth_user_id']
     input0 = {
         "token": u1_tok,
         "u_ids": [u2_id, u3_id]
@@ -74,7 +75,10 @@ def test_dm_create_valid(default_setup):
 
 # not a member and then invalid dm id
 def test_dm_details_invalid(default_setup):
-    u1_tok, u1_id, u2_tok, u2_id, u3_tok, u3_id = default_setup
+    u1, u2, u3 = default_setup
+    u1_tok = u1['token']
+    u2_id = u2['auth_user_id']
+    u3_tok = u3['token']
     input0 = {
         "token": u1_tok,
         "dm_id": 23
@@ -97,7 +101,11 @@ def test_dm_details_invalid(default_setup):
     assert response2.status_code == AccessError.code
 
 def test_dm_details_valid(default_setup):
-    u1_tok, u1_id, u2_tok, u2_id, u3_tok, u3_id = default_setup
+    u1, u2, u3 = default_setup
+    u1_tok = u1['token']
+    u1_id = u1['auth_user_id']
+    u2_id = u2['auth_user_id']
+    u3_id = u3['auth_user_id']
     user1 = {
         "u_id": u1_id,
         "email": "patrick.liang@unsw.com",
