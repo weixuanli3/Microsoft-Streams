@@ -3,35 +3,18 @@ from src.data_store import data_store, get_u_id
 from src.error import InputError
 from src.error import AccessError
 
-# from data_store import data_store, get_u_id
-# from error import InputError
-# from error import AccessError
-# from auth import auth_register_v1
-# from other import clear_v1
-
 def admin_user_remove_id(token, u_id):
 
     global_users = data_store.get_data()['global_owners']
 
+    # Removing only global user
     if len(global_users) == 1 and u_id in global_users:
         raise AccessError('You cannot remove the only global user')
 
+    # Checks if user does not exist
     user_ids = data_store.get('id')['id']
     if u_id not in user_ids:
         raise InputError('User does not exist')
-
-    # Changes the user info
-    all_users = data_store.get_data()['users']
-    for user in all_users:
-        if user['id'] == u_id:
-
-            print("Removing",user['names'])
-
-            user['names'] = 'Removed'
-            user['name_lasts'] = 'user'
-            user['channels'] = []
-            user['is_removed'] = True
-            user['token'] = []
 
     # Remove user from all channels
     all_channels = data_store.get_data()['channels']
@@ -39,16 +22,39 @@ def admin_user_remove_id(token, u_id):
         if u_id in channel['users_id']:
             channel['users_id'].remove(u_id)
 
-    all_dms = data_store.get_data()['DMs']
-    # Scan though all chats, if they are in it, replace all their messages with 'Removed user'
-    for chat in all_dms:
-        if u_id in chat['members']:
-            chat['members'].remove(u_id)
-            messages = chat['messages']
+    # Find correct user
+    all_users = data_store.get_data()['users']
+    for user in all_users:
+        if user['id'] == u_id:
+            currect_user = user
 
-            for message in messages:
-                if message['u_id'] == u_id:
-                    message['message'] = 'Removed user'
+    # Scan though all chats, if they are in it, replace all their messages with 'Removed user'
+    all_dms = data_store.get_data()['DMs']
+    for chat in all_dms:
+        for users in chat['members']:
+            if u_id == users['u_id'] :
+                chat['members'].remove({
+                    'u_id': currect_user['id'],
+                    'email': currect_user['emails'],
+                    'name_first': currect_user['names'],
+                    'name_last': currect_user['name_lasts'],
+                    'handle_str': currect_user['handle']
+                    }
+                )
+                messages = chat['messages']
+
+                for message in messages:
+                    if message['u_id'] == u_id:
+                        message['message'] = 'Removed user'
+
+    # Changes the user info
+    # print("Removing",user['names'])
+
+    currect_user['names'] = 'Removed'
+    currect_user['name_lasts'] = 'user'
+    currect_user['channels'] = []
+    currect_user['is_removed'] = True
+    currect_user['token'] = []
 
     return {}
 
