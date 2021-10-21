@@ -241,27 +241,28 @@ def dm_messages_v1(token, dm_id, start):
     # test if user is in dm
     user_in_dm = False
     # test if dm_id is valid
-    dm_id_valid = False
+    dm_is_valid = False
     
     for dm in dm_data:
         if dm_id == dm['dm_id']:
-            dm_id_valid = True
-            if user_id in dm['members']:
-                user_in_dm = True
+            dm_is_valid = True
+            for dm_members in dm['members']:    
+                if user_id == dm_members['u_id']:
+                    user_in_dm = True
 
     if not user_in_dm:
         raise AccessError("User is not a member of the DM")
 
-    if not dm_id_valid:
+    if not dm_is_valid:
         raise InputError("dm_id does not refer to a valid DM")
     
     msg = []
     
     for dm in dm_data:
         if dm_id == dm['dm_id']:
-            msg.append(dm['messages'])
+            msg = (dm['messages'])
     
-    msg = msg.reverse()
+    msg.reverse()
     
     if start < 0:
         raise InputError("Start cannot be negative")
@@ -272,13 +273,13 @@ def dm_messages_v1(token, dm_id, start):
 
     # If there are e.g. 50 messages and start = 30, can only return 20, end = -1
     if len(msg) < (start + 50):
-        return_messages = msg[start:-1]
+        return_messages = msg[start:]
         end = -1
     else: # If there are e.g. 100 messages and start = 30, returns 30 up to 80, end = 80
         return_messages = msg[start:start + 50]
         end = start + 50
 
-    return_dictionary['messages'].append(return_messages)
+    return_dictionary['messages'] = return_messages
     return_dictionary['start'] = start
     return_dictionary['end'] = end
 

@@ -167,4 +167,4 @@ def test_sethandle_valid_test(registered_user):
     result = user_profile_v1(registered_user_token, registered_user_id)['handle_str']
     expected = "johnDoe"
     assert result == expected
-
+    clear_v1()

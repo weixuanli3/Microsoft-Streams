@@ -11,7 +11,7 @@ from src.error import AccessError
 from src.other import clear_v1
 from src.data_store import Datastore, data_store, get_u_id
 from src.admin import admin_user_remove_id, admin_userpermission_change_v1
-from src.dm import dm_create_v1, dm_details_v1, dm_list_v1
+from src.dm import dm_create_v1, dm_details_v1, dm_messages_v1
 from src.message import message_senddm_v1
 
 # Tests for admin/user/remove/v1
@@ -67,27 +67,41 @@ def test_admin_user_remove_id_removed_from_channels():
 
     assert expected == result
 
-# def test_admin_user_remove_id_remove_from_dms():
-#     clear_v1()
-#     user1_data = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")
-#     user2_data = auth_register_v1("john.doe1@aunsw.edu.au","password","Jane","Doe")
+# THis test will forever make me want to not be here
+# POTENTIAL FIX
+def test_admin_user_remove_id_remove_from_dms():
+    clear_v1()
+    user1_data = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")
+    user2_data = auth_register_v1("john.doe1@aunsw.edu.au","password","Jane","Doe")
 
-#     dm_id = dm_create_v1(user1_data['token'], [user2_data['auth_user_id']])
-#     message_senddm_v1( user1_data['token'], dm_id['dm_id'], "This is a message")
+    dm_id = dm_create_v1(user1_data['token'], [user2_data['auth_user_id']])
 
-#     # Is rhe name geenrated in alphbetical order of handles?
-#     # Is auth creater put into the members list?
+    message_senddm_v1(user1_data['token'], dm_id['dm_id'], "I will removed you")
+    message_senddm_v1(user2_data['token'], dm_id['dm_id'], "I want to be banned")
+    
+    admin_user_remove_id(user1_data['token'], user2_data['auth_user_id'])
+    # Is rhe name geenrated in alphbetical order of handles?
+    # Is auth creater put into the members list?
 
-#     dm_details = dm_details_v1(user1_data['token'], dm_id['dm_id'])
+    dm_details = dm_details_v1(user1_data['token'], dm_id['dm_id'])
 
-#     expected_dm_details = {
-#         'name' : user1_data['handle'] + ',',
-#         'members' : [ user1_data['auth_user_id'] ]
-#     }
+    expected_dm_details = {
+        'name' : 'janedoe, johndoe',
+        'members' : [ {
+                'u_id': user1_data['auth_user_id'],
+                'email': 'john.doe@aunsw.edu.au',
+                'name_first': 'John',
+                'name_last': 'Doe',
+                'handle_str': 'johndoe'
+            } ]
+    }
 
-#     assert dm_details == expected_dm_details
+    assert dm_details == expected_dm_details
 
+    message = dm_messages_v1(user1_data['token'], dm_id['dm_id'], 0)['messages'][0]['message']
+    expected_message = 'Removed user'
 
+    assert message == expected_message
 
 # Tests for admin/userpermission/change/v1
 
@@ -198,3 +212,5 @@ def test_admin_userpermission_change_user_to_user():
 
     with pytest.raises(InputError):
         admin_userpermission_change_v1(user1_data['token'], user2_data['auth_user_id'], 2)
+
+    clear_v1()

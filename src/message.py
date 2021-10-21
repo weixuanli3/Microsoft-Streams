@@ -158,9 +158,10 @@ def message_senddm_v1(token, dm_id, message):
     for dm in dm_data:
         if dm_id == dm['dm_id']:
             dm_exists = True
-            if user_id in dm['members']:
-                user_in_dm = True
-
+            for dm_members in dm['members']:    
+                if user_id == dm_members['u_id']:
+                    user_in_dm = True
+ 
     if not dm_exists:
         raise InputError("DM ID not valid")
 
