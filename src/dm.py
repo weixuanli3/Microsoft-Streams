@@ -246,8 +246,9 @@ def dm_messages_v1(token, dm_id, start):
     for dm in dm_data:
         if dm_id == dm['dm_id']:
             dm_id_valid = True
-            if user_id in dm['members']:
-                user_in_dm = True
+            for dm_members in dm['members']:
+                if user_id == dm_members['u_id']:
+                    user_in_dm = True
 
     if not user_in_dm:
         raise AccessError("User is not a member of the DM")
@@ -287,4 +288,3 @@ def dm_messages_v1(token, dm_id, start):
     return return_dictionary
         
     #Return type {messages, start, end}
-    
