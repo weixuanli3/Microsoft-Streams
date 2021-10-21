@@ -79,15 +79,15 @@ def channel_invite():
 @APP.route("/channel/details/v2", methods=['GET'])
 def channel_details():
     token = request.args.get('token')
-    channel_id = request.args.get('channel_id')
+    channel_id = int(request.args.get('channel_id'))
     return json.dumps(channel_details_v1(token, channel_id))
 
 # Get channel number of channel messages
 @APP.route("/channel/messages/v2", methods=['GET'])
 def channel_messages():
     token = request.args.get('token')
-    channel_id = request.args.get('channel_id')
-    start = request.args.get('start')
+    channel_id = int(request.args.get('channel_id'))
+    start = int(request.args.get('start'))
     return json.dumps(channel_messages_v1(token, channel_id, start))
 
 # Make a particular channel
@@ -159,7 +159,7 @@ def dm_remove():
 @APP.route("/dm/details/v1", methods=['GET'])
 def dm_details():
     token = request.args.get('token')
-    dm_id = request.args.get('dm_id')
+    dm_id = int(request.args.get('dm_id'))
     return json.dumps(dm_details_v1(token, dm_id))
 
 # Make a user leave a channel
@@ -172,8 +172,8 @@ def dm_leave():
 @APP.route("/dm/messages/v1", methods=['GET'])
 def dm_messages():
     token = request.args.get('token')
-    dm_id = request.args.get('dm_id')
-    start = request.args.get('start')
+    dm_id = int(request.args.get('dm_id'))
+    start = int(request.args.get('start'))
     return json.dumps(dm_messages_v1(token, dm_id, start))
 
 ##########OTHER.PY##########
@@ -204,7 +204,7 @@ def clear():
 @APP.route("/user/profile/v1", methods=['GET'])
 def user_profile():
     token = request.args.get('token')
-    u_id = request.args.get('u_id')
+    u_id = int(request.args.get('u_id'))
     return json.dumps(user_profile_v1(token, u_id))
 
 # 
@@ -257,4 +257,4 @@ def message_senddm():
 
 if __name__ == "__main__":
     signal.signal(signal.SIGINT, quit_gracefully) # For coverage
-    APP.run(port=config.port, debug=True) # Do not edit this port
+    APP.run(port=config.port) # Do not edit this port

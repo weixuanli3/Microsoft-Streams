@@ -1,41 +1,63 @@
-'''Contains tests for channel.py'''
 import pytest
-
+import requests
+import json
+from src.error import AccessError, InputError
+from src.request_helper_functions import *
+from src.config import url
 from src.auth import auth_logout_v1, auth_register_v1
 from src.channels import channels_create_v1
 from src.channel import channel_invite_v1, channel_leave_v1, channel_messages_v1
 from src.channel import channel_join_v1, channel_remove_owner_v1, channel_add_owner_v1
 from src.channel import channel_details_v1
 from src.message import message_send_v1
-from src.error import InputError
-from src.error import AccessError
 from src.other import clear_v1
 from src.data_store import get_u_id
 
-# The following tests are for channel_invite_v1
-def test_channel_invite_channel_invalid():
-    clear_v1()
-    user1_token = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['token']
-    user2_id = auth_register_v1("john.smith@aunsw.edu.au", "naisud", "John", "Smith")['auth_user_id']
-    channels_create_v1(user1_token, "Channel 1", True)['channel_id']
-    with pytest.raises(InputError):
-        channel_invite_v1(user1_token, 2, user2_id)
+@pytest.fixture
+def default_setup():
+    clear_req()
+    u1 = auth_register_req("patrick.liang@unsw.com", "katrick", "Patrick", "Liang")
+    u2 = auth_register_req("john.citizen@unsw.com", "password", "John", "Citizen")
+    u3 = auth_register_req("john.doe@unsw.com", "bruhyikes", "John", "Doe")
+    return (u1, u2, u3)
+
+@pytest.fixture
+def Channel_setup(default_setup):
+    u1, u2, u3 = default_setup
+    u1_tok = u1['token']
+    u2_tok = u2['token']
+    chan1_id = channels_create_req(u1_tok, "Channel 1", True)
+    chan2_id = channels_create_req(u2_tok, "Channel 2", True)
+    return (u1, u2, u3, chan1_id, chan2_id)
+
+
+def test_invite_invalid_channel(default_setup):
+    u1, u2, u3 = default_setup
+    u1_tok = u1['token']
+    u2_id = u2['auth_user_id']
+    u3_id = u3['auth_user_id']
+    channels_create_req(u1_tok, "Channel 1", True)
+    assert channel_invite_req(u1_tok, 33, u2_id)['code'] == InputError.code
+    channels_create_req(u2['token'], "Channel 2", True)
+    assert channel_invite_req(u2['token'], 44, u3_id)['code'] == InputError.code
+
+
 
 def test_channel_invite_uid_invalid():
-    clear_v1()
-    user1_token = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['token']
-    channel1_id = channels_create_v1(user1_token, "Channel 1", True)['channel_id']
-    with pytest.raises(InputError):
-        channel_invite_v1(user1_token, channel1_id, 22)
+    clear_req()
+    u1 = auth_register_req("patrick.liang@unsw.com", "katrick", "Patrick", "Liang")
+    chan1_id = channels_create_req(u1['token'], "Channel 1", True)
+    assert channel_invite_req(u1['token'], chan1_id, 22)['code'] == InputError.code
 
-def test_channel_invite_uid_in_channel():
-    clear_v1()
-    user1_token = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['token']
-    user2_token = auth_register_v1("john.smith@aunsw.edu.au", "naisud", "John", "Smith")['token']
-    channel1_id = channels_create_v1(user1_token, "Channel 1", True)['channel_id']
-    channel_join_v1(user2_token, channel1_id)
-    with pytest.raises(InputError):
-        channel_invite_v1(user1_token, channel1_id, get_u_id(user2_token))
+def test_channel_invite_uid_in_channel(Channel_setup):
+    u1, u2, u3, chan1_id, chan2_id = Channel_setup
+    u1_tok = u1['token']
+    u2_id = u2['auth_user_id']
+    u3_id = u3['auth_user_id']
+    channel_join_req(u2['token'], chan1_id)
+    channel_join_req(u3['token'], chan2_id)
+    assert channel_invite_req(u1['token'], chan1_id, u2_id)['code'] == InputError.code
+    assert channel_invite_req(u2['token'], chan2_id, u3_id)['code'] == InputError.code
 
 def test_channel_invite_auth_not_in_channel():
     clear_v1()

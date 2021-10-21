@@ -36,7 +36,7 @@ def auth_login_v1(email, password):
     user_data = data_store.get_data()['users']
     # -1 should never be an actual user ID
     for users in user_data:
-        if (users['emails'], users['passwords']) == (email, password):
+        if (users['emails'], users['passwords']) == (email, str(hash(password))):
             user_id = users['id']
 
             token = generate_token(users)
@@ -123,7 +123,7 @@ def auth_register_v1(email, password, name_first, name_last):
             'names': name_first,
             'name_lasts': name_last,
             'emails': email,
-            'passwords': password,
+            'passwords': str(hash(password)),
             'handle': generate_handle(name_first, name_last),
             'channels': [],
             'token' : [],
