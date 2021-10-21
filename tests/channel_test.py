@@ -196,8 +196,9 @@ def test_channel_details_valid_private_channel():
 def test_channel_details_non_existant_channel():
     clear_v1()
     user_token = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['token']
-    # with pytest.raises(InputError):
-    channel_details_v1(user_token, 33)
+    channels_create_v1(user_token, "channel1", True)
+    with pytest.raises(InputError):
+        channel_details_v1(user_token, 33)
 
 def test_channel_details_not_in_channel():
     clear_v1()
@@ -248,12 +249,18 @@ def test_channel_mesg_srt_too_long():
         channel_messages_v1(user_token, channel_id, 33)
     
         
-def test_channel_messages_start_too_large():
+def test_channel_msgs_start_large():
     clear_v1()
     user_token = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['token']
     channel_id = channels_create_v1(user_token, "Channel 1", True)['channel_id']
     with pytest.raises(InputError):
         channel_messages_v1(user_token, channel_id, 33)
+        
+def test_channel_msgs_start_zero():
+    clear_v1()
+    user_token = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['token']
+    channel_id = channels_create_v1(user_token, "Channel 1", True)['channel_id']
+    channel_messages_v1(user_token, channel_id, 0)
         
 def test_channel_messages_start_negative():
     clear_v1()
@@ -401,6 +408,7 @@ def test_channel_addowner_channel_invalid():
     clear_v1()
     token = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['token']
     user_id = auth_register_v1("jade.lee@aunsw.edu.au","password","Jade","Lee")['auth_user_id']
+    channels_create_v1(token, "Channel1", True)
     with pytest.raises(InputError):
         channel_add_owner_v1(token, 4, user_id)
 
@@ -485,6 +493,7 @@ def test_channel_removeowner_channel_invalid():
     clear_v1()
     token = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['token']
     user_id = auth_register_v1("jade.lee@aunsw.edu.au","password","Jade","Lee")['auth_user_id']
+    channels_create_v1(token, "Channel1", True)
     with pytest.raises(InputError):
         channel_remove_owner_v1(token, 22, user_id)
         
