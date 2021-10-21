@@ -246,7 +246,7 @@ def dm_messages_v1(token, dm_id, start):
     for dm in dm_data:
         if dm_id == dm['dm_id']:
             dm_is_valid = True
-            for dm_members in dm['members']:    
+            for dm_members in dm['members']:
                 if user_id == dm_members['u_id']:
                     user_in_dm = True
 
@@ -288,4 +288,3 @@ def dm_messages_v1(token, dm_id, start):
     return return_dictionary
         
     #Return type {messages, start, end}
-    

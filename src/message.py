@@ -82,24 +82,20 @@ def message_edit_v1(token, message_id, message):
     # then check if user sent the msg or has perms in channel
     for channel in channel_data:
         for msg in channel['messages']:
-            if msg['message_id'] == message_id:
-                if user_id in channel['users_id']:
-                    message_id_valid = True
-                    if msg['u_id'] == user_id or user_id in channel['owner_id']:
-                        user_has_perm = True
-                else:
-                    raise InputError("User not in channel/DM of message")
+            if msg['message_id'] == message_id and user_id in channel['users_id']:
+                message_id_valid = True
+                if msg['u_id'] == user_id or user_id in channel['owner_id']:
+                    user_has_perm = True
 
     # check if message_id refers to a valid msg within DM user is in
     for dm in dm_data:
         for msg in dm['messages']:
             if msg['message_id'] == message_id:
-                if user_id in dm['members'] or user_id == dm['owner']:
-                    message_id_valid = True
-                    if msg['u_id'] == user_id or user_id == dm['owner']:
-                        user_has_perm = True
-                else:
-                    raise InputError("User not in channel/DM of message")
+                for members in dm['members']:
+                    if user_id == members['u_id']:
+                        message_id_valid = True
+                        if msg['u_id'] == user_id or user_id == dm['owner']:
+                            user_has_perm = True
 
     if not message_id_valid:
         raise InputError("message_id is not valid")
@@ -119,9 +115,6 @@ def message_edit_v1(token, message_id, message):
                 else:
                     msg['message'] = message
 
-                update_permanent_storage()
-                return {}
-
     # editing msg in DM
     for dm in dm_data:
         for msg in dm['messages']:
@@ -131,8 +124,8 @@ def message_edit_v1(token, message_id, message):
                 else:
                     msg['message'] = message
 
-                update_permanent_storage()
-                return {}
+    update_permanent_storage()
+    return {}
 
 def message_senddm_v1(token, dm_id, message):
     # Check if a token is valid
@@ -158,10 +151,10 @@ def message_senddm_v1(token, dm_id, message):
     for dm in dm_data:
         if dm_id == dm['dm_id']:
             dm_exists = True
-            for dm_members in dm['members']:    
-                if user_id == dm_members['u_id']:
+            for members in dm['members']:
+                if user_id == members['u_id']:
                     user_in_dm = True
- 
+
     if not dm_exists:
         raise InputError("DM ID not valid")
 
@@ -212,24 +205,20 @@ def message_remove_v1(token, message_id):
     # then check if user sent the msg or has perms in channel
     for channel in channel_data:
         for msg in channel['messages']:
-            if msg['message_id'] == message_id:
-                if user_id in channel['users_id']:
-                    message_id_valid = True
-                    if msg['u_id'] == user_id or user_id in channel['owner_id']:
-                        user_has_perm = True
-                else:
-                    raise InputError("User not in channel/DM of message")
+            if msg['message_id'] == message_id and user_id in channel['users_id']:
+                message_id_valid = True
+                if msg['u_id'] == user_id or user_id in channel['owner_id']:
+                    user_has_perm = True
 
     # check if message_id refers to a valid msg within DM user is in
     for dm in dm_data:
         for msg in dm['messages']:
             if msg['message_id'] == message_id:
-                if user_id in dm['members'] or user_id == dm['owner']:
-                    message_id_valid = True
-                    if msg['u_id'] == user_id or user_id == dm['owner']:
-                        user_has_perm = True
-                else:
-                    raise InputError("User not in channel/DM of message")
+                for members in dm['members']:
+                    if user_id == members['u_id']:
+                        message_id_valid = True
+                        if msg['u_id'] == user_id or user_id == dm['owner']:
+                            user_has_perm = True
 
     if not message_id_valid:
         raise InputError("message_id is not valid")
@@ -243,7 +232,6 @@ def message_remove_v1(token, message_id):
             if msg['message_id'] == message_id:
                 channel['messages'].remove(msg)
                 update_permanent_storage()
-                return {}
 
     # removing msg in DM
     for dm in dm_data:
@@ -251,4 +239,5 @@ def message_remove_v1(token, message_id):
             if msg['message_id'] == message_id:
                 dm['messages'].remove(msg)
                 update_permanent_storage()
-                return {}
+
+    return {}

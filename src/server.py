@@ -78,35 +78,38 @@ def channel_invite():
 # Get channel details
 @APP.route("/channel/details/v2", methods=['GET'])
 def channel_details():
-    request_data = request.get_json()
-    return json.dumps(channel_details_v1(request_data['token'], request_data['channel_id']))
+    token = request.args.get('token')
+    channel_id = int(request.args.get('channel_id'))
+    return json.dumps(channel_details_v1(token, channel_id))
 
 # Get channel number of channel messages
 @APP.route("/channel/messages/v2", methods=['GET'])
 def channel_messages():
-    request_data = request.get_json()
-    return json.dumps(channel_messages_v1(request_data['token'], request_data['channel_id'], request_data['start']))
+    token = request.args.get('token')
+    channel_id = int(request.args.get('channel_id'))
+    start = int(request.args.get('start'))
+    return json.dumps(channel_messages_v1(token, channel_id, start))
 
 # Make a particular channel
-@APP.route("/channel/channel_join/v2", methods=['POST'])
+@APP.route("/channel/join/v2", methods=['POST'])
 def channel_join():
     request_data = request.get_json(force = True)
     return json.dumps(channel_join_v1(request_data['token'], request_data['channel_id']))
 
 # Leave a particular channel
-@APP.route("/channel/channel_leave/v1", methods=['POST'])
+@APP.route("/channel/leave/v1", methods=['POST'])
 def channel_leave():
     request_data = request.get_json(force = True)
     return json.dumps(channel_leave_v1(request_data['token'], request_data['channel_id']))
 
 # Make a particular channel
-@APP.route("/channel/channel_add_owner/v1", methods=['POST'])
+@APP.route("/channel/addowner/v1", methods=['POST'])
 def channel_add_owner():
     request_data = request.get_json(force = True)
     return json.dumps(channel_add_owner_v1(request_data['token'], request_data['channel_id'], request_data['u_id']))
 
 # Make a particular channel
-@APP.route("/channel/channel_remove_owner/v1", methods=['POST'])
+@APP.route("/channel/removeowner/v1", methods=['POST'])
 def channel_remove_owner():
     request_data = request.get_json(force = True)
     return json.dumps(channel_remove_owner_v1(request_data['token'], request_data['channel_id'], request_data['u_id']))
@@ -115,19 +118,19 @@ def channel_remove_owner():
 ##########CHANNELS.PY##########
 
 # List channels user part of
-@APP.route("/channels/channels_list/v2", methods=['GET'])
+@APP.route("/channels/list/v2", methods=['GET'])
 def channels_list():
-    request_data = request.get_json()
-    return json.dumps(channels_list_v1(request_data['token']))
+    token = request.args.get('token')
+    return json.dumps(channels_list_v1(token))
 
 # List all channels
-@APP.route("/channels/channels_listall/v2", methods=['GET'])
+@APP.route("/channels/listall/v2", methods=['GET'])
 def channels_listall():
-    request_data = request.get_json()
-    return json.dumps(channels_listall_v1(request_data['token']))
+    token = request.args.get('token')
+    return json.dumps(channels_listall_v1(token))
 
 # Create a channel
-@APP.route("/channels/channels_create/v2", methods=['POST'])
+@APP.route("/channels/create/v2", methods=['POST'])
 def channels_create():
     request_data = request.get_json(force = True)
     return json.dumps(channels_create_v1(request_data['token'], request_data['name'], request_data['is_public']))
@@ -135,45 +138,48 @@ def channels_create():
 ##########DM.PY##########
 
 # Create a dm
-@APP.route("/channels/dm_create/v1", methods=['POST'])
+@APP.route("/dm/create/v1", methods=['POST'])
 def dm_create():
     request_data = request.get_json(force = True)
     return json.dumps(dm_create_v1(request_data['token'], request_data['u_ids']))
 
 # List DMs
-@APP.route("/channels/dm_list/v1", methods=['GET'])
+@APP.route("/dm/list/v1", methods=['GET'])
 def dm_list():
-    request_data = request.get_json()
-    return json.dumps(dm_list_v1(request_data['token']))
+    token = request.args.get('token')
+    return json.dumps(dm_list_v1(token))
 
 # Remove a user from the channel
-@APP.route("/channels/dm_remove/v1", methods=['DELETE'])
+@APP.route("/dm/remove/v1", methods=['DELETE'])
 def dm_remove():
     request_data = request.get_json(force = True)
     return json.dumps(dm_remove_v1(request_data['token'], request_data['dm_id']))
 
 # Give details of DM
-@APP.route("/channels/dm_details/v1", methods=['GET'])
+@APP.route("/dm/details/v1", methods=['GET'])
 def dm_details():
-    request_data = request.get_json()
-    return json.dumps(dm_details_v1(request_data['token'], request_data['dm_id']))
+    token = request.args.get('token')
+    dm_id = int(request.args.get('dm_id'))
+    return json.dumps(dm_details_v1(token, dm_id))
 
 # Make a user leave a channel
-@APP.route("/channels/dm_leave/v1", methods=['POST'])
+@APP.route("/dm/leave/v1", methods=['POST'])
 def dm_leave():
     request_data = request.get_json(force = True)
     return json.dumps(dm_leave_v1(request_data['token'], request_data['dm_id']))
 
 # DM messages
-@APP.route("/channels/dm_messages/v1", methods=['GET'])
+@APP.route("/dm/messages/v1", methods=['GET'])
 def dm_messages():
-    request_data = request.get_json()
-    return json.dumps(dm_messages_v1(request_data['token'], request_data['dm_id'], request_data['start']))
+    token = request.args.get('token')
+    dm_id = int(request.args.get('dm_id'))
+    start = int(request.args.get('start'))
+    return json.dumps(dm_messages_v1(token, dm_id, start))
 
 ##########OTHER.PY##########
       
 # Clear
-@APP.route("/clear/v2", methods=['DELETE'])
+@APP.route("/clear/v1", methods=['DELETE'])
 def clear():
     return json.dumps(clear_v1())
 
@@ -197,14 +203,15 @@ def clear():
 # 
 @APP.route("/user/profile/v1", methods=['GET'])
 def user_profile():
-    request_data = request.get_json()
-    return json.dumps(user_profile_v1(request_data['token'], request_data['u_id']))
+    token = request.args.get('token')
+    u_id = int(request.args.get('u_id'))
+    return json.dumps(user_profile_v1(token, u_id))
 
 # 
 @APP.route("/users/all/v1", methods=['GET'])
 def users_all():
-    request_data = request.get_json()
-    return json.dumps(users_all_v1(request_data['token']))
+    token = request.args.get('token')
+    return json.dumps(users_all_v1(token))
 
 # 
 @APP.route("/user/profile/setname/v1", methods=['PUT'])
@@ -250,4 +257,4 @@ def message_senddm():
 
 if __name__ == "__main__":
     signal.signal(signal.SIGINT, quit_gracefully) # For coverage
-    APP.run(port=config.port, debug=True) # Do not edit this port
+    APP.run(port=config.port) # Do not edit this port
