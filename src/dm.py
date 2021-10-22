@@ -253,7 +253,7 @@ def dm_messages_v1(token, dm_id, start):
                 if user_id == dm_members['u_id']:
                     user_in_dm = True
 
-    if not user_in_dm:
+    if not user_in_dm and dm_is_valid:
         raise AccessError("User is not a member of the DM")
 
     if not dm_is_valid:
