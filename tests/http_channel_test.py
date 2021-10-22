@@ -2,7 +2,7 @@ import pytest
 import requests
 import json
 from src.error import AccessError, InputError
-from src.request_helper_functions import *
+from other_functions.request_helper_functions import *
 from src.config import url
 from src.auth import auth_logout_v1, auth_register_v1
 from src.channels import channels_create_v1

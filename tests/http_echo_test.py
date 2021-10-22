@@ -2,7 +2,7 @@ import pytest
 import requests
 import json
 from src.error import InputError
-from src.request_helper_functions import *
+from other_functions.request_helper_functions import *
 from src.config import url
 
 
