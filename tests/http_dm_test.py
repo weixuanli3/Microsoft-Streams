@@ -227,3 +227,73 @@ def test_dm_remove_invalid(dms_setup):
     assert dm_remove_req(u1_tok, dm_id2)['code'] == AccessError.code
     assert dm_remove_req(u2_tok, dm_id1)['code'] == AccessError.code
     assert dm_remove_req(u3_tok, dm_id1)['code'] == AccessError.code
+
+def test_dm_messages_valid_less_than_50(dms_setup):
+    u1, u2, u3, dm_id1, dm_id2 = dms_setup
+    u1_tok = u1['token']
+    u1_id = u1['auth_user_id']
+    u2_tok = u2['token']
+    u2_id = u2['auth_user_id']
+    u3_tok = u3['token']
+    u3_id = u3['auth_user_id']
+    m1 = message_senddm_req(u1_tok, dm_id1, "Hey everyone")['message_id']
+    m2 = message_senddm_req(u2_tok, dm_id1, "Hello")['message_id']
+    m3 = message_senddm_req(u3_tok, dm_id1, "G'day")['message_id']
+    dm_msg = dm_messages_req(u1_tok, dm_id1, 0)
+    msgs = [
+        "Hey everyone",
+        "Hello",
+        "G'day"
+    ]
+    msg_ids = [m3, m2, m1]
+    u_ids = [u3_id, u2_id, u1_id]
+    assert dm_msg['start'] == 0
+    assert dm_msg['end'] == -1
+    for i in range(0, 3):
+        assert dm_msg['messages'][i]['message_id'] == msg_ids[i]
+        assert dm_msg['messages'][i]['u_id'] == u_ids[i]
+        assert dm_msg['messages'][i]['message'] == msgs[2 - i]
+
+def test_dm_messages_valid_more_than_50(default_setup):
+    u1, u2, u3 = default_setup
+    u1_tok = u1['token']
+    u1_id = u1['auth_user_id']
+    u2_tok = u2['token']
+    u2_id = u2['auth_user_id']
+    u3_tok = u3['token']
+    u3_id = u3['auth_user_id']
+    dm_id1 = dm_create_req(u1_tok, [u2_id, u3_id])['dm_id']
+    msgs = [str(i) for i in range(0, 72)]
+    u_ids = [u1_id, u2_id, u3_id]
+    tokens = [u1_tok, u2_tok, u3_tok]
+    msg_ids = []
+    for i in range(0, 72):
+        msg_ids.append(message_senddm_req(tokens[i % 3], dm_id1, msgs[i])['message_id'])
+    dm_msg = dm_messages_req(u1_tok, dm_id1, 0)
+    messages = dm_msg['messages']
+    assert dm_msg['start'] == 0
+    assert dm_msg['end'] == 50
+    for i in range(0, 50):
+        assert messages[i]['message_id'] == msg_ids[71 - i]
+        assert messages[i]['u_id'] == u_ids[(71 - i) % 3]
+        assert messages[i]['message'] == msgs[71 - i]
+    
+
+def test_dm_messages_invalid(dms_setup):
+    u1, u2, u3, dm_id1, dm_id2 = dms_setup
+    u1_tok = u1['token']
+    u2_tok = u2['token']
+    u3_tok = u3['token']
+    # Test an invalid dm_id
+    dm_id3 = dm_id1 + dm_id2 + 123
+    assert dm_messages_req(u1_tok, dm_id3, 0)['code'] == InputError.code
+    # Test if the start is greater than the number of messages
+    m1 = message_senddm_req(u1_tok, dm_id1, "Hey everyone")['message_id']
+    m2 = message_senddm_req(u2_tok, dm_id1, "Hello")['message_id']
+    assert dm_messages_req(u3_tok, dm_id1, 5)['code'] == InputError.code
+    # Test if the user is not in the dm
+    assert dm_messages_req(u1_tok, dm_id2, 5)['code'] == AccessError.code
+    # Test if the start index is negative
+    assert dm_messages_req(u3_tok, dm_id1, -23)['code'] == InputError.code
+    # Test if there are no messages to display
+    assert dm_messages_req(u2_tok, dm_id2, 4)['code'] == InputError.code
