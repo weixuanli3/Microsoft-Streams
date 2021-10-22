@@ -169,7 +169,12 @@ def message_senddm_v1(token, dm_id, message):
     time = datetime.now()
     timestamp = int(datetime.timestamp(time))
 
-    message = {'message_id' : message_id, 'u_id' : user_id, 'message' : message, 'time_created' : timestamp}
+    message = {
+        'message_id' : message_id,
+        'u_id' : user_id,
+        'message' : message,
+        'time_created' : timestamp
+    }
 
     # adding message to dm_data
     for dm in dm_data:
