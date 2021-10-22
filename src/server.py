@@ -13,6 +13,7 @@ from src.dm import dm_create_v1, dm_list_v1, dm_remove_v1, dm_details_v1, dm_lea
 from src.user import users_all_v1, user_profile_v1, user_profile_setname_v1, user_profile_setemail_v1, user_profile_sethandle_v1
 from src.message import message_send_v1, message_edit_v1, message_senddm_v1, message_remove_v1
 from src.other import clear_v1
+from src.admin import admin_user_remove_id, admin_userpermission_change_v1
 import src.data_store
 import json
 
@@ -185,17 +186,17 @@ def clear():
 
 ##########ADMIN.PY##########
 
-# # Admin remove
-# @APP.route("/admin/user/remove/v1", methods=['DELETE'])
-# def admin_remove():
-#     request_data = request.get_json()
-#     return json.dumps(admin_user_remove_v1(request_data['token'], request_data['u_id']))
+# Admin remove
+@APP.route("/admin/user/remove/v1", methods=['DELETE'])
+def admin_remove():
+    request_data = request.get_json()
+    return json.dumps(admin_user_remove_id(request_data['token'], request_data['u_id']))
 
-# # Admin user permisions
-# @APP.route("/admin/userpermission/change/v1", methods=['POST'])
-# def admin_change():
-#     request_data = request.get_json()
-#     return json.dumps(admin_userpermission_change_v1(request_data['token'], request_data['u_id'], request_data['permission_id']))
+# Admin user permisions
+@APP.route("/admin/userpermission/change/v1", methods=['POST'])
+def admin_change():
+    request_data = request.get_json()
+    return json.dumps(admin_userpermission_change_v1(request_data['token'], request_data['u_id'], request_data['permission_id']))
 
 
 ##########USER.PY##########
