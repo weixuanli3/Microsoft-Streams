@@ -1,5 +1,6 @@
 import pytest
 from src.auth import auth_register_v1, auth_login_v1
+from src.admin import admin_user_remove_id
 from src.other import clear_v1
 from src.user import user_profile_setemail_v1, user_profile_sethandle_v1, user_profile_setname_v1, users_all_v1, user_profile_v1
 from src.error import InputError
@@ -28,17 +29,29 @@ The following tests make some assumptions based on the gitlab doc!
 #     result = users_all_v1(registered_user_token)
 #     expected = {}
 #     assert result == expected
-def test_invlaid_token():
+
+def test_invalid_token():
     clear_v1()
+    auth_register_v1('jane.doe@unsw.edu.au', '123123', 'jane', 'Doe')
     registered_user_token = 'HMMMMM'
-  
     with pytest.raises(InputError):
         users_all_v1(registered_user_token)
-# def test_valid_test(registered_user):
-#     registered_user_token = registered_user['token']
-#     result = users_all_v1(registered_user_token)
-#     expected = {}
-#     assert result == expected
+
+def test_valid_test(registered_user):
+    user_data = registered_user
+    user_id = auth_register_v1('jane.doe@unsw.edu.au', '123123', 'jane', 'Doe')['auth_user_id']
+    admin_user_remove_id(user_data['token'], user_id)
+    result = users_all_v1(user_data['token'])
+    expected = {
+        'users':[{
+            'email': 'john.doe@unsw.edu.au',
+            'handle_str': 'johndoe',
+            'name_first': 'John',
+            'name_last': 'Doe',
+            'u_id': 1
+        }]
+    }
+    assert result == expected
 #################################
 #       user/profile/v1         #
 #################################
@@ -97,6 +110,7 @@ def test_setname_invlid_token(registered_user):
         user_profile_setname_v1("dOEID", "Janet", "Doe")
 
 def test_setname_valid_test(registered_user):
+    auth_register_v1('jane.doe@unsw.edu.au', '123123', 'jane', 'Doe')
     registered_user_token = registered_user['token']
     registered_user_id = registered_user['auth_user_id']
     returned = user_profile_setname_v1(registered_user_token, "Janet", "Doe")
@@ -124,6 +138,7 @@ def test_setmail_invlid_token(registered_user):
         user_profile_setemail_v1("EFSE", "john.doe1@unsw.edu.au")
 
 def test_setmail_valid_test(registered_user):
+    auth_register_v1('jane.doe@unsw.edu.au', '123123', 'jane', 'Doe')
     registered_user_token = registered_user['token']
     registered_user_id = registered_user['auth_user_id']
     returned = user_profile_setemail_v1(registered_user_token, "janet.doe@unsw.ed.au")
@@ -160,6 +175,7 @@ def test_sethandle_invlid_token(registered_user):
         user_profile_sethandle_v1("EFSE", "johnDoe12")
 
 def test_sethandle_valid_test(registered_user):
+    auth_register_v1('jane.doe@unsw.edu.au', '123123', 'jane', 'Doe')
     registered_user_token = registered_user['token']
     registered_user_id = registered_user['auth_user_id']
     returned = user_profile_sethandle_v1(registered_user_token, "johnDoe")

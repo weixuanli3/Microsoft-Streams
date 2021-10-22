@@ -225,3 +225,8 @@ def admin_userpermission_change_req(token, u_id, permission_id):
 def clear_req():
     requests.delete(f"{url}clear/v1")
 
+def echo_req(value):
+    input_data = {
+        'value': value
+    }
+    return requests.get(f"{url}echo", params=input_data).json()

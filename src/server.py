@@ -6,6 +6,7 @@ from flask_cors import CORS
 from src.error import InputError
 from src import config
 from src.auth import auth_login_v1, auth_register_v1, auth_logout_v1
+from src.admin import admin_user_remove_id, admin_userpermission_change_v1
 from src.channel import channel_invite_v1, channel_details_v1, channel_messages_v1
 from src.channel import channel_join_v1, channel_leave_v1, channel_add_owner_v1, channel_remove_owner_v1
 from src.channels import  channels_list_v1, channels_listall_v1, channels_create_v1
@@ -13,6 +14,7 @@ from src.dm import dm_create_v1, dm_list_v1, dm_remove_v1, dm_details_v1, dm_lea
 from src.user import users_all_v1, user_profile_v1, user_profile_setname_v1, user_profile_setemail_v1, user_profile_sethandle_v1
 from src.message import message_send_v1, message_edit_v1, message_senddm_v1, message_remove_v1
 from src.other import clear_v1
+from src.echo import echo
 import src.data_store
 import json
 
@@ -41,13 +43,9 @@ APP.register_error_handler(Exception, defaultHandler)
 
 # Example
 @APP.route("/echo", methods=['GET'])
-def echo():
-    data = request.args.get('data')
-    if data == 'echo':
-   	    raise InputError(description='Cannot echo "echo"')
-    return dumps({
-        'data': data
-    })
+def echo_route():
+    value = request.args.get('value')
+    return json.dumps(echo(value))
 
 ##########AUTH.PY##########
 # Register a user
@@ -185,17 +183,17 @@ def clear():
 
 ##########ADMIN.PY##########
 
-# # Admin remove
-# @APP.route("/admin/user/remove/v1", methods=['DELETE'])
-# def admin_remove():
-#     request_data = request.get_json()
-#     return json.dumps(admin_user_remove_v1(request_data['token'], request_data['u_id']))
+# Admin remove
+@APP.route("/admin/user/remove/v1", methods=['DELETE'])
+def admin_remove():
+    request_data = request.get_json()
+    return json.dumps(admin_user_remove_id(request_data['token'], request_data['u_id']))
 
-# # Admin user permisions
-# @APP.route("/admin/userpermission/change/v1", methods=['POST'])
-# def admin_change():
-#     request_data = request.get_json()
-#     return json.dumps(admin_userpermission_change_v1(request_data['token'], request_data['u_id'], request_data['permission_id']))
+# Admin user permisions
+@APP.route("/admin/userpermission/change/v1", methods=['POST'])
+def admin_change():
+    request_data = request.get_json()
+    return json.dumps(admin_userpermission_change_v1(request_data['token'], request_data['u_id'], request_data['permission_id']))
 
 
 ##########USER.PY##########
@@ -240,7 +238,7 @@ def message_send():
 @APP.route("/message/edit/v1", methods=['PUT'])
 def message_edit():
     request_data = request.get_json(force = True)
-    return json.dumps(message_edit_v1(request_data['token'], request_data['message_id '], request_data['message']))
+    return json.dumps(message_edit_v1(request_data['token'], request_data['message_id'], request_data['message']))
 
 @APP.route("/message/remove/v1", methods=['DELETE'])
 def message_delete():
