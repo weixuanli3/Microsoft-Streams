@@ -34,7 +34,6 @@ def Channel_setup(default_setup):
 def Channel_setup_one(default_setup):
     u1, u2, u3 = default_setup
     u1_tok = u1['token']
-    u2_tok = u2['token']
     chan1_id = channels_create_req(u1_tok, "Channel 1", True)['channel_id']
     return (u1, u2, u3, chan1_id)
 
@@ -59,7 +58,6 @@ def test_channel_invite_uid_invalid():
 
 def test_channel_invite_uid_in_channel(Channel_setup):
     u1, u2, u3, chan1_id, chan2_id = Channel_setup
-    u1_tok = u1['token']
     u2_id = u2['auth_user_id']
     u3_id = u3['auth_user_id']
     channel_join_req(u2['token'], chan1_id)
@@ -94,10 +92,12 @@ def test_channel_invite_user_id_empty(Channel_setup):
 def test_channel_invite_no_channels(default_setup):
     u1, u2, u3 = default_setup
     assert channel_invite_req(u1['token'], 1, u3['auth_user_id'])['code'] == InputError.code
+    assert channel_invite_req(u1['token'], 1, u2['auth_user_id'])['code'] == InputError.code
 
 def test_channel_invite_auth_id_invalid(Channel_setup):
     u1, u2, u3, chan1_id, chan2_id = Channel_setup
-    
+    channel_join_req(u1['token'], chan2_id)
+    channel_join_req(u2['token'], chan1_id)
     assert channel_invite_req("", chan1_id, u3['auth_user_id'])['code'] == AccessError.code
     assert channel_invite_req("", chan2_id, u3['auth_user_id'])['code'] == AccessError.code
 
@@ -113,13 +113,17 @@ def test_channel_invite_all_invalid():
     assert channel_invite_req("", "", "")['code'] == AccessError.code
 
 # The following tests are for channel_join
-def test_channel_join_public_channel(Channel_setup):
-    u1, u2, u3, chan1_id, chan2_id = Channel_setup
+def test_channel_join_public_channel(default_setup):
+    u1, u2, u3 = default_setup
+    chan1_id = channels_create_req(u1['token'], "Channel 1", True)['channel_id']
+    chan2_id = channels_create_req(u2['token'], "Channel 2", True)['channel_id']
     assert channel_join_req(u3['token'], chan1_id) == {}
     assert channel_join_req(u3['token'], chan2_id) == {}
 
-def test_channel_join_channel_user_aready_in(Channel_setup):
-    u1, u2, u3, chan1_id, chan2_id = Channel_setup
+def test_channel_join_channel_user_aready_in(default_setup):
+    u1, u2, u3 = default_setup
+    chan1_id = channels_create_req(u1['token'], "Channel 1", True)['channel_id']
+    chan2_id = channels_create_req(u2['token'], "Channel 2", True)['channel_id']
     channel_join_req(u3['token'], chan1_id)
     channel_join_req(u3['token'], chan2_id)
     
@@ -163,8 +167,10 @@ def test_channel_join_channel_user_token_empty():
     chan_id = channels_create_req(u1['token'], "Channel 1", True)['channel_id']
     assert channel_join_req("", chan_id)['code'] == AccessError.code
 
-def test_channel_join_channel_channel_id_empty(Channel_setup):
-    u1, u2, u3, chan1_id, chan2_id = Channel_setup
+def test_channel_join_channel_channel_id_empty(default_setup):
+    u1, u2, u3 = default_setup
+    channels_create_req(u1['token'], "Channel 1", False)['channel_id']
+    channels_create_req(u2['token'], "Channel 2", False)['channel_id']
     assert channel_join_req(u1['token'], "")['code'] == InputError.code
     assert channel_join_req(u2['token'], "")['code'] == InputError.code
     assert channel_join_req(u3['token'], "")['code'] == InputError.code
@@ -212,9 +218,13 @@ def test_channel_details_valid_private_channel(default_setup):
     }
     
 def test_channel_details_non_existant_channel(default_setup):
-    u1, u2, u3= default_setup
-    channels_create_req(u1['token'], "Channel 1", False)['channel_id']
+    u1, u2, u3 = default_setup
+    channels_create_req(u1['token'], "Channel 1", False)
     assert channel_details_req(u1['token'], 33)['code'] == InputError.code
+    channels_create_req(u2['token'], "Channel 2", False)
+    assert channel_details_req(u2['token'], 33)['code'] == InputError.code
+    channels_create_req(u3['token'], "Channel 3", False)
+    assert channel_details_req(u3['token'], 33)['code'] == InputError.code
 
 def test_channel_details_not_in_channel(Channel_setup):
     u1, u2, u3, chan1_id, chan2_id = Channel_setup
@@ -272,9 +282,19 @@ def test_channel_messages_start_negative(default_setup):
     assert channel_messages_req(u1['token'], chan_id, -3)['code'] == InputError.code
     assert channel_messages_req(u2['token'], chan_id, -3)['code'] == InputError.code
     assert channel_messages_req(u3['token'], chan_id, -3)['code'] == InputError.code
+    
+def test_channel_message_invalid_chan_id(default_setup):
+    u1, u2, u3 = default_setup
+    chan_id = channels_create_req(u1['token'], "Channel 1", True)['channel_id']
+    channel_join_req(u2['token'], chan_id)
+    channel_join_req(u3['token'], chan_id)
+    assert channel_messages_req(u1['token'], 4, 0)['code'] == InputError.code
+    assert channel_messages_req(u2['token'], 4, 0)['code'] == InputError.code
+    assert channel_messages_req(u3['token'], 4, 0)['code'] == InputError.code
 
 def test_channel_messages_user_not_member(Channel_setup_one):
     u1, u2, u3, chan_id = Channel_setup_one
+    channel_messages_req(u1['token'], chan_id, 0)
     assert channel_messages_req(u2['token'], chan_id, 0)['code'] == AccessError.code
     assert channel_messages_req(u3['token'], chan_id, 0)['code'] == AccessError.code
 
@@ -356,8 +376,9 @@ def test_channel_messages_valid_over_50_messages(Channel_setup_one):
     channel_messages_req(u1['token'], chan_id, 0)
 
 # the following tests are for channel_addowner
-def test_channel_addowner_channel_invalid(Channel_setup_one):
-    u1, u2, u3, chan_id = Channel_setup_one
+def test_channel_addowner_channel_invalid(default_setup):
+    u1, u2, u3 = default_setup
+    channels_create_req(u1['token'], "Channel 1", True)
     assert channel_addowner_req(u1['token'], 4, u2['auth_user_id'])['code'] == InputError.code
     assert channel_addowner_req(u1['token'], 4, u3['auth_user_id'])['code'] == InputError.code
 
@@ -381,19 +402,23 @@ def test_channel_addowner_user_valid_then_user_already_owner(Channel_setup_one):
     assert channel_addowner_req(u1['token'], chan_id, u2['auth_user_id'])['code'] == InputError.code
     assert channel_addowner_req(u1['token'], chan_id, u3['auth_user_id'])['code'] == InputError.code
     
-def test_channel_addowner_token_not_member(Channel_setup_one):
-    u1, u2, u3, chan_id = Channel_setup_one
+def test_channel_addowner_token_not_member(default_setup):
+    u1, u2, u3 = default_setup
+    chan_id = channels_create_req(u1['token'], "Channel 1", True)['channel_id']
     channel_join_req(u3['token'], chan_id)
-    assert channel_addowner_req(u2['token'], chan_id, u3['auth_user_id'])['code'] == AccessError.code)
+    assert channel_addowner_req(u2['token'], chan_id, u3['auth_user_id'])['code'] == AccessError.code
         
 def test_channel_addowner_token_not_existant(Channel_setup_one):
     u1, u2, u3, chan_id = Channel_setup_one
+    channel_join_req(u2['token'], chan_id)
     channel_join_req(u3['token'], chan_id)
     auth_logout_req(u1['token'])
     assert channel_addowner_req(u1['token'], chan_id, u3['auth_user_id'])['code'] == AccessError.code
+    assert channel_addowner_req(u1['token'], chan_id, u2['auth_user_id'])['code'] == AccessError.code
 
-def test_channel_addowner_token_not_owner(Channel_setup_one):
-    u1, u2, u3, chan_id = Channel_setup_one
+def test_channel_addowner_token_not_owner(default_setup):
+    u1, u2, u3 = default_setup
+    chan_id = channels_create_req(u1['token'], "Channel 1", True)['channel_id']
     channel_join_req(u2['token'], chan_id)
     channel_join_req(u3['token'], chan_id)
     assert channel_addowner_req(u2['token'], chan_id, u3['auth_user_id'])['code'] == AccessError.code
@@ -422,7 +447,9 @@ def test_channel_removeowner_channel_invalid(default_setup):
 def test_channel_removeowner_user_not_owner(Channel_setup_one):
     u1, u2, u3, chan_id = Channel_setup_one
     channel_join_req(u2['token'], chan_id)
+    channel_join_req(u3['token'], chan_id)
     assert channel_removeowner_req(u2['token'], chan_id, u1['auth_user_id'])['code'] == AccessError.code
+    assert channel_removeowner_req(u3['token'], chan_id, u1['auth_user_id'])['code'] == AccessError.code
 
 def test_channel_removeowner_user_invalid(Channel_setup_one):
     u1, u2, u3, chan_id = Channel_setup_one
@@ -433,8 +460,8 @@ def test_channel_removeowner_user_invalid(Channel_setup_one):
 def test_channel_removeowner_user_not_member(Channel_setup_one):
     u1, u2, u3, chan_id = Channel_setup_one
     
-    assert channel_removeowner_req(u1['token'], chan_id, u2['token'])['code'] == InputError.code
-    assert channel_removeowner_req(u1['token'], chan_id, u3['token'])['code'] == InputError.code
+    assert channel_removeowner_req(u1['token'], chan_id, u2['auth_user_id'])['code'] == InputError.code
+    assert channel_removeowner_req(u1['token'], chan_id, u3['auth_user_id'])['code'] == InputError.code
 
 def test_channel_removeowner_user_valid_then_user_not_owner(Channel_setup_one):
     u1, u2, u3, chan_id = Channel_setup_one
@@ -480,8 +507,9 @@ def test_channel_removeowner_token_not_member_valid(Channel_setup_one):
     channel_removeowner_req(u1['token'], chan_id, u1['auth_user_id'])
 
 # Tests for channel_leave
-def test_channel_leave_not_member(Channel_setup_one):
-    u1, u2, u3, chan_id = Channel_setup_one
+def test_channel_leave_not_member(default_setup):
+    u1, u2, u3 = default_setup
+    chan_id = channels_create_req(u1['token'], "Channel 1", True)['channel_id']
     assert channel_leave_req(u2['token'], chan_id)['code'] == AccessError.code
     assert channel_leave_req(u3['token'], chan_id)['code'] == AccessError.code
 
