@@ -240,7 +240,7 @@ def message_send():
 @APP.route("/message/edit/v1", methods=['PUT'])
 def message_edit():
     request_data = request.get_json(force = True)
-    return json.dumps(message_edit_v1(request_data['token'], request_data['message_id '], request_data['message']))
+    return json.dumps(message_edit_v1(request_data['token'], request_data['message_id'], request_data['message']))
 
 @APP.route("/message/remove/v1", methods=['DELETE'])
 def message_delete():
