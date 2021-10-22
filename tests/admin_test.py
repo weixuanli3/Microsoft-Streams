@@ -156,11 +156,11 @@ def test_admin_userpermission_change_only_global_owner():
     with pytest.raises(InputError):
         admin_userpermission_change_v1(user1['token'], user1['auth_user_id'], 2)
 
-def test_admin_userpermission_invliad_token():
+def test_admin_userpermission_invalid_token():
     clear_v1()
     auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")
     user2 = auth_register_v1("john.smith@aunsw.edu.au", "naisud", "John", "Smith")
-    with pytest.raises(InputError):
+    with pytest.raises(AccessError):
         admin_userpermission_change_v1("ABC", user2['auth_user_id'], 2)
 
 def test_admin_userpermission_change_permission_id_invalid():
