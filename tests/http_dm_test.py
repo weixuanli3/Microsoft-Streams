@@ -228,14 +228,15 @@ def test_dm_remove_invalid(dms_setup):
     assert dm_remove_req(u2_tok, dm_id1)['code'] == AccessError.code
     assert dm_remove_req(u3_tok, dm_id1)['code'] == AccessError.code
 
-def test_dm_messages_valid_less_than_50(dms_setup):
-    u1, u2, u3, dm_id1, dm_id2 = dms_setup
+def test_dm_messages_valid_less_than_50(default_setup):
+    u1, u2, u3 = default_setup
     u1_tok = u1['token']
     u1_id = u1['auth_user_id']
     u2_tok = u2['token']
     u2_id = u2['auth_user_id']
     u3_tok = u3['token']
     u3_id = u3['auth_user_id']
+    dm_id1 = dm_create_req(u1_tok, [u2_id, u3_id])['dm_id']
     m1 = message_senddm_req(u1_tok, dm_id1, "Hey everyone")['message_id']
     m2 = message_senddm_req(u2_tok, dm_id1, "Hello")['message_id']
     m3 = message_senddm_req(u3_tok, dm_id1, "G'day")['message_id']
@@ -288,8 +289,8 @@ def test_dm_messages_invalid(dms_setup):
     dm_id3 = dm_id1 + dm_id2 + 123
     assert dm_messages_req(u1_tok, dm_id3, 0)['code'] == InputError.code
     # Test if the start is greater than the number of messages
-    m1 = message_senddm_req(u1_tok, dm_id1, "Hey everyone")['message_id']
-    m2 = message_senddm_req(u2_tok, dm_id1, "Hello")['message_id']
+    message_senddm_req(u1_tok, dm_id1, "Hey everyone")
+    message_senddm_req(u2_tok, dm_id1, "Hello")
     assert dm_messages_req(u3_tok, dm_id1, 5)['code'] == InputError.code
     # Test if the user is not in the dm
     assert dm_messages_req(u1_tok, dm_id2, 5)['code'] == AccessError.code
