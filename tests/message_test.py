@@ -17,19 +17,13 @@ def test_message_send_channel_id_invalid():
     with pytest.raises(InputError): 
         message_send_v1(token1, 7643829, "Hi there!")
 
-def test_message_send_send_multi_msgs():
+def test_message_send_multi_msgs():
     clear_v1()
     token1 = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['token']
     channel_id = channels_create_v1(token1, "Channel 1", True)['channel_id']
     msg1_id = message_send_v1(token1, channel_id, "Hi there!")['message_id']
     msg2_id = message_send_v1(token1, channel_id, "Hi there!")['message_id']
     assert msg1_id != msg2_id
-
-def test_message_send_send_single_msgs():
-    clear_v1()
-    token1 = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['token']
-    channel_id = channels_create_v1(token1, "Channel 1", True)['channel_id'] 
-    message_send_v1(token1, channel_id, "Hi there!")
 
 def test_message_send_msg_length_too_small():
     clear_v1()
@@ -43,7 +37,7 @@ def test_message_send_msg_length_too_big():
     token1 = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['token']
     channel_id = channels_create_v1(token1, "Channel 1", True)['channel_id']
     with pytest.raises(InputError): 
-        message_edit_v1(token1, channel_id, """Altruism is the principle and moral practice of concern for 
+        message_send_v1(token1, channel_id, """Altruism is the principle and moral practice of concern for 
             happiness of other human beings or other animals, resulting in a quality of life both material and spiritual. 
             It is a traditional virtue in many cultures and a core aspect of various religious traditions and secular worldviews, 
             though the concept of others toward whom concern should be directed can vary among cultures and religions. 
@@ -330,9 +324,7 @@ def test_message_senddm_token_invalid():
 def test_invalid_dm_id():
     clear_v1()
     return1 = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")
-    return2 = auth_register_v1("john.smith@aunsw.edu.au", "naisud", "John", "Smith")
     token1 = return1['token']
-    user2_id = return2['auth_user_id']
     with pytest.raises(InputError):
         message_senddm_v1(token1, 434, "Hi there!")
 
