@@ -300,9 +300,7 @@ def test_message_senddm_token_invalid():
 def test_invalid_dm_id():
     clear_req()
     return1 = auth_register_req("john.doe@aunsw.edu.au","password","John","Doe")
-    return2 = auth_register_req("john.smith@aunsw.edu.au", "naisud", "John", "Smith")
     token1 = return1['token']
-    user2_id = return2['auth_user_id']
     assert message_senddm_req(token1, 434, "Hi there!")['code'] == InputError.code
 
 def test_message_senddm_msg_length_too_small():
