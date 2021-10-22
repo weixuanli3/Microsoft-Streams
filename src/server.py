@@ -186,13 +186,13 @@ def clear():
 # Admin remove
 @APP.route("/admin/user/remove/v1", methods=['DELETE'])
 def admin_remove():
-    request_data = request.get_json()
+    request_data = request.get_json(force = True)
     return json.dumps(admin_user_remove_id(request_data['token'], request_data['u_id']))
 
 # Admin user permisions
 @APP.route("/admin/userpermission/change/v1", methods=['POST'])
 def admin_change():
-    request_data = request.get_json()
+    request_data = request.get_json(force = True)
     return json.dumps(admin_userpermission_change_v1(request_data['token'], request_data['u_id'], request_data['permission_id']))
 
 
