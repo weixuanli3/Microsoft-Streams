@@ -23,7 +23,7 @@ def test_invalid_token():
     clear_req()
     auth_register_req('jane.doe@unsw.edu.au', '123123', 'jane', 'Doe')
     registered_user_token = 'HMMMMM'
-    assert users_all_req(registered_user_token)['code'] == InputError.code
+    assert users_all_req(registered_user_token)['code'] == AccessError.code
 
 # def test_valid_test(registered_user):
 #     token = registered_user['token']
@@ -49,7 +49,7 @@ def test_profile_user_not_found(registered_user):
 
 def test_profile_invalid_token(registered_user):
     registered_user_id = registered_user['auth_user_id']
-    assert user_profile_req("IUdbe", registered_user_id)['code'] == InputError.code
+    assert user_profile_req("IUdbe", registered_user_id)['code'] == AccessError.code
 # not sure how to test this at the moment
 # def test_profile_valid_test(registered_user):
 #     registered_user_token = registered_user['token']
@@ -88,7 +88,7 @@ def test_setname_alphanumeric(registered_user):
 
 
 def test_setname_invlid_token(registered_user):
-    assert user_profile_setname_req("dOEID", "Janet", "Doe")['code'] == InputError.code
+    assert user_profile_setname_req("dOEID", "Janet", "Doe")['code'] == AccessError.code
 
 def test_setname_valid_test(registered_user):
     auth_register_req('jane.doe@unsw.edu.au', '123123', 'jane', 'Doe')
@@ -113,7 +113,7 @@ def test_setmail_email_already_used(registered_user):
     assert user_profile_setemail_req(registered_user_token, "john.doe1@unsw.edu.au")['code'] == InputError.code
 
 def test_setmail_invlid_token(registered_user):
-    assert user_profile_setemail_req("EFSE", "john.doe1@unsw.edu.au")['code'] == InputError.code
+    assert user_profile_setemail_req("EFSE", "john.doe1@unsw.edu.au")['code'] == AccessError.code
 
 def test_setmail_valid_test(registered_user):
     auth_register_req('jane.doe@unsw.edu.au', '123123', 'jane', 'Doe')
@@ -145,7 +145,7 @@ def test_sethandle_handle_already_used(registered_user):
     assert user_profile_sethandle_req(registered_user2_token, "johndoe")['code'] == InputError.code
 
 def test_sethandle_invlid_token(registered_user):
-    assert user_profile_sethandle_req("EFSE", "johnDoe12")['code'] == InputError.code
+    assert user_profile_sethandle_req("EFSE", "johnDoe12")['code'] == AccessError.code
 
 def test_sethandle_valid_test(registered_user):
     auth_register_req('jane.doe@unsw.edu.au', '123123', 'jane', 'Doe')

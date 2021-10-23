@@ -161,11 +161,12 @@ def channel_details_v1(token, channel_id):
 
 
     return_dictionary = {
-        'name' : '',
-        'is_public' : True,
-        'owner_members' : [],
-        'all_members' : [],
+        'name': '',
+        'is_public': True,
+        'owner_members': [],
+        'all_members': [],
     }
+    
 
     owner_ids = []
     member_ids = []
@@ -289,11 +290,6 @@ def channel_messages_v1(token, channel_id, start):
     """
 
 
-    return_dictionary = {
-        'messages': [],
-    }
-
-
     
     user_data = data_store.get_data()['users']
     
@@ -304,6 +300,11 @@ def channel_messages_v1(token, channel_id, start):
 
     if not valid_token:
         raise AccessError("Invalid Token")
+    
+
+    return_dictionary = {
+        'messages': [],
+    }
     
     auth_user_id = get_u_id(token)
 
@@ -523,6 +524,14 @@ def channel_add_owner_v1(token, channel_id, u_id):
     global_data = data_store.get_data()['global_owners']
     user_data = data_store.get_data()['users']
     
+    valid_token = False
+    for user in user_data:
+        if token in user['token']:
+            valid_token = True
+
+    if not valid_token:
+        raise AccessError("Invalid Token")
+    
     channel_exists = False
     
     for channel in channel_data:
@@ -538,14 +547,6 @@ def channel_add_owner_v1(token, channel_id, u_id):
     if not channel_exists:
         raise InputError("Channel ID not valid")
 
-    
-    valid_token = False
-    for user in user_data:
-        if token in user['token']:
-            valid_token = True
-
-    if not valid_token:
-        raise AccessError("Invalid Token")
     
     # check if token user exists
     # token_exists = False

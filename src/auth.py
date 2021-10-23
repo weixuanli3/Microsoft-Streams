@@ -5,7 +5,7 @@ import jwt
 from datetime import datetime
 
 from src.data_store import data_store, update_permanent_storage
-from src.error import InputError
+from src.error import InputError, AccessError
 
 # from data_store import data_store, update_permanent_storage
 # from error import InputError
@@ -102,7 +102,7 @@ def auth_register_v1(email, password, name_first, name_last):
     if not is_not_already_registered:
         all_users = data_store.get_data()['users']
         for user in all_users:
-            print(user['emails'], user['is_removed'])
+            # print(user['emails'], user['is_removed'])
             if user['emails'] == email and user['is_removed'] == True:
                 is_not_already_registered = True
 
@@ -161,7 +161,7 @@ def auth_logout_v1(token):
         if token in user['token']:
             user['token'].remove(token)
             return {}
-    raise InputError('Could not find token')
+    raise AccessError('Could not find token')
 
 
 ################################

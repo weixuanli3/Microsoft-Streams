@@ -1,10 +1,20 @@
 '''Contains all admin related functions, such as removing users and permissions'''
-from src.data_store import data_store, get_u_id
+from src.data_store import data_store, update_permanent_storage, get_u_id
 from src.error import InputError
 from src.error import AccessError
 
 def admin_user_remove_id(token, u_id):
+    
+    # Check a token is valid
+    all_tokens = data_store.get('token')['token']
+    token_exists = False
+    for user_tokens in all_tokens:
+        if token in user_tokens:
+            token_exists = True
 
+    if not token_exists:
+        raise AccessError
+    
     global_users = data_store.get_data()['global_owners']
 
     # Removing only global user
@@ -55,7 +65,7 @@ def admin_user_remove_id(token, u_id):
     currect_user['channels'] = []
     currect_user['is_removed'] = True
     currect_user['token'] = []
-
+    update_permanent_storage()
     return {}
 
     
@@ -99,5 +109,5 @@ def admin_userpermission_change_v1(token, u_id, permission_id):
             global_owners.remove(u_id)
         else:
             raise InputError('You are changing a user to a user')
-
+    update_permanent_storage()
     return {}
