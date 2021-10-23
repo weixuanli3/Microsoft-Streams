@@ -2,6 +2,8 @@
 
 import re
 import jwt
+import hashlib
+import os
 
 from src.data_store import data_store, update_permanent_storage
 from src.error import InputError, AccessError
@@ -36,18 +38,31 @@ def auth_login_v1(email, password):
     user_data = data_store.get_data()['users']
     # -1 should never be an actual user ID
     for users in user_data:
-        if (users['emails'], users['passwords']) == (email, str(hash(password))):
-            user_id = users['id']
+        if users['emails'] == email:
 
-            token = generate_token(users)
-            users['token'].append(token)
-            
-            update_permanent_storage()
-            
-            return {
-                'token': token,
-                'auth_user_id': user_id
-            }
+            # Get the salt
+            salt = users['passwords']['salt']
+            # Get the correct key 
+            key = users['passwords']['key'] 
+
+            new_key = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), salt, 100000)
+
+            if key == new_key:
+
+                user_id = users['id']
+
+                token = generate_token(users)
+                users['token'].append(token)
+                
+                update_permanent_storage()
+                
+                return {
+                    'token': token,
+                    'auth_user_id': user_id
+                }
+
+            else:
+                raise InputError("Password is incorrect")
 
     raise InputError("Password or email is incorrect")
 
@@ -90,20 +105,7 @@ def auth_register_v1(email, password, name_first, name_last):
     name_last = regex.sub("", name_last)
 
     # Used to check that the email is valid
-    regex = r"^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}$"
-    is_valid_email = re.match(regex, email)
-
-    # Gets a dictionary for the emails ie: 'emails' : [...]
-    user_emails = data_store.get('emails')
-    is_not_already_registered = not email in user_emails['emails']
-
-    # Checks that a used email does not belong to a removed user
-    if not is_not_already_registered:
-        all_users = data_store.get_data()['users']
-        for user in all_users:
-            # print(user['emails'], user['is_removed'])
-            if user['emails'] == email and user['is_removed'] == True:
-                is_not_already_registered = True
+    is_valid_email = is_email_valid(email)
 
     # Check remaining conditions
     is_valid_password = len(password) >= 6 and len(password) <= 100
@@ -112,18 +114,28 @@ def auth_register_v1(email, password, name_first, name_last):
 
     # Check all conditions to see that a user is valid
     if (is_valid_email and is_valid_password and is_valid_name_last and
-            is_valid_name_first and is_not_already_registered):
+            is_valid_name_first):
 
         # REGISTER USER
         user_data = data_store.get_data()['users']
         new_user_id = len(user_data) + 1
+        
+        # Hashing of passwords
+        # A new salt for this user
+        salt = os.urandom(32) 
+        # High iteration number to make more secure
+        key = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), salt, 100000)
+        encrypted_password = { 
+            'salt': salt,
+            'key': key
+        }
 
         new_user = {
             'id': new_user_id,
             'names': name_first,
             'name_lasts': name_last,
             'emails': email,
-            'passwords': str(hash(password)),
+            'passwords': encrypted_password,
             'handle': generate_handle(name_first, name_last),
             'channels': [],
             'token' : [],
@@ -167,6 +179,28 @@ def auth_logout_v1(token):
 #   Helper functions for auth  #
 ################################
 
+def is_email_valid(email):
+
+    """Returns whether an email is valid or not"""
+
+    # Used to check that the email is valid
+    regex = r"^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}$"
+    is_valid_email = re.match(regex, email)
+
+    # Gets a dictionary for the emails ie: 'emails' : [...]
+    user_emails = data_store.get('emails')
+    is_not_already_registered = not email in user_emails['emails']
+
+    # Checks that a used email does not belong to a removed user
+    if not is_not_already_registered:
+        all_users = data_store.get_data()['users']
+        for user in all_users:
+            # print(user['emails'], user['is_removed'])
+            if user['emails'] == email and user['is_removed'] == True:
+                is_not_already_registered = True
+    
+    return (is_valid_email and is_not_already_registered)
+
 """
 Given a first and last name, it will generate a handle for the user.
 
@@ -180,7 +214,6 @@ Arguments: - name_first: first name of the user
             - name_last: last name of the user
 
 """
-
 
 def generate_handle(name_first, name_last):
     """Given a users first and last name, generate a handle"""
