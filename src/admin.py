@@ -60,15 +60,6 @@ def admin_user_remove_id(token, u_id):
 
     
 def admin_userpermission_change_v1(token, u_id, permission_id):
-    # permission_id is invalid
-    if permission_id not in [1,2]:
-        raise InputError('Invalid permission ID')
-
-    # u_id does not refer to a valid user
-    all_u_ids = data_store.get('id')['id']
-    if u_id not in all_u_ids:
-        raise InputError('Not valid ID')
-
     # Check a token is valid
     all_tokens = data_store.get('token')['token']
     token_exists = False
@@ -77,16 +68,25 @@ def admin_userpermission_change_v1(token, u_id, permission_id):
             token_exists = True
 
     if not token_exists:
-        raise InputError
-
-    # u_id refers to a user who is the only global owner and they are being demoted to a user
-    global_owners = data_store.get_data()['global_owners']
-    if len(global_owners) == 1 and u_id in global_owners and permission_id == 2:
-        raise InputError('You are removing the only global user')
+        raise AccessError
     
+    # permission_id is invalid
+    if permission_id not in [1,2]:
+        raise InputError('Invalid permission ID')
+
+    # u_id does not refer to a valid user
+    all_u_ids = data_store.get('id')['id']
+    if u_id not in all_u_ids:
+        raise InputError('Not valid ID')
+    
+    global_owners = data_store.get_data()['global_owners']
     # the authorised user is not a global owner
     if get_u_id(token) not in global_owners:
         raise AccessError('You need to be a global pwner to do this')
+
+    # u_id refers to a user who is the only global owner and they are being demoted to a user
+    if len(global_owners) == 1 and u_id in global_owners and permission_id == 2:
+        raise InputError('You are removing the only global user')
 
     # Change permissions
     if permission_id == 1:

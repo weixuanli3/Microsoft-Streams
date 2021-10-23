@@ -1,7 +1,7 @@
 import pytest
 from src.error import InputError
 from src.other import clear_v1
-from src.request_helper_functions import admin_user_remove_req, auth_login_req, auth_logout_req, auth_register_req, clear_req
+from other_functions.request_helper_functions import admin_user_remove_req, auth_login_req, auth_logout_req, auth_register_req, clear_req
 from src.data_store import data_store
 
 #------------------------------------------------------------
