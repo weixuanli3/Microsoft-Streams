@@ -101,7 +101,7 @@ def auth_register_v1(email, password, name_first, name_last):
     if not is_not_already_registered:
         all_users = data_store.get_data()['users']
         for user in all_users:
-            print(user['emails'], user['is_removed'])
+            # print(user['emails'], user['is_removed'])
             if user['emails'] == email and user['is_removed'] == True:
                 is_not_already_registered = True
 
