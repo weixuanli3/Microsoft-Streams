@@ -173,7 +173,7 @@ def auth_logout_v1(token):
         if token in user['token']:
             user['token'].remove(token)
             return {}
-    raise AccessError('Could not find token')
+    raise InputError('Could not find token')
 
 
 ################################
