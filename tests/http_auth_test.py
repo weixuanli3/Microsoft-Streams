@@ -89,47 +89,47 @@ def test_longer_handle():
 # from auth.py
 
 def test_auth_login_email_not_registered():
-    clear_v1()
+    clear_req()
     register_test = auth_login_req("john.doe10@unsw.edu.au","password")
     assert register_test['code'] == InputError.code
 
 def test_auth_login_email_empty():
-    clear_v1()
+    clear_req()
     auth_register_req("john.doe11@unsw.edu.au","password","John","Doe")
     register_test = auth_login_req("","password")
     assert register_test['code'] == InputError.code
 
 # The email is a user, but has the wrong password
 def test_auth_login_incorrect_password():
-    clear_v1()
+    clear_req()
     auth_register_req("john.doe12@unsw.edu.au","password","John","Doe")
     register_test = auth_login_req("john.doe12@unsw.edu.au","password123")
     assert register_test['code'] == InputError.code
 
 def test_auth_login_correct_password():
-    clear_v1()
-    user_id = auth_register_req("john.doe13@unsw.edu.au","password","John","Doe")["auth_user_id"]
+    clear_req()
+    user_id = auth_register_req("john.doe13@unsw.edu.au","password","John","Doe")['auth_user_id']
     assert auth_login_req("john.doe13@unsw.edu.au","password")['auth_user_id'] == user_id
 
-# def test_auth_login_bad_login_good_login():
-#     clear_v1()
-#     user_id = auth_register_req("john.doe@unsw.edu.au","password","John","Doe")
-#     print(user_id)
-#     # Should not work
-#     register_test = auth_login_req("john.doe@unsw.edu.au","password1")
-#     assert register_test['code'] == InputError.code
+def test_auth_login_bad_login_good_login():
+    clear_req()
+    user_id = auth_register_req("john.doe@unsw.edu.au","password","John","Doe")['auth_user_id']
+    print(user_id)
+    # Should not work
+    register_test = auth_login_req("john.doe@unsw.edu.au","password1")
+    assert register_test['code'] == InputError.code
 
     # Should return corrent login user ID
     assert auth_login_req("john.doe@unsw.edu.au","password")["auth_user_id"] == user_id
 
 def test_auth_login_password_empty():
-    clear_v1()
+    clear_req()
     auth_register_req("john.doe12@unsw.edu.au","password","John","Doe")
     register_test = auth_login_req("john.doe12@unsw.edu.au","")
     assert register_test['code'] == InputError.code
 
 def test_auth_login_pass_different_user():
-    clear_v1()
+    clear_req()
     auth_register_req("john.doe1@unsw.edu.au","password1","John","Doe")
     auth_register_req("john.doe2@unsw.edu.au","password2","John","Doe")
     register_test = auth_login_req("john.doe1@unsw.edu.au", "password2")
