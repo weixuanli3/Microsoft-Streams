@@ -219,7 +219,7 @@ def generate_token(user):
     payload = {
         "u_id" : user['id'],
         "User_session" : len(user['token']) + 1,
-        "time_generated" : datetime.now()
+        "time_generated" : int(datetime.timestamp(datetime.now()))
     }
 
     token = str(
