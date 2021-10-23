@@ -3,7 +3,7 @@ from src.auth import auth_register_v1, auth_login_v1
 from src.admin import admin_user_remove_id
 from src.other import clear_v1
 from src.user import user_profile_setemail_v1, user_profile_sethandle_v1, user_profile_setname_v1, users_all_v1, user_profile_v1
-from src.error import InputError
+from src.error import InputError, AccessError
 
 @pytest.fixture
 def registered_user():
@@ -34,7 +34,7 @@ def test_invalid_token():
     clear_v1()
     auth_register_v1('jane.doe@unsw.edu.au', '123123', 'jane', 'Doe')
     registered_user_token = 'HMMMMM'
-    with pytest.raises(InputError):
+    with pytest.raises(AccessError):
         users_all_v1(registered_user_token)
 
 def test_valid_test(registered_user):
@@ -62,7 +62,7 @@ def test_profile_user_not_found(registered_user):
 
 def test_profile_invalid_token(registered_user):
     registered_user_id = registered_user['auth_user_id']
-    with pytest.raises(InputError):
+    with pytest.raises(AccessError):
         user_profile_v1("IUdbe", registered_user_id)
 # not sure how to test this at the moment
 # def test_profile_valid_test(registered_user):
@@ -106,7 +106,7 @@ def test_setname_alphanumeric(registered_user):
 
 
 def test_setname_invlid_token(registered_user):
-    with pytest.raises(InputError):
+    with pytest.raises(AccessError):
         user_profile_setname_v1("dOEID", "Janet", "Doe")
 
 def test_setname_valid_test(registered_user):
@@ -134,7 +134,7 @@ def test_setmail_email_already_used(registered_user):
         user_profile_setemail_v1(registered_user_token, "john.doe1@unsw.edu.au")
 
 def test_setmail_invlid_token(registered_user):
-    with pytest.raises(InputError):
+    with pytest.raises(AccessError):
         user_profile_setemail_v1("EFSE", "john.doe1@unsw.edu.au")
 
 def test_setmail_valid_test(registered_user):
@@ -171,7 +171,7 @@ def test_sethandle_handle_already_used(registered_user):
         user_profile_sethandle_v1(registered_user2_token, "johndoe")
 
 def test_sethandle_invlid_token(registered_user):
-    with pytest.raises(InputError):
+    with pytest.raises(AccessError):
         user_profile_sethandle_v1("EFSE", "johnDoe12")
 
 def test_sethandle_valid_test(registered_user):

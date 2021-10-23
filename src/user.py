@@ -14,7 +14,7 @@ def users_all_v1(token):
             valid_token = True
 
     if not valid_token:
-        raise InputError("Invalid Token")
+        raise AccessError("Invalid Token")
 
     user_dict = {'users': []}
     for user in user_data:
@@ -38,7 +38,7 @@ def user_profile_v1(token, u_id):
             valid_token = True
 
     if not valid_token:
-        raise InputError("Invalid Token")
+        raise AccessError("Invalid Token")
 
     user_exists = False
     for user in user_data:
@@ -59,11 +59,6 @@ def user_profile_v1(token, u_id):
     #Return type {user}
     
 def user_profile_setname_v1(token, name_first, name_last):
-    first_name_valid = (len(name_first) in range(1, 51))
-    second_name_valid = (len(name_last) in range(1, 51))
-    if not first_name_valid or not second_name_valid:
-        raise InputError("Name is not of correct length")
-    
     user_data = data_store.get_data()['users']
     valid_token = False
     for user in user_data:
@@ -71,7 +66,14 @@ def user_profile_setname_v1(token, name_first, name_last):
             valid_token = True
 
     if not valid_token:
-        raise InputError("Invalid Token")
+        raise AccessError("Invalid Token")    
+    
+    first_name_valid = (len(name_first) in range(1, 51))
+    second_name_valid = (len(name_last) in range(1, 51))
+    if not first_name_valid or not second_name_valid:
+        raise InputError("Name is not of correct length")
+    
+
 
     # Update the name
 
@@ -91,7 +93,7 @@ def user_profile_setemail_v1(token, email):
             valid_token = True
 
     if not valid_token:
-        raise InputError("Invalid Token")
+        raise AccessError("Invalid Token")
     # Used to check that the email is valid
     regex  = r"^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}$"
     is_valid_email = re.match(regex, email)
@@ -118,7 +120,7 @@ def user_profile_sethandle_v1(token, handle_str):
             valid_token = True
 
     if not valid_token:
-        raise InputError("Invalid Token")
+        raise AccessError("Invalid Token")
 
     if len(handle_str) not in range(3, 21):
         raise InputError("Invalid length of handle_str")
