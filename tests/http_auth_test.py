@@ -142,7 +142,7 @@ def test_auth_login_pass_different_user():
 
 # POSSIBLE ASSUMPTION RASIE INPUT ERROR?
 def test_invalid_token():
-    clear_v1()
+    clear_req()
     auth_register_req("john.doe12@unsw.edu.au","password","John","Doe")
     auth_login_req("john.doe12@unsw.edu.au","password")['token']
     
@@ -158,8 +158,8 @@ def test_invalid_token():
 #       auth_logout_v1()
 
 def test_valid_token():
-    clear_v1()
+    clear_req()
     auth_register_req("john.doe12@unsw.edu.au","password","John","Doe")
     token = auth_login_req("john.doe12@unsw.edu.au","password")['token']
     assert auth_logout_req(token) == {}
-    clear_v1()
+    clear_req()
