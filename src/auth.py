@@ -2,7 +2,7 @@
 
 import re
 import jwt
-import datetime
+from datetime import datetime
 
 from src.data_store import data_store, update_permanent_storage
 from src.error import InputError
