@@ -209,7 +209,7 @@ def test_invalid_token():
     clear_v1()
     auth_register_v1("john.doe12@unsw.edu.au","password","John","Doe")
     auth_login_v1("john.doe12@unsw.edu.au","password")['token']
-    with pytest.raises(AccessError): 
+    with pytest.raises(InputError): 
       auth_logout_v1(923564)
 
 # CANNOT CALL FUNCTION WITHOUT PROPER INPUT, ERROR NOT ON SERVER SIDE   
