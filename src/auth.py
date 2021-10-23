@@ -4,6 +4,7 @@ import re
 import jwt
 import hashlib
 import os
+from datetime import datetime
 
 from src.data_store import data_store, update_permanent_storage
 from src.error import InputError, AccessError
@@ -250,7 +251,8 @@ def generate_token(user):
 
     payload = {
         "u_id" : user['id'],
-        "User_session" : len(user['token']) + 1
+        "User_session" : len(user['token']) + 1,
+        "time_generated" : int(datetime.timestamp(datetime.now()))
     }
 
     token = str(
