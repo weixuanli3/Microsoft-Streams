@@ -4,7 +4,7 @@ import pytest
 
 from src.other import clear_v1
 from src.auth import auth_register_v1, auth_login_v1, auth_logout_v1
-from src.error import InputError
+from src.error import InputError, AccessError
 from src.admin import admin_user_remove_id
 
 #------------------------------------------------------------
@@ -209,7 +209,7 @@ def test_invalid_token():
     clear_v1()
     auth_register_v1("john.doe12@unsw.edu.au","password","John","Doe")
     auth_login_v1("john.doe12@unsw.edu.au","password")['token']
-    with pytest.raises(InputError): 
+    with pytest.raises(AccessError): 
       auth_logout_v1(923564)
 
 # CANNOT CALL FUNCTION WITHOUT PROPER INPUT, ERROR NOT ON SERVER SIDE   

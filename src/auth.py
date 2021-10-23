@@ -4,7 +4,7 @@ import re
 import jwt
 
 from src.data_store import data_store, update_permanent_storage
-from src.error import InputError
+from src.error import InputError, AccessError
 
 # from data_store import data_store, update_permanent_storage
 # from error import InputError
@@ -160,7 +160,7 @@ def auth_logout_v1(token):
         if token in user['token']:
             user['token'].remove(token)
             return {}
-    raise InputError('Could not find token')
+    raise AccessError('Could not find token')
 
 
 ################################

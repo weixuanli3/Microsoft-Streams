@@ -7,6 +7,14 @@ from src.error import AccessError
 def dm_create_v1(token, u_ids):
 
     user_data = data_store.get_data()['users']
+
+    valid_token = False
+    for user in user_data:
+        if token in user['token']:
+            valid_token = True
+
+    if not valid_token:
+        raise AccessError("Invalid Token")
         
     user_exists = []
     for user in user_data:
@@ -34,13 +42,6 @@ def dm_create_v1(token, u_ids):
     #     raise InputError("At least one of the u_ids is invalid")
     
     # check if token is valid
-    valid_token = False
-    for user in user_data:
-        if token in user['token']:
-            valid_token = True
-
-    if not valid_token:
-        raise AccessError("Invalid Token")
     
     dm_data = data_store.get_data()['DMs']
     dm_id = len(dm_data) + 1
@@ -93,6 +94,16 @@ def dm_create_v1(token, u_ids):
     #Return type {dm_id}
 
 def dm_list_v1(token):
+
+    user_data = data_store.get_data()['users']
+    
+    valid_token = False
+    for user in user_data:
+        if token in user['token']:
+            valid_token = True
+
+    if not valid_token:
+        raise AccessError("Invalid Token")
     
     dm_data = data_store.get_data()['DMs']
     user_id = get_u_id(token)
@@ -116,6 +127,17 @@ def dm_list_v1(token):
     #Return type {dms}
     
 def dm_remove_v1(token, dm_id):
+
+    user_data = data_store.get_data()['users']
+    
+    valid_token = False
+    for user in user_data:
+        if token in user['token']:
+            valid_token = True
+
+    if not valid_token:
+        raise AccessError("Invalid Token")
+
     # check if the dm id is not valid
     DM_data = data_store.get_data()['DMs']
     DM_exists = False
@@ -150,7 +172,17 @@ def dm_remove_v1(token, dm_id):
     return{}
 
 def dm_details_v1(token, dm_id):
+
+    user_data = data_store.get_data()['users']
     
+    valid_token = False
+    for user in user_data:
+        if token in user['token']:
+            valid_token = True
+
+    if not valid_token:
+        raise AccessError("Invalid Token")
+
   # check if the dm id is not valid
     DM_data = data_store.get_data()['DMs']
     DM_exists = False
@@ -194,7 +226,18 @@ def dm_details_v1(token, dm_id):
     # Return type {name, members}
     
 def dm_leave_v1(token, dm_id):
-        
+
+
+    user_data = data_store.get_data()['users']
+    
+    valid_token = False
+    for user in user_data:
+        if token in user['token']:
+            valid_token = True
+
+    if not valid_token:
+        raise AccessError("Invalid Token")
+    
     dm_data = data_store.get_data()['DMs']
     user_id = get_u_id(token)
     
@@ -234,7 +277,19 @@ def dm_leave_v1(token, dm_id):
 
 def dm_messages_v1(token, dm_id, start):
     
+
+    user_data = data_store.get_data()['users']
+    
+    valid_token = False
+    for user in user_data:
+        if token in user['token']:
+            valid_token = True
+
+    if not valid_token:
+        raise AccessError("Invalid Token")
+    
     user_id = get_u_id(token)
+    
     dm_data = data_store.get_data()['DMs']
     
     return_dictionary = {
