@@ -147,6 +147,7 @@ def test_dm_leave_valid(dms_setup):
         'name': 'johncitizen, johndoe',
         'members': [user2]
     }
+
     
 def test_dm_leave_bad_token(default_setup):
     u1, u2, u3 = default_setup
