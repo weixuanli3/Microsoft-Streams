@@ -476,7 +476,8 @@ def test_channel_addowner_global_owner_adding():
     user_data = auth_register_v1("jade.lee@aunsw.edu.au","password","Jade","Lee")
     chan_id = channels_create_v1(token2, "Channel", True)['channel_id']
     channel_join_v1(user_data['token'], chan_id)
-    channel_add_owner_v1(token1, chan_id, user_data['auth_user_id'])
+    with pytest.raises(AccessError):
+        channel_add_owner_v1(token1, chan_id, user_data['auth_user_id'])
     
 def test_channel_addowner_global_owner_being_added():
     clear_v1()
@@ -484,8 +485,7 @@ def test_channel_addowner_global_owner_being_added():
     token2 = auth_register_v1("john.smith@aunsw.edu.au", "naisud", "John", "Smith")['token']
     chan_id = channels_create_v1(token2, "Channel", True)['channel_id']
     channel_join_v1(user1['token'], chan_id)
-    with pytest.raises(InputError):
-        channel_add_owner_v1(token2, chan_id, user1['auth_user_id'])
+    channel_add_owner_v1(token2, chan_id, user1['auth_user_id'])
 
 # the following tests are for channel_removeowner
         
