@@ -151,7 +151,7 @@ def test_dm_leave_valid(dms_setup):
 def test_dm_leave_bad_token(default_setup):
     u1, u2, u3 = default_setup
     
-    dm_id = dm_create_req(u1['code'], [u2['code'], u3['code']])['dm_id']
+    dm_id = dm_create_req(u1['token'], [u2['auth_user_id'], u3['auth_user_id']])['dm_id']
 
     assert dm_leave_req("efef", dm_id)['code'] == AccessError.code
 
