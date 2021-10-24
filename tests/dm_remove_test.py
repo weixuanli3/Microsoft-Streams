@@ -1,3 +1,4 @@
+'''Contains tests for dm_remove function'''
 import pytest
 from src.auth import auth_register_v1
 from src.dm import dm_create_v1, dm_list_v1, dm_remove_v1

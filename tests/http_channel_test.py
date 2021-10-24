@@ -1,3 +1,4 @@
+'''Contains http tests for channel.py'''
 import pytest
 import requests
 import json

@@ -4,7 +4,31 @@ from src.error import InputError
 from src.error import AccessError
 
 def admin_user_remove_id(token, u_id):
+    """
+    Remove a user from the Streams
     
+    Given a user by their u_id, remove them from the Streams. 
+    This means they should be removed from all channels/DMs, 
+    and will not be included in the list of users returned by users/all. 
+    Streams owners can remove other Streams owners (including the original first owner). 
+    Once users are removed, the contents of the messages they sent will be replaced by 'Removed user'. 
+    Their profile must still be retrievable with user/profile, however name_first should be 'Removed' 
+    and name_last should be 'user'. The user's email and handle should be reusable.
+
+    Args:
+        token: The generated token of user removing a user.
+        u_id: integer value id of the user being removed
+
+    Returns:
+        An empty dictionary
+
+    Raises:
+        Input Error: - Cannot remove only global user.
+                     - u_id doesn't exist
+
+        Access Error: - The token does not exist
+                      - token doesn't belong to a global user
+    """    
     # Check a token is valid
     all_tokens = data_store.get('token')['token']
     token_exists = False
@@ -85,7 +109,31 @@ def admin_user_remove_id(token, u_id):
 
     
 def admin_userpermission_change_v1(token, u_id, permission_id):
+    """
+    Changes a user's permissions
+    
+    Given a user by their user ID, set their permissions to new 
+    permissions described by permission_id.
 
+    Args:
+        token: The generated token of user changing a user's
+        permissions.
+        u_id: integer value id of the userwhose permissions
+        are being changed.
+
+    Returns:
+        An empty dictionary
+
+    Raises:
+        Input Error: - Invalid permission id.
+                     - u_id doesn't exist
+                     - changing global user to a gloabl user
+                     - changing a user to a user
+
+        Access Error: - The token does not exist
+                      - token doesn't belong to a global user
+                      - changing permission of only global user
+    """
     # Check a token is valid
     all_tokens = data_store.get('token')['token']
     token_exists = False
