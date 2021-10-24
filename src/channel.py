@@ -508,7 +508,7 @@ def channel_leave_v1(token, channel_id):
     return {}
 
 def channel_add_owner_v1(token, channel_id, u_id):
-"""
+    """
     Adds a user already in the channel as an owner
 
 
@@ -630,7 +630,7 @@ def channel_add_owner_v1(token, channel_id, u_id):
     #Return type {}
     
 def channel_remove_owner_v1(token, channel_id, u_id):
-"""
+    """
     Removes a user from the owner status in the channel
 
 
