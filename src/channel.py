@@ -339,7 +339,7 @@ def channel_messages_v1(token, channel_id, start):
 
     # If there are e.g. 50 messages and start = 30, can only return 20, end = -1
     if len(msg) < (start + 50):
-        return_messages = msg[start:-1]
+        return_messages = msg[start:]
         end = -1
     else: # If there are e.g. 100 messages and start = 30, returns 30 up to 80, end = 80
         return_messages = msg[start:start + 50]

@@ -84,8 +84,10 @@ def message_edit_v1(token, message_id, message):
         for msg in channel['messages']:
             if msg['message_id'] == message_id and user_id in channel['users_id']:
                 message_id_valid = True
-                if msg['u_id'] == user_id or user_id in channel['owner_id']:
-                    user_has_perm = True
+                sent_by_user = (msg['u_id'] == user_id)
+                user_is_owner = user_id in channel['owner_id']
+                user_has_glob_perms = get_u_id(token) in global_data and get_u_id(token) in channel['users_id']
+                user_has_perm = sent_by_user or user_is_owner or user_has_glob_perms
 
     # check if message_id refers to a valid msg within DM user is in
     for dm in dm_data:
@@ -201,6 +203,7 @@ def message_remove_v1(token, message_id):
 
     channel_data = data_store.get_data()['channels']
     dm_data = data_store.get_data()['DMs']
+    global_data = data_store.get_data()['global_owners']
     user_id = get_u_id(token)
 
     message_id_valid = False
@@ -212,8 +215,10 @@ def message_remove_v1(token, message_id):
         for msg in channel['messages']:
             if msg['message_id'] == message_id and user_id in channel['users_id']:
                 message_id_valid = True
-                if msg['u_id'] == user_id or user_id in channel['owner_id']:
-                    user_has_perm = True
+                sent_by_user = (msg['u_id'] == user_id)
+                user_is_owner = user_id in channel['owner_id']
+                user_has_glob_perms = get_u_id(token) in global_data and get_u_id(token) in channel['users_id']
+                user_has_perm = sent_by_user or user_is_owner or user_has_glob_perms
 
     # check if message_id refers to a valid msg within DM user is in
     for dm in dm_data:
