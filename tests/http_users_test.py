@@ -97,8 +97,8 @@ def test_setname_valid_test(registered_user):
     registered_user_id = registered_user['auth_user_id']
     returned = user_profile_setname_req(registered_user_token, "Janet", "Doe")
     assert returned == {}
-    result_first_name = user_profile_req(registered_user_token, registered_user_id)['name_first']
-    result_last_name = user_profile_req(registered_user_token, registered_user_id)['name_last']
+    result_first_name = user_profile_req(registered_user_token, registered_user_id)['user']['name_first']
+    result_last_name = user_profile_req(registered_user_token, registered_user_id)['user']['name_last']
     expected = ["Janet", "Doe"]
     assert [result_first_name, result_last_name] == expected
 #################################
@@ -122,7 +122,7 @@ def test_setmail_valid_test(registered_user):
     registered_user_id = registered_user['auth_user_id']
     returned = user_profile_setemail_req(registered_user_token, "janet.doe@unsw.ed.au")
     assert returned == {}
-    result = user_profile_req(registered_user_token, registered_user_id)['email']
+    result = user_profile_req(registered_user_token, registered_user_id)['user']['email']
     expected = "janet.doe@unsw.ed.au"
     assert result == expected
 #################################
@@ -154,7 +154,7 @@ def test_sethandle_valid_test(registered_user):
     registered_user_id = registered_user['auth_user_id']
     returned = user_profile_sethandle_req(registered_user_token, "johnDoe")
     assert returned == {}
-    result = user_profile_req(registered_user_token, registered_user_id)['handle_str']
+    result = user_profile_req(registered_user_token, registered_user_id)['user']['handle_str']
     expected = "johnDoe"
     assert result == expected
     clear_req()
