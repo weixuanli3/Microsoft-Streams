@@ -493,22 +493,17 @@ def channel_leave_v1(token, channel_id):
     return {}
 
 def channel_add_owner_v1(token, channel_id, u_id):
-    # Check if the token and the u_id are valid
+    # Check if the token is valid
     user_data = data_store.get_data()['users']
     valid_token = False
-    valid_user = False
     for user in user_data:
         if token in user['token']:
             valid_token = True
-        if u_id == user['id']:
-            valid_user = True
-    
+
     if not valid_token:
         raise AccessError("Invalid Token")
-    
-    if not valid_user:
-        raise InputError("u_id does not refer to a valid user")
-    # Check if the channel exists and if the auth_user is in the channel
+
+    # Check if the channel exists
     channel_data = data_store.get_data()['channels']
     channel_exists = False
     for channel in channel_data:
@@ -518,22 +513,29 @@ def channel_add_owner_v1(token, channel_id, u_id):
     
     if not channel_exists:
         raise InputError("Channel ID not valid")
-    
-    # Check if the token and u_id refer to people in the channel
-    token_in_channel = get_u_id(token) in curr_channel['users_id']
-    user_in_channel = u_id in curr_channel['users_id']
-
-    if not token_in_channel:
-        raise AccessError("User isn't part of the channel")
-
-    if not user_in_channel:
-        raise InputError("u_id isn't part of the channel")
 
     # Check the permission of the token
     global_data = data_store.get_data()['global_owners']
-    token_perm_valid = get_u_id(token) in curr_channel['owner_id'] or get_u_id(token) in global_data
+    token_in_channel = get_u_id(token) in curr_channel['users_id']
+    is_global_owner = get_u_id(token) in global_data
+    is_channel_owner = get_u_id(token) in curr_channel['owner_id']
+    token_perm_valid = (token_in_channel and is_global_owner) or is_channel_owner
     if not token_perm_valid:
         raise AccessError("User does not have owner permissions in the channel")
+
+    # Check if the u_id is valid
+    valid_user = False
+    for user in user_data:
+        if u_id == user['id']:
+            valid_user = True
+        
+    if not valid_user:
+        raise InputError("u_id does not refer to a valid user")
+
+    # Check if the u_id refers to someone in the channel
+    user_in_channel = u_id in curr_channel['users_id']
+    if not user_in_channel:
+        raise InputError("u_id isn't part of the channel")
     
     # Check if the user is already an owner of the channel
     if u_id in curr_channel['owner_id']:
@@ -548,12 +550,8 @@ def channel_add_owner_v1(token, channel_id, u_id):
     #Return type {}
     
 def channel_remove_owner_v1(token, channel_id, u_id):
-    
-    channel_data = data_store.get_data()['channels']
+    # Check if the token is valid
     user_data = data_store.get_data()['users']
-    global_data = data_store.get_data()['global_owners']
-    user_data = data_store.get_data()['users']
-    
     valid_token = False
     for user in user_data:
         if token in user['token']:
@@ -561,81 +559,48 @@ def channel_remove_owner_v1(token, channel_id, u_id):
 
     if not valid_token:
         raise AccessError("Invalid Token")
-    
-    # # check if token user exists
-    # token_exists = False
-    # for user in user_data:
-    #     if token == user['token']:
-    #         token_exists = True
-    
-    # check if the user exists
-    user_exists = False
-    for user in user_data:
-        if u_id == user['id']:
-            user_exists = True
-            
-    # if not token_exists:
-    #     raise AccessError("User doesn't exist")
 
-    if not user_exists:
-        raise InputError("u_id does not refer to a valid user")
-    
+    # Check if the channel exists
+    channel_data = data_store.get_data()['channels']
     channel_exists = False
-    token_in_channel = False
-    user_in_channel = False
-    
     for channel in channel_data:
-        # check if the channel exists and if the auth_user is in the channel
         if channel_id == channel['chan_id']:
             channel_exists = True
             curr_channel = channel
-            if get_u_id(token) in channel['users_id']:
-                token_in_channel = True
-            if u_id in channel['users_id']:
-                user_in_channel = True    
-                
+    
     if not channel_exists:
         raise InputError("Channel ID not valid")
-    
-    if not token_in_channel:
-        raise AccessError("User isn't part of the channel")
 
-    if not user_in_channel:
-        raise InputError("u_id isn't part of the channel")
-    
-    token_is_owner = False
-    user_is_owner = False
-    
-    # check if global owner
-    if get_u_id(token) in global_data:
-        token_is_owner = True
-    if u_id in global_data:
-        user_is_owner = True
-    
-    # check if channel owner
-    if get_u_id(token) in curr_channel['owner_id']:
-        token_is_owner = True
-    if u_id in channel['owner_id']:
-        user_is_owner = True
-                
-    if not token_is_owner:
+    # Check the permission of the token
+    global_data = data_store.get_data()['global_owners']
+    token_in_channel = get_u_id(token) in curr_channel['users_id']
+    is_global_owner = get_u_id(token) in global_data
+    is_channel_owner = get_u_id(token) in curr_channel['owner_id']
+    token_perm_valid = (token_in_channel and is_global_owner) or is_channel_owner
+    if not token_perm_valid:
         raise AccessError("User does not have owner permissions in the channel")
-    
-    if not user_is_owner:
-        raise InputError("u_id is not an owner of this channel")
-    
-    only_owner = True
-    
-    # check if only owner
-    if channel['owner_id'] != [u_id]:
-        only_owner = False
-    
-    if only_owner:
-        raise InputError("u_id is the only owner of the channel")
-    
-    # remove u_id as channel owner
-    curr_channel['owner_id'].remove(u_id)
+
+    # Check if the u_id is valid
+    valid_user = False
+    for user in user_data:
+        if u_id == user['id']:
+            valid_user = True
         
-    update_permanent_storage()
+    if not valid_user:
+        raise InputError("u_id does not refer to a valid user")
     
+    # Check if the user is not an owner of the channel
+    user_is_owner = u_id in curr_channel['owner_id']
+    if not user_is_owner:
+        raise InputError("u_id refers to a user who is not an owner of the channel")
+
+    # Check if the user is the only owner of the channel
+    if len(curr_channel['owner_id']) == 1:
+        raise InputError("Cannot remove the only channel owner")
+
+    # Remove u_id as channel owner
+    curr_channel['owner_id'].remove(u_id)
+
+    update_permanent_storage()
+            
     return {}
