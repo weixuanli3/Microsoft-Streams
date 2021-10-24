@@ -72,6 +72,7 @@ def message_edit_v1(token, message_id, message):
 
     channel_data = data_store.get_data()['channels']
     dm_data = data_store.get_data()['DMs']
+    global_data = data_store.get_data()['global_owners']
     user_id = get_u_id(token)
 
     message_id_valid = False
