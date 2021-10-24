@@ -330,7 +330,7 @@ def dm_messages_v1(token, dm_id, start):
         raise InputError("Start cannot be negative")
     # elif not msg:
         # raise InputError("Start is greater than the total number of messages in the channel")
-    elif start + 1 > len(msg) and len(msg) >= 0:
+    elif start > len(msg):
         raise InputError("Start is greater than the total number of messages in the channel")
 
     # If there are e.g. 50 messages and start = 30, can only return 20, end = -1
