@@ -1,3 +1,4 @@
+'''Contains http tests for auth.py'''
 import pytest
 from src.error import InputError
 from src.other import clear_v1

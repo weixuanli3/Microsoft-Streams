@@ -1,3 +1,4 @@
+'''Contains classes for input and access errors'''
 from werkzeug.exceptions import HTTPException
 
 class AccessError(HTTPException):

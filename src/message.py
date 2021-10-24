@@ -5,6 +5,29 @@ from src.error import AccessError
 from datetime import datetime
 
 def message_send_v1(token, channel_id, message):
+    """
+    Sends a message in a channel.
+    
+    Send a message from the authorised user to the channel specified by channel_id. 
+    Note: Each message should have its own unique ID, i.e. no messages should share 
+    an ID with another message, even if that other message is in a different channel.
+
+    Args:
+        token: The generated token of user sending message.
+        channel_id: The integer id of the channel the user is
+        sending the message in.
+        message: The string of the message the user wants to send.
+
+    Returns:
+        {'message_id' : message_id}
+
+    Raises:
+        Input Error: - The channel id does not exist
+                     - Length of message not valid
+
+        Access Error: - The token does not exist
+                      - The token is not part of the channel.
+    """
     # Check if a token is valid
     all_tokens = data_store.get('token')['token']
     token_exists = False
@@ -59,6 +82,29 @@ def message_send_v1(token, channel_id, message):
     return {'message_id' : message_id}
 
 def message_edit_v1(token, message_id, message):
+    """
+    Edits a message in a channel
+    
+    Given a message, update its text with new text. 
+    If the new message is an empty string, the message is deleted.
+
+    Args:
+        token: The generated token of user editing the message.
+        message_id: The integer id of the message the user is
+        editing.
+        message: The string of the message the user wants to change
+        the original message to.
+
+    Returns:
+        An empty dictionary
+
+    Raises:
+        Input Error: - The message_id does not exist
+                     - Length of message not valid
+
+        Access Error: - The token does not exist
+                      - User doesn't have owner permission
+    """
     # Check if a token is valid
     all_tokens = data_store.get('token')['token']
     token_exists = False
@@ -128,6 +174,30 @@ def message_edit_v1(token, message_id, message):
     return {}
 
 def message_senddm_v1(token, dm_id, message):
+    """
+    ESends a message in a dm.
+    
+    Send a message from authorised_user to the DM specified by dm_id. 
+    Note: Each message should have it's own unique ID, i.e. no messages 
+    should share an ID with another message, even if that other message 
+    is in a different channel or DM.
+
+    Args:
+        token: The generated token of user sending the message.
+        dm_id: The integer id of the dm the user is sending
+        the message in.
+        message: The string of the message the user wants to send.
+
+    Returns:
+        {'message_id' : message_id}
+
+    Raises:
+        Input Error: - The dm_id does not exist
+                     - Length of message not valid
+
+        Access Error: - The token does not exist
+                      - User not part of DM
+    """
     # Check if a token is valid
     all_tokens = data_store.get('token')['token']
     token_exists = False
@@ -188,6 +258,24 @@ def message_senddm_v1(token, dm_id, message):
     return {'message_id' : message_id}
     
 def message_remove_v1(token, message_id):
+    """
+    Given a message_id for a message, this message is removed from the channel/DM
+
+    Args:
+        token: The generated token of user removing the message.
+        message_id: The integer id of the message the user is
+        removing.
+
+
+    Returns:
+        An empty dictionary
+
+    Raises:
+        Input Error: - The message_id does not exist
+
+        Access Error: - The token does not exist
+                      - User doesn't have owner permission
+    """
     # Check if a token is valid
     all_tokens = data_store.get('token')['token']
     token_exists = False

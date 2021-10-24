@@ -5,7 +5,25 @@ from src.error import InputError
 from src.error import AccessError
 
 def dm_create_v1(token, u_ids):
+    """
+    Creates a dm chat.
+    
+    Creates a dm chat with the specified users and the creator who
+    becomes the owner.
 
+    Args:
+        token: The generated token of user creating the dm.
+        u_ids: The integer ids of the users being added to the created dm.
+
+    Returns:
+        An empty dictionary.
+
+    Raises:
+        Input Error: - one of the inputted u_ids does not exist
+
+        Access Error: - The token does not exist
+
+    """ 
     user_data = data_store.get_data()['users']
 
     valid_token = False
@@ -94,7 +112,24 @@ def dm_create_v1(token, u_ids):
     #Return type {dm_id}
 
 def dm_list_v1(token):
+    """
+    Lists all the dms a user is part of.
 
+    Args:
+        token: The generated token of user.
+
+    Returns:
+        List of dms
+        [{
+                    'dm_id': dm['dm_id'],
+                    'name': dm['name']
+                },
+        ]
+
+    Raises:
+        Access Error: - The token does not exist
+
+    """ 
     user_data = data_store.get_data()['users']
     
     valid_token = False
@@ -127,7 +162,24 @@ def dm_list_v1(token):
     #Return type {dms}
     
 def dm_remove_v1(token, dm_id):
+    """
+    Remove an existing DM, so all members are no longer in the DM. 
+    This can only be done by the original creator of the DM.
 
+    Args:
+        token: The generated token of user.
+        dm_id: the dm_id of the dm being removed
+
+    Returns:
+        An empty dm
+
+    Raises:
+        Input Error: - Invalid dm_id
+    
+        Access Error: - The token does not exist
+                      - user not original creator
+
+    """ 
     user_data = data_store.get_data()['users']
     
     valid_token = False
@@ -172,7 +224,27 @@ def dm_remove_v1(token, dm_id):
     return{}
 
 def dm_details_v1(token, dm_id):
+    """
+    Given a DM with ID dm_id that the authorised user is a member of, 
+    provide basic details about the DM.
 
+    Args:
+        token: The generated token of user.
+        dm_id: the dm_id of the dm whose details are being returned
+
+    Returns:
+        {
+            'name': dm['name'],
+            'members':  dm['members']
+        }
+
+    Raises:
+        Input Error: - Invalid dm_id
+    
+        Access Error: - The token does not exist
+                      - user not member of dm
+
+    """
     user_data = data_store.get_data()['users']
     
     valid_token = False
@@ -227,7 +299,25 @@ def dm_details_v1(token, dm_id):
     # Return type {name, members}
     
 def dm_leave_v1(token, dm_id):
+    """
+    Given a DM ID, the user is removed as a member of this DM. 
+    The creator is allowed to leave and the DM will still exist if this happens. 
+    This does not update the name of the DM.
 
+    Args:
+        token: The generated token of user.
+        dm_id: the dm_id of the dm the user is leaving
+
+    Returns:
+        An empty dictionary
+
+    Raises:
+        Input Error: - Invalid dm_id
+    
+        Access Error: - The token does not exist
+                      - user not member of dm
+
+    """
 
     user_data = data_store.get_data()['users']
     
@@ -280,7 +370,35 @@ def dm_leave_v1(token, dm_id):
     #Return type {}
 
 def dm_messages_v1(token, dm_id, start):
+    """
+Given a DM with ID dm_id that the authorised user is a member of, 
+return up to 50 messages between index "start" and "start + 50". 
+Message with index 0 is the most recent message in the DM. 
+This function returns a new index "end" which is the value of "start + 50", or, 
+if this function has returned the least recent messages in the DM, returns -1 in 
+"end" to indicate there are no more messages to load after this return.
+
+    Args:
+        token: The generated token of user.
+        dm_id: the dm_id of the dm whose messages are being returned
+        start: the value of start of the list of messages being returned
+
+    Returns:
+        {
+        'messages': [{'message_id' : message_id, 
+                    'u_id' : user_id, 
+                    'message' : message, 
+                    'time_created' : timestamp
+            }],
+    }
+
+    Raises:
+        Input Error: - Invalid dm_id
     
+        Access Error: - The token does not exist
+                      - user not member of dm
+
+    """    
 
     user_data = data_store.get_data()['users']
     

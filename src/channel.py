@@ -12,7 +12,7 @@ def channel_invite_v1(token, channel_id, u_id):
     the auth_user is a part of.
 
     Args:
-        auth_user_id: The integer id of user inviting the other user to the channel.
+        token: The generated token of user inviting the other user to the channel.
         channel_id: The integer id of the channel that auth_user wants to invite
         the other user to.
         u_id: The integer id of the user being invited to the channel.
@@ -25,8 +25,8 @@ def channel_invite_v1(token, channel_id, u_id):
                      - u_id already in the channel
                      - u_id does not exist
 
-        Access Error: - The auth_user_id does not exist
-                      - The auth_user_id is not part of the channel.
+        Access Error: - The token does not exist
+                      - The token is not part of the channel.
     """
 
 
@@ -112,7 +112,7 @@ def channel_details_v1(token, channel_id):
     dictionary with said details.
 
     Args:
-        auth_user_id: The integer id of user displaying the channel details.
+        token: The integer id of user displaying the channel details.
         channel_id: The integer id of the channel that the user wants to get
         the details of.
 
@@ -132,8 +132,8 @@ def channel_details_v1(token, channel_id):
     Raises:
         Input Error: - The channel id does not exist
 
-        Access Error: - The auth_user_id does not exist
-                      - The auth_user_id is not part of the channel.
+        Access Error: - The token does not exist
+                      - The token is not part of the channel.
 
     """
 
@@ -228,7 +228,6 @@ return {
 '''
 # Return 50 messages (or the end of the messages) in a dictionary
 def channel_messages_v1(token, channel_id, start):
-
     """
     Returns the messages sent in the specified channel.
 
@@ -239,7 +238,7 @@ def channel_messages_v1(token, channel_id, start):
     from the start value up until the most first message in the channel sent.
 
     Args:
-        auth_user_id: The integer id of user displaying the channel messaages.
+        token: The generated token of user displaying the channel messaages.
         channel_id: The integer id of the channel that the user wants to get
         the message details of.
         start: The start index of the messages being displayed, with index 0 is the
@@ -263,9 +262,10 @@ def channel_messages_v1(token, channel_id, start):
     Raises:
         Input Error: - The channel id does not exist.
                      - start is greater than the total number of messages in the channel.
+                     - start can't be negative
 
-        Access Error: - The auth_user_id does not exist.
-                      - The auth_user_id is not part of the channel.
+        Access Error: - The token does not exist.
+                      - The token is not part of the channel.
     """
 
 
@@ -372,19 +372,18 @@ def channel_join_v1(token, channel_id):
     to the user's 'channels' key's list.
 
     Args:
-        auth_user_id: The integer id of user displaying the channel details.
-        channel_id: The integer id of the channel that the user wants to get
-        the details of.
+        token: The generated token of user joining the channel.
+        channel_id: The integer id of the channel that the user wants to join.
 
     Returns:
         An empty dictionary.
 
     Raises:
         Input Error: - the channel id inputted does not exist
-                     - the auth_user_id is already in the channel
+                     - the token is already in the channel
 
-        Access Error: - The auth_user_id does not exist
-                      - the auth_user is not a global owner and tries to join a private channel
+        Access Error: - The token does not exist
+                      - the token is not a global owner and tries to join a private channel
 
     """
     
@@ -444,7 +443,23 @@ def channel_join_v1(token, channel_id):
 
 
 def channel_leave_v1(token, channel_id):
-    
+    """
+    The specified user leaves the channel
+
+    Args:
+        token: The generated token of user leaving the channel.
+        channel_id: The integer id of the channel that the user wants to leave.
+
+    Returns:
+        An empty dictionary.
+
+    Raises:
+        Input Error: - the channel id inputted does not exist
+
+        Access Error: - The token does not exist
+                      - token not part of the channel
+
+    """    
     user_data = data_store.get_data()['users']
     
     valid_token = False
@@ -493,7 +508,31 @@ def channel_leave_v1(token, channel_id):
     return {}
 
 def channel_add_owner_v1(token, channel_id, u_id):
-    
+"""
+    Adds a user already in the channel as an owner
+
+
+
+    Args:
+        token: The generated token of the user calling the function
+        channel_id: The integer id of the channel that the user is being made owner in.
+        u_id: The integer id of the user being made the owner.
+
+    Returns:
+        An empty dictionary.
+
+    Raises:
+        Input Error: - The channel id does not exist
+                     - u_id owner.
+                     - u_id does not exist.
+                     - The u_id is not part of the channel.
+
+        Access Error:
+                      - The token is not part of the channel.
+                      - Invalid token.
+                      - token doesn't have permisions to add owner.
+                      
+    """ 
     channel_data = data_store.get_data()['channels']
     user_data = data_store.get_data()['users']
     global_data = data_store.get_data()['global_owners']
@@ -591,7 +630,32 @@ def channel_add_owner_v1(token, channel_id, u_id):
     #Return type {}
     
 def channel_remove_owner_v1(token, channel_id, u_id):
-    
+"""
+    Removes a user from the owner status in the channel
+
+
+
+    Args:
+        token: The generated token of the user calling the function
+        channel_id: The integer id of the channel that the user is being removed owner in.
+        u_id: The integer id of the user being removed as owner.
+
+    Returns:
+        An empty dictionary.
+
+    Raises:
+        Input Error: - The channel id does not exist
+                     - u_id isn't owner.
+                     - u_id does not exist.
+                     - u_id only owner of the channel.
+
+        Access Error:
+                      - The token is not part of the channel.
+                      - Invalid token.
+                      - token doesn't have permisions to add owner.
+                      - The u_id is not part of the channel
+                      
+    """    
     channel_data = data_store.get_data()['channels']
     user_data = data_store.get_data()['users']
     global_data = data_store.get_data()['global_owners']

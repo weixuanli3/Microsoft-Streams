@@ -1,3 +1,4 @@
+'''Contains http tests for dm.py'''
 import pytest
 import requests
 import json

@@ -1,3 +1,4 @@
+'''Contains routes for the different functions'''
 import sys
 import signal
 from json import dumps
