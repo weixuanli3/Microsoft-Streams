@@ -20,3 +20,8 @@ Current assumptions for functions:
 - The tokens given will be strings
 
 - The tokens given will be of valid length
+
+- If owner is removed from a channel, the channel has no owner and cannot get one
+
+- You cannot change the permission ID of a person to the permission ID that they already have
+    - This is to prevent mistakes where you mean to change the ID of someone, but you missclick and select the wrong option. 
