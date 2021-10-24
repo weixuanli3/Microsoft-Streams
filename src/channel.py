@@ -334,7 +334,7 @@ def channel_messages_v1(token, channel_id, start):
     # elif not msg:
     #     if start != 0:
     #         raise InputError("Start is greater than the total number of messages in the channel")
-    elif start > len(msg) - 1 and len(msg) > 0:
+    elif start + 1 > len(msg) and len(msg) >= 0:
         raise InputError("Start is greater than the total number of messages in the channel")
 
     # If there are e.g. 50 messages and start = 30, can only return 20, end = -1
