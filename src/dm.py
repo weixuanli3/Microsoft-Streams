@@ -256,7 +256,7 @@ def dm_leave_v1(token, dm_id):
                     dm['members'].remove(dm_member)   
             if user_id == dm['owner']:
                 user_in_dm = True
-                dm['owner'] = 0
+                dm['owner'] = -1
 
     if dm_id_valid and not user_in_dm:
         raise AccessError("User is not a member of the DM")
