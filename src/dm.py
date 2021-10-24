@@ -196,17 +196,18 @@ def dm_details_v1(token, dm_id):
     user_id = get_u_id(token)
     
     user_in_dm = False
-    
+
     # check if user not in dm
     for dm in DM_data:
-        if dm_id == dm['dm_id']:
+        if dm_id == dm['dm_id']: 
             for dm_members in dm['members']:    
                 if user_id == dm_members['u_id']:
                     user_in_dm = True
                     return_dict = {
                         'name': dm['name'],
-                        'members': dm['members']
-                    }               
+                        'members':  dm['members']
+                    }
+                       
 
 
     if not user_in_dm:
@@ -252,18 +253,21 @@ def dm_leave_v1(token, dm_id):
             for dm_member in dm['members']:    
                 if user_id == dm_member['u_id']:
                     user_in_dm = True
-                    dm['members'].remove(dm_member)
+                    dm['members'].remove(dm_member)   
+            if user_id == dm['owner']:
+                user_in_dm = True
+                dm['owner'] = -1
 
     if dm_id_valid and not user_in_dm:
         raise AccessError("User is not a member of the DM")
     
     #    # check if user not in dm
-    # for dm in dm_data:
-    #     if dm_id == dm['dm_id']:
-    #         for dm_members in dm['members']:    
-    #             if user_id == dm_members['u_id']:
-    #                 user_in_dm = True
-    #                 # dm.remove(dm_members)
+    for dm in dm_data:
+        if dm_id == dm['dm_id']:
+            for dm_members in dm['members']:    
+                if user_id == dm_members['u_id']:
+                    user_in_dm = True
+                    # dm.remove(dm_members)
 
     if not dm_id_valid:
         raise InputError("dm_id does not refer to a valid DM")
@@ -324,7 +328,9 @@ def dm_messages_v1(token, dm_id, start):
     
     if start < 0:
         raise InputError("Start cannot be negative")
-    elif start > len(msg):
+    # elif not msg:
+        # raise InputError("Start is greater than the total number of messages in the channel")
+    elif start + 1 > len(msg) and len(msg) >= 0:
         raise InputError("Start is greater than the total number of messages in the channel")
 
     # If there are e.g. 50 messages and start = 30, can only return 20, end = -1

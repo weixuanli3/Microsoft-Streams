@@ -12,7 +12,7 @@ from src.other import clear_v1
 from src.data_store import Datastore, data_store, get_u_id
 from src.admin import admin_user_remove_id, admin_userpermission_change_v1
 from src.dm import dm_create_v1, dm_details_v1, dm_messages_v1
-from src.message import message_senddm_v1
+from src.message import message_send_v1, message_senddm_v1
 
 # Tests for admin/user/remove/v1
 
@@ -38,6 +38,9 @@ def test_admin_user_remove_id_removed_from_channels():
     chan_id = channels_create_v1(user1_data['token'], "Stream", True)
     channels_create_v1(user1_data['token'], "Stream2", True)
     channel_join_v1(user2_data['token'], chan_id['channel_id'])
+
+    message_send_v1(user2_data['token'], chan_id['channel_id'], "1")
+    message_send_v1(user2_data['token'], chan_id['channel_id'], "2")
 
     admin_user_remove_id(user1_data['token'], user2_data['auth_user_id'])
     # Test 
@@ -66,6 +69,45 @@ def test_admin_user_remove_id_removed_from_channels():
     result = channel_details_v1(user1_data['token'], chan_id['channel_id'])
 
     assert expected == result
+
+def test_admin_user_remove_id_owner_from_channels():
+    clear_v1()
+    # Set up user
+    user1_data = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")
+    user2_data = auth_register_v1("john.doe1@aunsw.edu.au","password","Jane","Doe")
+    # set up channels
+    chan_id = channels_create_v1(user1_data['token'], "Stream", True)
+    channels_create_v1(user1_data['token'], "Stream2", True)
+    channel_join_v1(user2_data['token'], chan_id['channel_id'])
+
+    message_send_v1(user1_data['token'], chan_id['channel_id'], "1")
+    message_send_v1(user2_data['token'], chan_id['channel_id'], "2")
+
+    # Make user 2 admin
+    admin_userpermission_change_v1(user1_data['token'], user2_data['auth_user_id'], 1)
+    # Remove user 1
+    admin_user_remove_id(user2_data['token'], user1_data['auth_user_id'])
+    
+    # Test 
+    expected = {
+        'name' : 'Stream',
+        'is_public' : True,
+        'owner_members' : [],
+        'all_members' : [
+                {
+                    'email': 'john.doe1@aunsw.edu.au', 
+                    'handle_str': 'janedoe', 
+                    'name_first': 'Jane', 
+                    'name_last': 'Doe', 
+                    'u_id': user2_data['auth_user_id']
+                }
+            ],
+        }
+
+    result = channel_details_v1(user2_data['token'], chan_id['channel_id'])
+
+    assert expected == result
+
 
 # THis test will forever make me want to not be here
 # POTENTIAL FIX

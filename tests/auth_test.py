@@ -7,24 +7,24 @@ from src.auth import auth_register_v1, auth_login_v1, auth_logout_v1
 from src.error import InputError, AccessError
 from src.admin import admin_user_remove_id
 
+@pytest.fixture
+def setup():
+    clear_v1()
+    return auth_register_v1("john.doe1@unsw.edu.au","password","John","Doe")
+
 #------------------------------------------------------------
 # This block of code deals with the auth_register_v1 function
 # from auth.py
 
 # This should not raise any errors
-def test_auth_register_valid_email():
-    clear_v1()
-    auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")
+def test_auth_register_valid_email(setup):
+    auth_register_v1("john.doe2@aunsw.edu.au","password","John","Doe")
 
-def test_auth_register_empty_email():
-    clear_v1()
+def test_auth_register_empty_email(setup):
     with pytest.raises(InputError):
         auth_register_v1("","password","John","Doe")
 
-def test_auth_register_email_already_used():
-    clear_v1()
-    auth_register_v1("john.doe1@unsw.edu.au","password","John","Doe")
-
+def test_auth_register_email_already_used(setup):
     # Regerstering a second account with the same email
     with pytest.raises(InputError):
         auth_register_v1("john.doe1@unsw.edu.au","password","John","Doe")
@@ -157,44 +157,31 @@ def test_auth_login_email_not_registered():
     with pytest.raises(InputError):
         auth_login_v1("john.doe10@unsw.edu.au","password")
 
-def test_auth_login_email_empty():
-    clear_v1()
-    auth_register_v1("john.doe11@unsw.edu.au","password","John","Doe")
+def test_auth_login_email_empty(setup):
     with pytest.raises(InputError):
         auth_login_v1("","password")
 
 # The email is a user, but has the wrong password
-def test_auth_login_incorrect_password():
-    clear_v1()
-    auth_register_v1("john.doe12@unsw.edu.au","password","John","Doe")
+def test_auth_login_incorrect_password(setup):
     with pytest.raises(InputError):
-        auth_login_v1("john.doe12@unsw.edu.au","password123")
+        auth_login_v1("john.doe1@unsw.edu.au","password123")
 
-def test_auth_login_correct_password():
-    clear_v1()
-    user_id = auth_register_v1("john.doe13@unsw.edu.au","password","John","Doe")["auth_user_id"]
-    assert auth_login_v1("john.doe13@unsw.edu.au","password")['auth_user_id'] == user_id
+def test_auth_login_correct_password(setup):
+    assert auth_login_v1("john.doe1@unsw.edu.au","password")['auth_user_id'] == setup['auth_user_id']
 
-def test_auth_login_bad_login_good_login():
-    clear_v1()
-    user_id = auth_register_v1("john.doe@unsw.edu.au","password","John","Doe")["auth_user_id"]
-
-    # Should not work
+def test_auth_login_bad_login_good_login(setup):
+    # Should not work - wrong password
     with pytest.raises(InputError):
-        auth_login_v1("john.doe@unsw.edu.au","password1")
+        auth_login_v1("john.doe1@unsw.edu.au","password1")
 
     # Should return corrent login user ID
-    assert auth_login_v1("john.doe@unsw.edu.au","password")["auth_user_id"] == user_id
+    assert auth_login_v1("john.doe1@unsw.edu.au","password")["auth_user_id"] == setup['auth_user_id']
 
-def test_auth_login_password_empty():
-    clear_v1()
-    auth_register_v1("john.doe12@unsw.edu.au","password","John","Doe")
+def test_auth_login_password_empty(setup):
     with pytest.raises(InputError):
-        auth_login_v1("john.doe12@unsw.edu.au","")
+        auth_login_v1("john.doe1@unsw.edu.au","")
 
-def test_auth_login_pass_different_user():
-    clear_v1()
-    auth_register_v1("john.doe1@unsw.edu.au","password1","John","Doe")
+def test_auth_login_pass_different_user(setup):
     auth_register_v1("john.doe2@unsw.edu.au","password2","John","Doe")
     with pytest.raises(InputError):
         auth_login_v1("john.doe1@unsw.edu.au", "password2")
@@ -205,10 +192,7 @@ def test_auth_login_pass_different_user():
 # from auth.py
 
 # POSSIBLE ASSUMPTION RASIE INPUT ERROR?
-def test_invalid_token():
-    clear_v1()
-    auth_register_v1("john.doe12@unsw.edu.au","password","John","Doe")
-    auth_login_v1("john.doe12@unsw.edu.au","password")['token']
+def test_invalid_token(setup):
     with pytest.raises(InputError): 
       auth_logout_v1(923564)
 
@@ -220,10 +204,8 @@ def test_invalid_token():
 #     with pytest.raises(InputError): 
 #       auth_logout_v1()
 
-def test_valid_token():
-    clear_v1()
-    auth_register_v1("john.doe12@unsw.edu.au","password","John","Doe")
-    token = auth_login_v1("john.doe12@unsw.edu.au","password")['token']
+def test_valid_token(setup):
+    token = auth_login_v1("john.doe1@unsw.edu.au","password")['token']
     assert auth_logout_v1(token) == {}
     clear_v1()
 
