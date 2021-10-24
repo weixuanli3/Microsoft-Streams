@@ -345,7 +345,7 @@ def channel_messages_v1(token, channel_id, start):
         return_messages = msg[start:start + 50]
         end = start + 50
 
-    return_dictionary['messages'].append(return_messages)
+    return_dictionary['messages'] = return_messages
     return_dictionary['start'] = start
     return_dictionary['end'] = end
 
@@ -477,6 +477,11 @@ def channel_leave_v1(token, channel_id):
     if not user_in_channel:
         raise AccessError("User not part of the channel")
     
+    # remove the channel from the user
+    for user in user_data:
+        if user['id'] == auth_user_id:
+            user['channels'].remove(channel_id)
+
     # remove the user from the channel
     channel_data[channel_id - 1]['users_id'].remove(auth_user_id)
     

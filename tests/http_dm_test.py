@@ -38,6 +38,12 @@ def test_dm_create_invalid(default_setup):
     auth_logout_req(u1_tok)
     invalid_token = dm_create_req(u1_tok, [u3_id, u2_id])
     assert invalid_token['code'] == AccessError.code
+    
+def test_dm_create_invalid_token(default_setup):
+    u1, u2, u3 = default_setup
+
+    assert dm_create_req("mdsfjo", [u2['token'], u3['token'], u1['token']])['code'] == AccessError.code
+
 
 def test_dm_create_valid(default_setup):
     u1, u2, u3 = default_setup
@@ -98,6 +104,16 @@ def test_dm_details_valid(default_setup):
         'name': "johncitizen, johndoe, patrickliang",
         'members': [user1, user3, user2]
     }
+    
+def test_dm_details_bad_token(default_setup):
+    u1, u2, u3 = default_setup
+    u1_tok = u1['token']
+    u2_id = u2['auth_user_id']
+    u3_id = u3['auth_user_id']
+    dm_id0 = dm_create_req(u1_tok, [u3_id, u2_id])['dm_id']
+    assert dm_details_req("fsdffeefw", dm_id0)['code'] == AccessError.code
+    
+# The following tests are for leave
 
 def test_dm_leave_valid(dms_setup):
     u1, u2, u3, dm_id1, dm_id2 = dms_setup
@@ -132,6 +148,14 @@ def test_dm_leave_valid(dms_setup):
         'members': [user2]
     }
 
+    
+def test_dm_leave_bad_token(default_setup):
+    u1, u2, u3 = default_setup
+    
+    dm_id = dm_create_req(u1['token'], [u2['auth_user_id'], u3['auth_user_id']])['dm_id']
+
+    assert dm_leave_req("efef", dm_id)['code'] == AccessError.code
+
 
 def test_dm_leave_invalid(dms_setup):
     u1, u2, u3, dm_id1, dm_id2 = dms_setup
@@ -150,6 +174,7 @@ def test_dm_leave_invalid(dms_setup):
     dm_leave_req(u3_tok, dm_id2)
     assert dm_leave_req(u3_tok, dm_id2)['code'] == AccessError.code
 
+# The following tests are for dm_list
 
 def test_dm_list_valid(default_setup):
     u1, u2, u3 = default_setup
@@ -202,6 +227,14 @@ def test_dm_list_valid(default_setup):
         ]
     }
 
+def test_dm_list_bad_token(default_setup):
+    u1, u2, u3 = default_setup
+    dm_create_req(u1['token'], [u2['auth_user_id'], u3['auth_user_id']])
+
+    assert dm_list_req("dsfjnodcf")['code'] == AccessError.code
+    
+# The following tests are for dm_remove
+
 def test_dm_remove_valid(default_setup):
     u1, u2, u3 = default_setup
     u1_tok = u1['token']
@@ -212,6 +245,17 @@ def test_dm_remove_valid(default_setup):
     dm_id2 = dm_create_req(u2_tok, [u3_id])['dm_id']
     dm_remove_req(u1_tok, dm_id1)
     dm_remove_req(u2_tok, dm_id2)
+
+def test_dm_remove_bad_token(default_setup):
+    u1, u2, u3 = default_setup
+    u1_tok = u1['token']
+    u2_tok = u2['token']
+    u2_id = u2['auth_user_id']
+    u3_id = u3['auth_user_id']
+    dm_id1 = dm_create_req(u1_tok, [u2_id, u3_id])['dm_id']
+    dm_id2 = dm_create_req(u2_tok, [u3_id])['dm_id']
+    assert dm_remove_req("dfvwffd", dm_id1)['code'] == AccessError.code
+    assert dm_remove_req("dcsdcsdc", dm_id2)['code'] == AccessError.code
 
 def test_dm_remove_invalid(dms_setup):
     u1, u2, u3, dm_id1, dm_id2 = dms_setup
@@ -254,6 +298,20 @@ def test_dm_messages_valid_less_than_50(default_setup):
         assert dm_msg['messages'][i]['message_id'] == msg_ids[i]
         assert dm_msg['messages'][i]['u_id'] == u_ids[i]
         assert dm_msg['messages'][i]['message'] == msgs[2 - i]
+        
+def test_dm_messages_bad_token(default_setup):
+    u1, u2, u3 = default_setup
+    u1_tok = u1['token']
+    u2_tok = u2['token']
+    u2_id = u2['auth_user_id']
+    u3_tok = u3['token']
+    u3_id = u3['auth_user_id']
+    dm_id1 = dm_create_req(u1_tok, [u2_id, u3_id])['dm_id']
+    message_senddm_req(u1_tok, dm_id1, "Hey everyone")['message_id']
+    message_senddm_req(u2_tok, dm_id1, "Hello")['message_id']
+    message_senddm_req(u3_tok, dm_id1, "G'day")['message_id']
+    assert dm_messages_req("fdvnjfdoif", dm_id1, 0)['code'] == AccessError.code
+    
 
 def test_dm_messages_valid_more_than_50(default_setup):
     u1, u2, u3 = default_setup

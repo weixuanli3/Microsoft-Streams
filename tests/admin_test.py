@@ -20,7 +20,7 @@ from src.message import message_send_v1, message_senddm_v1
 def test_admin_user_remove_id_only_globel_user():
     clear_v1()
     user_data = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")
-    with pytest.raises(AccessError):
+    with pytest.raises(InputError):
             admin_user_remove_id(user_data['token'], user_data['auth_user_id'])
 
 def test_admin_user_remove_id_invalid_user():

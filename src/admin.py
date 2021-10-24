@@ -19,7 +19,7 @@ def admin_user_remove_id(token, u_id):
 
     # Removing only global user
     if len(global_users) == 1 and u_id in global_users:
-        raise AccessError('You cannot remove the only global user')
+        raise InputError('You cannot remove the only global user')
 
     # Checks if user does not exist
     user_ids = data_store.get('id')['id']

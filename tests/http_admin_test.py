@@ -25,7 +25,7 @@ def test_admin_user_remove_only_global():
     clear_req()
     user_data = auth_register_req("john.doe@aunsw.edu.au","password","John","Doe")
     invalid_only_global = admin_user_remove_req(user_data['token'], user_data['auth_user_id'])
-    assert invalid_only_global['code'] == AccessError.code
+    assert invalid_only_global['code'] == InputError.code
 
 def test_admin_user_remove_invalid_user():
     clear_req()

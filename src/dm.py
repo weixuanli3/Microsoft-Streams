@@ -196,17 +196,18 @@ def dm_details_v1(token, dm_id):
     user_id = get_u_id(token)
     
     user_in_dm = False
-    
+
     # check if user not in dm
     for dm in DM_data:
-        if dm_id == dm['dm_id']:
+        if dm_id == dm['dm_id']: 
             for dm_members in dm['members']:    
                 if user_id == dm_members['u_id']:
                     user_in_dm = True
                     return_dict = {
                         'name': dm['name'],
-                        'members': dm['members']
-                    }               
+                        'members':  dm['members']
+                    }
+                       
 
 
     if not user_in_dm:
@@ -252,7 +253,10 @@ def dm_leave_v1(token, dm_id):
             for dm_member in dm['members']:    
                 if user_id == dm_member['u_id']:
                     user_in_dm = True
-                    dm['members'].remove(dm_member)
+                    dm['members'].remove(dm_member)   
+            if user_id == dm['owner']:
+                user_in_dm = True
+                dm['owner'] = -1
 
     if dm_id_valid and not user_in_dm:
         raise AccessError("User is not a member of the DM")
