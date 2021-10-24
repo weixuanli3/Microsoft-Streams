@@ -132,7 +132,7 @@ def channels_create_v1(token, name, is_public):
         }
     '''
     user_data = data_store.get_data()['users']
-    # Check if the given user_id exists in the database
+    # Check if the given token exists in the database
     user_exists = False
     for user in user_data:
         if token in user['token']:

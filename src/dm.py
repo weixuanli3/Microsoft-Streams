@@ -262,12 +262,12 @@ def dm_leave_v1(token, dm_id):
         raise AccessError("User is not a member of the DM")
     
     #    # check if user not in dm
-    # for dm in dm_data:
-    #     if dm_id == dm['dm_id']:
-    #         for dm_members in dm['members']:    
-    #             if user_id == dm_members['u_id']:
-    #                 user_in_dm = True
-    #                 # dm.remove(dm_members)
+    for dm in dm_data:
+        if dm_id == dm['dm_id']:
+            for dm_members in dm['members']:    
+                if user_id == dm_members['u_id']:
+                    user_in_dm = True
+                    # dm.remove(dm_members)
 
     if not dm_id_valid:
         raise InputError("dm_id does not refer to a valid DM")
@@ -328,7 +328,9 @@ def dm_messages_v1(token, dm_id, start):
     
     if start < 0:
         raise InputError("Start cannot be negative")
-    elif start > len(msg):
+    # elif not msg:
+        # raise InputError("Start is greater than the total number of messages in the channel")
+    elif start + 1 > len(msg) and len(msg) >= 0:
         raise InputError("Start is greater than the total number of messages in the channel")
 
     # If there are e.g. 50 messages and start = 30, can only return 20, end = -1
