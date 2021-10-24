@@ -55,7 +55,7 @@ def user_profile_v1(token, u_id):
     if not user_exists:
         raise InputError("User id does not refer to a valid user")
     
-    return requested_user
+    return {'user': requested_user}
     #Return type {user}
     
 def user_profile_setname_v1(token, name_first, name_last):
@@ -72,15 +72,13 @@ def user_profile_setname_v1(token, name_first, name_last):
     second_name_valid = (len(name_last) in range(1, 51))
     if not first_name_valid or not second_name_valid:
         raise InputError("Name is not of correct length")
-    
-
 
     # Update the name
 
     for user in user_data:
         if token in user['token']:
             user['names'] = name_first
-            user['names_lasts'] = name_last
+            user['name_lasts'] = name_last
     update_permanent_storage()
     return {}
     #Return type {}
