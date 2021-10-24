@@ -1,4 +1,5 @@
 '''Conatins functions to invite to channel, joins channel, return channel messages and return channel details'''
+import copy
 from src.data_store import data_store, update_permanent_storage, get_u_id
 from src.error import InputError
 from src.error import AccessError
@@ -325,10 +326,11 @@ def channel_messages_v1(token, channel_id, start):
 
     msg = []
 
-    msg = curr_channel['messages']
+    # Prevents following changes to messages from affecting out database
+    msg = copy.deepcopy(curr_channel['messages'])
 
     msg.reverse() # Reversed so that newest message has index of 0
-    print(msg)
+    # print(msg)
     if start < 0:
         raise InputError("Start cannot be negative")
     # elif not msg:

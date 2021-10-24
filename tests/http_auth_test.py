@@ -1,6 +1,6 @@
 '''Contains http tests for auth.py'''
 import pytest
-from src.error import InputError
+from src.error import AccessError, InputError
 from src.other import clear_v1
 from other_functions.request_helper_functions import admin_user_remove_req, auth_login_req, auth_logout_req, auth_register_req, clear_req
 from src.data_store import data_store
@@ -148,7 +148,7 @@ def test_invalid_token():
     auth_login_req("john.doe12@unsw.edu.au","password")['token']
     
     register_test = auth_logout_req(923564)
-    assert register_test['code'] == InputError.code    
+    assert register_test['code'] == AccessError.code    
 
 # CANNOT CALL FUNCTION WITHOUT PROPER INPUT, ERROR NOT ON SERVER SIDE   
 # def test_empty_token():

@@ -1,4 +1,5 @@
 '''Contains functions relating to creating, listing, removing DMs'''
+import copy
 from sys import _clear_type_cache
 from src.data_store import data_store, get_u_id, update_permanent_storage
 from src.error import InputError
@@ -30,7 +31,6 @@ def dm_create_v1(token, u_ids):
     for user in user_data:
         if token in user['token']:
             valid_token = True
-
     if not valid_token:
         raise AccessError("Invalid Token")
         
@@ -440,7 +440,8 @@ if this function has returned the least recent messages in the DM, returns -1 in
     
     for dm in dm_data:
         if dm_id == dm['dm_id']:
-            msg = (dm['messages'])
+            # Prevents the following changes from affecting our database
+            msg = copy.deepcopy(dm['messages'])
     
     msg.reverse()
     
