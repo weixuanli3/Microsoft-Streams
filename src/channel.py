@@ -520,98 +520,55 @@ def channel_leave_v1(token, channel_id):
     return {}
 
 def channel_add_owner_v1(token, channel_id, u_id):
-    
-    channel_data = data_store.get_data()['channels']
+    # Check if the token and the u_id are valid
     user_data = data_store.get_data()['users']
-    global_data = data_store.get_data()['global_owners']
-    user_data = data_store.get_data()['users']
-    
     valid_token = False
+    valid_user = False
     for user in user_data:
         if token in user['token']:
             valid_token = True
-
+        if u_id == user['id']:
+            valid_user = True
+    
     if not valid_token:
         raise AccessError("Invalid Token")
     
+    if not valid_user:
+        raise InputError("u_id does not refer to a valid user")
+    # Check if the channel exists and if the auth_user is in the channel
+    channel_data = data_store.get_data()['channels']
     channel_exists = False
-    
     for channel in channel_data:
-        # check if the channel exists and if the auth_user is in the channel
         if channel_id == channel['chan_id']:
             channel_exists = True
             curr_channel = channel
-            if get_u_id(token) in channel['users_id']:
-                token_in_channel = True
-            if u_id in channel['users_id']:
-                user_in_channel = True    
-                 
+    
     if not channel_exists:
         raise InputError("Channel ID not valid")
+    
+    # Check if the token and u_id refer to people in the channel
+    token_in_channel = get_u_id(token) in curr_channel['users_id']
+    user_in_channel = u_id in curr_channel['users_id']
 
-    
-    # check if token user exists
-    # token_exists = False
-    # for user in user_data:
-    #     if token == user['token']:
-    #         token_exists = True
-    
-    # check if the user exists
-    user_exists = False
-    for user in user_data:
-        if u_id == user['id']:
-            user_exists = True
-            
-    # if not token_exists:
-    #     raise AccessError("User doesn't exist")
-
-    if not user_exists:
-        raise InputError("u_id does not refer to a valid user")
-    
-    
-    token_in_channel = False
-    user_in_channel = False
-    
-    token_is_owner = False
-    user_is_owner = False
-    
-    # check if global owner
-    if get_u_id(token) in global_data:
-        token_is_owner = True
-        token_in_channel = True
-    if u_id in global_data:
-        user_is_owner = True
-        user_in_channel = True
-    
-   
-        # check if the channel exists and if the auth_user is in the channel
-    if get_u_id(token) in curr_channel['users_id']:
-        token_in_channel = True
-    if u_id in curr_channel['users_id']:
-        user_in_channel = True    
-                
     if not token_in_channel:
         raise AccessError("User isn't part of the channel")
 
     if not user_in_channel:
         raise InputError("u_id isn't part of the channel")
-    
-    
-    # check if channel owner
-    if get_u_id(token) in curr_channel['owner_id']:
-        token_is_owner = True
-    if u_id in curr_channel['owner_id']:
-        user_is_owner = True
-                
-    if not token_is_owner:
+
+    # Check the permission of the token
+    global_data = data_store.get_data()['global_owners']
+    token_perm_valid = get_u_id(token) in curr_channel['owner_id'] or get_u_id(token) in global_data
+    if not token_perm_valid:
         raise AccessError("User does not have owner permissions in the channel")
     
-    if user_is_owner:
-        raise InputError("u_id is already an owner in this channel")
-    
+    # Check if the user is already an owner of the channel
+    if u_id in curr_channel['owner_id']:
+        raise InputError("User is already an owner in the channel")
+
     # add u_id as channel owner
     curr_channel['owner_id'].append(u_id)
-            
+
     update_permanent_storage()
             
     return {}
