@@ -193,7 +193,7 @@ def test_auth_login_pass_different_user(setup):
 
 # POSSIBLE ASSUMPTION RASIE INPUT ERROR?
 def test_invalid_token(setup):
-    with pytest.raises(InputError): 
+    with pytest.raises(AccessError): 
       auth_logout_v1(923564)
 
 # CANNOT CALL FUNCTION WITHOUT PROPER INPUT, ERROR NOT ON SERVER SIDE   
