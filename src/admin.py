@@ -14,12 +14,16 @@ def admin_user_remove_id(token, u_id):
 
     if not token_exists:
         raise AccessError
-    
+
     global_users = data_store.get_data()['global_owners']
 
     # Removing only global user
     if len(global_users) == 1 and u_id in global_users:
         raise InputError('You cannot remove the only global user')
+
+    # Check token belong to a global user
+    if get_u_id(token) not in global_users:
+        raise AccessError('You need to be a global owner to do that')
 
     # Checks if user does not exist
     user_ids = data_store.get('id')['id']
