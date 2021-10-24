@@ -1,3 +1,4 @@
+'''Contains http tests for users.py'''
 import pytest
 import requests
 import json

@@ -1,3 +1,4 @@
+'''Contains tests for user.py'''
 import pytest
 from src.auth import auth_register_v1, auth_login_v1
 from src.admin import admin_user_remove_id

@@ -4,6 +4,25 @@ from src.error import InputError, AccessError
 import re
 
 def users_all_v1(token):
+    """
+    Returns a list of all users and their associated details.
+
+    Args:
+        token: The generated token of user getting all user's details.
+
+    Returns:
+        [{
+                'u_id': user['id'],
+                'email': user['emails'],
+                'name_first': user['names'],
+                'name_last': user['name_lasts'],
+                'handle_str': user['handle']
+            }]
+
+    Raises:
+
+        Access Error: - The token does not exist
+    """
     # Check if the user has been removed first
     # If they have, dont display
     user_data = data_store.get_data()['users']
@@ -30,6 +49,27 @@ def users_all_v1(token):
     #Return type {users}
 
 def user_profile_v1(token, u_id):
+    """
+    For a valid user, returns information about their user_id, email, 
+    first name, last name, and handle
+
+    Args:
+        token: The generated token of user getting a user's details.
+
+    Returns:
+        {
+                'u_id': user['id'],
+                'email': user['emails'],
+                'name_first': user['names'],
+                'name_last': user['name_lasts'],
+                'handle_str': user['handle']
+            }
+
+    Raises:
+        Input Error: - u_id does not exist
+
+        Access Error: - The token does not exist
+    """
     user_data = data_store.get_data()['users']
 
     valid_token = False
@@ -59,6 +99,20 @@ def user_profile_v1(token, u_id):
     #Return type {user}
     
 def user_profile_setname_v1(token, name_first, name_last):
+    """
+    Update the authorised user's first and last name
+
+    Args:
+        token: The generated token of user changing their name.
+
+    Returns:
+        An empty dictionary
+
+    Raises:
+        Input Error: - Name not correct length
+
+        Access Error: - The token does not exist
+    """
     user_data = data_store.get_data()['users']
     valid_token = False
     for user in user_data:
@@ -89,6 +143,20 @@ def user_profile_setname_v1(token, name_first, name_last):
     #Return type {}
     
 def user_profile_setemail_v1(token, email):
+    """
+    Update the authorised user's email address
+
+    Args:
+        token: The generated token of user changing their email.
+
+    Returns:
+        An empty dictionary
+
+    Raises:
+        Input Error: - Invalid email
+
+        Access Error: - The token does not exist
+    """
     user_data = data_store.get_data()['users']
     valid_token = False
     for user in user_data:
@@ -116,6 +184,22 @@ def user_profile_setemail_v1(token, email):
     #Return type {}
 
 def user_profile_sethandle_v1(token, handle_str):
+    """
+    Update the authorised user's handle (i.e. display name)
+
+    Args:
+        token: The generated token of user changing their handle.
+
+    Returns:
+        An empty dictionary
+
+    Raises:
+        Input Error: - Invalid length of handle
+                     - Handle can't contain non-alphanumeric characters
+                     - Handle already taken
+
+        Access Error: - The token does not exist
+    """
     user_data = data_store.get_data()['users']
     valid_token = False
     for user in user_data:

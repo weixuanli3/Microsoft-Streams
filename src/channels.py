@@ -8,11 +8,11 @@ def channels_list_v1(token):
     Function will take in an user_id and list all the public channels the user is in
 
     Arguments:
-        auth_user_id (int) - Used to uniquely identify the user
+        token - Used to uniquely identify the user
 
     Exceptions:
-        InputError - Occurs when:
-            Given user_id does not exist in the system
+        AccessError - Occurs when:
+            Token doesn't exist
 
     Return Value:
         Returns {} when user is not a part of any channel
@@ -62,11 +62,11 @@ def channels_listall_v1(token):
     Function will take in an user_id and list all the public and private channels
     the user is in
     Arguments:
-        auth_user_id (int) - Used to uniquely identify the user
+        token (int) - Used to uniquely identify the user
 
     Exceptions:
-        InputError - Occurs when:
-            Given user_id does not exist in the system
+        Access - Occurs when:
+            Given token does not exist in the system
 
     Return Value:
         Returns {} when user is not a part of any channel
@@ -115,14 +115,15 @@ def channels_create_v1(token, name, is_public):
     the user is in
 
     Arguments:
-        auth_user_id (int) - Used to uniquely identify the user
+        token - Used to uniquely identify the user
 
     Exceptions:
         InputError - Occurs when:
-            Given user_id does not exist in the system
             Channel name is taken
             Channel name is smaller than 1 character or greater than 20
             Channel name is all spaces
+        AcessError - Occurs when:
+            Invalid token
 
     Return Value:
         Returns a dicionary containing the new channel_id
