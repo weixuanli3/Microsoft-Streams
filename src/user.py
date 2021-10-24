@@ -74,6 +74,11 @@ def user_profile_setname_v1(token, name_first, name_last):
         raise InputError("Name is not of correct length")
 
     # Update the name
+    # ASSUMPTION: Names cannot have characters not used in names
+    # Formating name to remove special characters
+    regex = re.compile(r"[^a-zA-Z0-9-]")
+    name_first = regex.sub("", name_first)
+    name_last = regex.sub("", name_last)
 
     for user in user_data:
         if token in user['token']:
