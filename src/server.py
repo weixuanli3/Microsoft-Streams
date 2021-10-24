@@ -120,13 +120,17 @@ def channel_remove_owner():
 @APP.route("/channels/list/v2", methods=['GET'])
 def channels_list():
     token = request.args.get('token')
-    return json.dumps(channels_list_v1(token))
+    a = json.dumps(channels_list_v1(token))
+    print("\n\nListing channels:", a, "\n\n")
+    return a
 
 # List all channels
 @APP.route("/channels/listall/v2", methods=['GET'])
 def channels_listall():
     token = request.args.get('token')
-    return json.dumps(channels_listall_v1(token))
+    a = json.dumps(channels_listall_v1(token))
+    print("\n\nListing all channels:", a, "\n\n")
+    return a
 
 # Create a channel
 @APP.route("/channels/create/v2", methods=['POST'])
@@ -146,7 +150,9 @@ def dm_create():
 @APP.route("/dm/list/v1", methods=['GET'])
 def dm_list():
     token = request.args.get('token')
-    return json.dumps(dm_list_v1(token))
+    a = json.dumps(dm_list_v1(token))
+    print("\n\nList dm:",a, "\n\n")
+    return a
 
 # Remove a user from the channel
 @APP.route("/dm/remove/v1", methods=['DELETE'])
@@ -173,7 +179,9 @@ def dm_messages():
     token = request.args.get('token')
     dm_id = int(request.args.get('dm_id'))
     start = int(request.args.get('start'))
-    return json.dumps(dm_messages_v1(token, dm_id, start))
+    a = json.dumps(dm_messages_v1(token, dm_id, start))
+    print("\n\Messages dm:",a, "\n\n")
+    return a
 
 ##########OTHER.PY##########
       

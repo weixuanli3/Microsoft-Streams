@@ -32,13 +32,24 @@ def admin_user_remove_id(token, u_id):
         if u_id in channel['users_id']:
             channel['users_id'].remove(u_id)
 
+            # Removes all messages from channels:
+            all_messages = channel['messages']
+
+            for messages in all_messages:
+                if messages['u_id'] == u_id:
+                    messages['message'] = 'Removed user'            
+            
+        # If the user is the owner
+        if u_id in channel['owner_id']:
+            channel['owner_id'].remove(u_id)
+
     # Find correct user
     all_users = data_store.get_data()['users']
     for user in all_users:
         if user['id'] == u_id:
             currect_user = user
 
-    # Scan though all chats, if they are in it, replace all their messages with 'Removed user'
+    # Scan though all DMs, if they are in it, replace all their messages with 'Removed user'
     all_dms = data_store.get_data()['DMs']
     for chat in all_dms:
         for users in chat['members']:
@@ -70,6 +81,7 @@ def admin_user_remove_id(token, u_id):
 
     
 def admin_userpermission_change_v1(token, u_id, permission_id):
+
     # Check a token is valid
     all_tokens = data_store.get('token')['token']
     token_exists = False
@@ -89,10 +101,10 @@ def admin_userpermission_change_v1(token, u_id, permission_id):
     if u_id not in all_u_ids:
         raise InputError('Not valid ID')
     
-    global_owners = data_store.get_data()['global_owners']
     # the authorised user is not a global owner
+    global_owners = data_store.get_data()['global_owners']
     if get_u_id(token) not in global_owners:
-        raise AccessError('You need to be a global pwner to do this')
+        raise AccessError('You need to be a global owner to do this')
 
     # u_id refers to a user who is the only global owner and they are being demoted to a user
     if len(global_owners) == 1 and u_id in global_owners and permission_id == 2:
@@ -109,5 +121,6 @@ def admin_userpermission_change_v1(token, u_id, permission_id):
             global_owners.remove(u_id)
         else:
             raise InputError('You are changing a user to a user')
+
     update_permanent_storage()
     return {}

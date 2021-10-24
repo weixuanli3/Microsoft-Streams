@@ -48,6 +48,7 @@ def auth_login_v1(email, password):
 
             new_key = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), salt, 100000)
 
+            # Logs the new user in
             if key == new_key:
 
                 user_id = users['id']
@@ -100,6 +101,7 @@ def auth_register_v1(email, password, name_first, name_last):
     if password_is_all_spaces:
         raise InputError("Password cannot be all white space")
 
+    # ASSUMPTION: Names cannot have characters not used in names
     # Formating name to remove special characters
     regex = re.compile(r"[^a-zA-Z0-9-]")
     name_first = regex.sub("", name_first)
@@ -118,6 +120,7 @@ def auth_register_v1(email, password, name_first, name_last):
             is_valid_name_first):
 
         # REGISTER USER
+        
         user_data = data_store.get_data()['users']
         new_user_id = len(user_data) + 1
         
@@ -142,7 +145,7 @@ def auth_register_v1(email, password, name_first, name_last):
             'token' : [],
             'is_removed' : False
         }
-
+        # print("Adding user", new_user)
         token = generate_token(new_user)
         new_user['token'].append(token)
 
@@ -152,6 +155,7 @@ def auth_register_v1(email, password, name_first, name_last):
         global_users = data_store.get_data()['global_owners']
         if len(global_users) == 0:
             global_users.append(new_user_id)
+            print("\n\nAdded ", new_user_id, "as global\n\n")
 
         update_permanent_storage()
         

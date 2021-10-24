@@ -139,6 +139,7 @@ def channel_details_v1(token, channel_id):
 
     user_data = data_store.get_data()['users']
     
+    # Check if the user exists and token is valid
     valid_token = False
     for user in user_data:
         if token in user['token']:
@@ -147,18 +148,7 @@ def channel_details_v1(token, channel_id):
     if not valid_token:
         raise AccessError("Invalid Token")
 
-    # check if the user exists
     auth_user_id = get_u_id(token)
-    
-    user_data = data_store.get_data()['users']
-    # user_exists = False
-    # for user in user_data:
-    #     if auth_user_id == user['id']:
-    #         user_exists = True
-
-    # if not user_exists:
-    #     raise AccessError("User doesn't exist")
-
 
     return_dictionary = {
         'name': '',
@@ -167,21 +157,10 @@ def channel_details_v1(token, channel_id):
         'all_members': [],
     }
     
-
     owner_ids = []
     member_ids = []
 
-    # check if the auth user exists
-    user_data = data_store.get_data()['users']
-    # auth_user_exists = False
-    # for user in user_data:
-    #     if auth_user_id == user['id']:
-    #         auth_user_exists = True
-
-    # if not auth_user_exists:
-    #     raise AccessError("User doesn't exist")
-
-    #check if the channel exists and if the auth_user is in the channel
+    # Check if the channel exists and if the auth_user is in the channel
     channel_data = data_store.get_data()['channels']
     channel_exists = False
     auth_user_in_channel = False
@@ -352,10 +331,10 @@ def channel_messages_v1(token, channel_id, start):
     print(msg)
     if start < 0:
         raise InputError("Start cannot be negative")
-    elif not msg:
-        if start != 0:
-            raise InputError("Start is greater than the total number of messages in the channel")
-    elif start > len(msg) - 1:
+    # elif not msg:
+    #     if start != 0:
+    #         raise InputError("Start is greater than the total number of messages in the channel")
+    elif start > len(msg) - 1 and len(msg) > 0:
         raise InputError("Start is greater than the total number of messages in the channel")
 
     # If there are e.g. 50 messages and start = 30, can only return 20, end = -1
@@ -411,6 +390,9 @@ def channel_join_v1(token, channel_id):
     
     user_data = data_store.get_data()['users']
     
+    # check if the user and token exists
+    user_data = data_store.get_data()['users']
+
     valid_token = False
     for user in user_data:
         if token in user['token']:
@@ -422,23 +404,12 @@ def channel_join_v1(token, channel_id):
      # turn token into user 
     auth_user_id = get_u_id(token)
     
-    # check if the user exists
-    user_data = data_store.get_data()['users']
-    # user_exists = False
-    # for user in user_data:
-    #     if auth_user_id == user['id']:
-    #         user_exists = True
-
-    # if not user_exists:
-    #     raise AccessError("User doesn't exist")
-
     #check if the user is a global
     global_data = data_store.get_data()['global_owners']
     is_global_owner = False
 
     if auth_user_id in global_data:
         is_global_owner = True
-
 
     #check if the channel exists
     channel_data = data_store.get_data()['channels']
@@ -449,12 +420,11 @@ def channel_join_v1(token, channel_id):
             channel_exists = True
             curr_channel = channel
 
-            # check if the user is aready in the channel
+            # Check if the user is aready in the channel
             if auth_user_id in channel['users_id']:
                 raise InputError("User already member of channel")
 
-            #check if the channel is private
-
+            # Check if the channel is private
             if not channel['is_public'] and not is_global_owner:
                 raise AccessError("Channel is not public")
 
