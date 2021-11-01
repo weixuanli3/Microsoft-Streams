@@ -1,3 +1,8 @@
+import jwt
+import shelve
+
+DATABASE_FILE_NAME = "src/data_base_files/database"
+
 '''
 data_store.py
 
@@ -35,6 +40,7 @@ Example Storage: (Joseph)
                 'passwords': '123123',
                 'handle' : 'AdminUser1234567891011',
                 'channels' : [1, 2]
+                'token': ["OLIUEFKSEJF.IEUFHKESF.Iuhflskejhf"]
             },
         ],
         'channels': [
@@ -47,7 +53,9 @@ Example Storage: (Joseph)
                 'messages': []
             },
         ],
-        'global_owners':[]
+        'global_owners':[],
+        'DMs' : [],
+        'msgs' : []
     }
 '''
 ## YOU SHOULD MODIFY THIS OBJECT BELOW
@@ -55,9 +63,19 @@ initial_object = {
     'users': [],
     'channels': [], 
     'global_owners': [],
+    'DMs': [],
+    'msgs' : []
 }
 
 ## YOU SHOULD MODIFY THIS OBJECT ABOVE
+
+def get_u_id(token):
+    '''given a token, return user ID Will raise error if token does not exist, so make sure to 
+    only input valid tokens, or to try, except'''
+
+    decoded_token = jwt.decode(token, "IAmNotSureReally", algorithms=["HS256"])
+    return decoded_token['u_id']
+
 
 class Datastore:
     def __init__(self):
@@ -89,8 +107,44 @@ class Datastore:
             raise TypeError('store must be of type dictionary')
         self.__store = store
 
-
-print('Loading Datastore...')
-
 global data_store
 data_store = Datastore()
+
+def update_permanent_storage():
+    """Updates the permanent storage to contain the same content as in the datastore object"""
+    filehandler = shelve.open(DATABASE_FILE_NAME)
+    for item in data_store.get_data():
+        # print("Storing:", data_store.get_data()[item])
+        filehandler[item] = data_store.get_data()[item]
+    filehandler.close()
+
+def update_datastore_object():
+    """
+    Updates the datastore object to contain the same infomation as whats in the permanent storage
+    Only runs if datastore contains more users than the data_store object.
+    """
+
+    filehandler = shelve.open(DATABASE_FILE_NAME)
+
+    # If the database has nothing in it, then it does not contiue
+    if len(filehandler) == 0:
+        return
+
+    # If the data_store object has more data than the data base, then it 
+    # cannot continue
+    if len(filehandler['users']) < len(data_store.get_data()['users']):
+        return
+
+    data_base = data_store.get_data()
+    new_data_base = dict()
+
+    for item in data_base:
+        new_data_base[item] = filehandler[item]
+        # print("fetching:",filehandler[item])
+
+    filehandler.close()
+
+    data_store.set(new_data_base)
+    
+update_datastore_object()
+print('Loading Datastore...')
