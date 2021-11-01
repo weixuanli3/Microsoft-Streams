@@ -341,7 +341,7 @@ def message_remove_v1(token, message_id):
 
     return {}
 
-def message_share_v1(token, og_message_id, message=, channel_id, dm_id):
+def message_share_v1(token, og_message_id, message, channel_id, dm_id):
     return {
         "shared_message_id": 1
     }
