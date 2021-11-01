@@ -180,6 +180,12 @@ def auth_logout_v1(token):
     raise AccessError('Could not find token')
 
 
+def auth_passwordreset_request_v1(email):
+    return {}
+
+def auth_passwordreset_reset_v1(reset_code, new_password):
+    return {}
+
 ################################
 #   Helper functions for auth  #
 ################################
