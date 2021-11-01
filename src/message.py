@@ -340,3 +340,30 @@ def message_remove_v1(token, message_id):
                 update_permanent_storage()
 
     return {}
+
+def message_share_v1(token, og_message_id, message=, channel_id, dm_id):
+    return {
+        "shared_message_id": 1
+    }
+
+def message_react_v1(token, message_id, react_id):
+    return {}
+
+def message_unreact_v1(token, message_id, react_id):
+    return {}
+
+def message_pin_v1(token, message_id):
+    return {}
+
+def message_unpin_v1(token, message_id):
+    return {}
+
+def message_sendlater_v1(token, channel_id, message, time_sent):
+    return {
+        "message_id": 1
+    }
+
+def message_sendlaterdm_v1(token, dm_id, message, time_sent):
+    return {
+        "message_id": 1
+    }
