@@ -74,11 +74,13 @@ def auth_logout():
     request_data = request.get_json(force = True)
     return json.dumps(auth_logout_v1(request_data['token']))
 
+# Request a pw reset
 @APP.route("/auth/passwordreset/request/v1", methods=['POST'])
 def auth_passwordreset_request():
     request_data = request.get_json(force = True)
     return json.dumps(auth_passwordreset_request_v1(request_data['email']))
 
+# Reset a pw
 @APP.route("/auth/passwordreset/reset/v1", methods=['POST'])
 def auth_passwordreset_reset():
     request_data = request.get_json(force = True)
@@ -106,7 +108,7 @@ def channel_messages():
     start = int(request.args.get('start'))
     return json.dumps(channel_messages_v1(token, channel_id, start))
 
-# Make a particular channel
+# Join a particular channel
 @APP.route("/channel/join/v2", methods=['POST'])
 def channel_join():
     request_data = request.get_json(force = True)
@@ -118,13 +120,13 @@ def channel_leave():
     request_data = request.get_json(force = True)
     return json.dumps(channel_leave_v1(request_data['token'], request_data['channel_id']))
 
-# Make a particular channel
+# Add an owner to a particular channel
 @APP.route("/channel/addowner/v1", methods=['POST'])
 def channel_add_owner():
     request_data = request.get_json(force = True)
     return json.dumps(channel_add_owner_v1(request_data['token'], request_data['channel_id'], request_data['u_id']))
 
-# Make a particular channel
+# Remove an owner to a particular channel
 @APP.route("/channel/removeowner/v1", methods=['POST'])
 def channel_remove_owner():
     request_data = request.get_json(force = True)
@@ -247,6 +249,7 @@ def user_profile_sethandle():
     request_data = request.get_json(force = True)
     return json.dumps(user_profile_sethandle_v1(request_data['token'], request_data['handle_str']))
 
+# User set profile photo
 @APP.route("/user/profile/uploadphoto/v1", methods=['POST'])
 def user_profile_uploadphoto():
     data = request.get_json(force = True)
@@ -254,11 +257,13 @@ def user_profile_uploadphoto():
         data['y_start'], data['x_end'], data['y_end'])
     )
 
+# User stats
 @APP.route("/user/stats/v1", methods=['GET'])
 def user_stats():
     token = request.args.get('token')
     return json.dumps(user_stats_v1(token))
 
+# ALL stats
 @APP.route("/users/stats/v1", methods=['GET'])
 def users_stats():
     token = request.args.get('token')
@@ -266,68 +271,83 @@ def users_stats():
 
 ##########MESSAGE.PY##########
 
+# Send a message to channel
 @APP.route("/message/send/v1", methods=['POST'])
 def message_send():
     request_data = request.get_json(force = True)
     return json.dumps(message_send_v1(request_data['token'], request_data['channel_id'], request_data['message']))
 
+# Edit a message
 @APP.route("/message/edit/v1", methods=['PUT'])
 def message_edit():
     request_data = request.get_json(force = True)
     return json.dumps(message_edit_v1(request_data['token'], request_data['message_id'], request_data['message']))
 
+# Remove a message
 @APP.route("/message/remove/v1", methods=['DELETE'])
 def message_delete():
     request_data = request.get_json(force = True)
     return json.dumps(message_remove_v1(request_data['token'],request_data['message_id']))
 
+# Send a message to a dm
 @APP.route("/message/senddm/v1", methods=['POST'])
 def message_senddm():
     request_data = request.get_json(force = True)
     return json.dumps(message_senddm_v1(request_data['token'], request_data['dm_id'], request_data['message']))
 
+# Share a message
 @APP.route("/message/share/v1", methods=['POST'])
 def message_share():
     data = request.get_json(force = True)
     return json.dumps(message_share_v1(data['token'], data['og_message_id'], data['message'], data['channel_id'], data['dm_id']))
 
+# React to a message
 @APP.route("/message/react/v1", methods=['POST'])
 def message_react():
     data = request.get_json(force = True)
     return json.dumps(message_react_v1(data['token'], data['message_id'], data['react_id']))
 
+# Unreact to a message
 @APP.route("/message/unreact/v1", methods=['POST'])
 def message_unreact():
     data = request.get_json(force = True)
     return json.dumps(message_unreact_v1(data['token'], data['message_id'], data['react_id']))
 
+# Pin a message
 @APP.route("/message/pin/v1", methods=['POST'])
 def message_pin():
     data = request.get_json(force = True)
     return json.dumps(message_pin_v1(data['token'], data['message_id']))
 
+# Unpin a message
 @APP.route("/message/unpin/v1", methods=['POST'])
 def message_unpin():
     data = request.get_json(force = True)
     return json.dumps(message_unpin_v1(data['token'], data['message_id']))
 
+# Send a message to channel later
 @APP.route("/message/sendlater/v1", methods=['POST'])
 def message_sendlater():
     data = request.get_json(force = True)
     return json.dumps(message_sendlater_v1(data['token'], data['channel_id'], data['message'], data['time_sent']))
 
+# Send a message to dm later
 @APP.route("/message/sendlaterdm/v1", methods=['POST'])
 def message_sendlaterdm():
     data = request.get_json(force = True)
     return json.dumps(message_sendlaterdm_v1(data['token'], data['dm_id'], data['message'], data['time_sent']))
 
 ##########NOTIFICATIONS.PY##########
+
+# Return notifications for user
 @APP.route("/notifications/get/v1", methods=['GET'])
 def notifications_get():
     token = request.args.get('token')
     return json.dumps(notifications_get_v1(token))
 
 ##########SEARCH.PY##########
+
+# Searches for matching query strings for user
 @APP.route("/search/v1", methods=['GET'])
 def search_get():
     token = request.args.get('token')
@@ -335,17 +355,20 @@ def search_get():
     return json.dumps(search_v1(token, query_str))
 
 ##########STANDUP.PY##########
+# Starts a standup
 @APP.route("/standup/start/v1", methods=['POST'])
 def standup_start():
     data = request.get_json(force = True)
     return json.dumps(standup_start_v1(data['token'], data['channel_id'], data['length']))
 
+# Check if standup is active
 @APP.route("/standup/active/v1", methods=['GET'])
 def standup_active():
     token = request.args.get('token')
     channel_id = request.args.get('channel_id')
     return json.dumps(standup_active_v1(token, channel_id))
 
+# Send a message to be buffered
 @APP.route("/standup/send/v1", methods=['POST'])
 def standup_send():
     data = request.get_json(force = True)
