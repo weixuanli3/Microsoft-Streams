@@ -227,7 +227,7 @@ def user_profile_sethandle_v1(token, handle_str):
     return {}
     #Return type {}
 
-def user_profile_upload_photo_v1(token, img_url, x_start, y_start, x_end, y_end):
+def user_profile_uploadphoto_v1(token, img_url, x_start, y_start, x_end, y_end):
     return {}
 
 def user_stats_v1(token):
