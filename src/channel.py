@@ -253,6 +253,7 @@ def channel_messages_v1(token, channel_id, start):
                             'message_id': 1,
                             'u_id': 1,
                             'message': 'Hello world',
+                            'reacts' : [{'user_id' : 1, 'react_id' : 1}]
                             'time_created': 1582426789,
                         }
                     ],
@@ -359,6 +360,8 @@ def channel_messages_v1(token, channel_id, start):
     #             'u_id': 1,
     #             'message': 'Hello world',
     #             'time_created': 1582426789,
+    #             'reacts' : [{'user_id' : 1, 'react_id' : 1}]
+    #             'is_pinned' : False
     #         }
     #     ],
     #     'start': 0,
