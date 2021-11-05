@@ -219,40 +219,40 @@ def test_user_profile_uploadphoto_success(registered_user):
 #   user/stats                  #
 #################################
 
-def test_user_stats_invalid_token(registered_user):
-    with pytest.raises(AccessError):
-        user_stats_v1('123')
+# def test_user_stats_invalid_token(registered_user):
+#     with pytest.raises(AccessError):
+#         user_stats_v1('123')
 
-def test_user_stats_success(registered_user):
+# def test_user_stats_success(registered_user):
     
-    output = user_stats_v1(registered_user['token'])
+#     output = user_stats_v1(registered_user['token'])
 
-    expected_output = {
-        'channels_joined': [],
-        'dms_joined': [], 
-        'messages_sent': [], 
-        'involvement_rate' : 0
-    }
+#     expected_output = {
+#         'channels_joined': [],
+#         'dms_joined': [], 
+#         'messages_sent': [], 
+#         'involvement_rate' : 0
+#     }
 
-    assert output == expected_output
+#     assert output == expected_output
 
 #################################
 #   users/stats                 #
 #################################
 
-def test_users_stats_invalid_token(registered_user):
-    with pytest.raises(AccessError):
-        users_stats_v1('123')
+# def test_users_stats_invalid_token(registered_user):
+#     with pytest.raises(AccessError):
+#         users_stats_v1('123')
 
-def test_users_stats_success(registered_user):
+# def test_users_stats_success(registered_user):
     
-    output = users_stats_v1(registered_user['token'])
+#     output = users_stats_v1(registered_user['token'])
 
-    expected_output = {
-        'channels_exist': [], 
-        'dms_exist': [], 
-        'messages_exist': [], 
-        'utilization_rate' : 0
-    }
+#     expected_output = {
+#         'channels_exist': [], 
+#         'dms_exist': [], 
+#         'messages_exist': [], 
+#         'utilization_rate' : 0
+#     }
 
-    assert output == expected_output
+#     assert output == expected_output
