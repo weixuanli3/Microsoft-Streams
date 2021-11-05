@@ -3,7 +3,7 @@ import pytest
 from src.auth import auth_register_v1, auth_login_v1
 from src.admin import admin_user_remove_id
 from src.other import clear_v1
-from src.user import user_profile_setemail_v1, user_profile_sethandle_v1, user_profile_setname_v1, users_all_v1, user_profile_v1
+from src.user import user_profile_setemail_v1, user_profile_sethandle_v1, user_profile_setname_v1, user_stats_v1, users_all_v1, user_profile_v1, users_stats_v1
 from src.error import InputError, AccessError
 
 @pytest.fixture
@@ -96,14 +96,14 @@ def test_setname_name_last_too_long(registered_user):
         user_profile_setname_v1(registered_user_token, "JohnJohnJohnJohnJohnJohnJohnJohnJohnJohnJohnJohnJohn", "Doe")
 # Assumption we have - names cannot contain non-alphabetical characters and
 # grammer that is not associated with names
-# THE BELOW TEST IS NOT BLACKBOX!!!
-def test_setname_alphanumeric(registered_user):
-    registered_user_token = registered_user['token']
-    user_profile_setname_v1(registered_user_token, "Mary-Ann", "!@#Doe")
-    result_first_name = users_all_v1(registered_user_token)['users'][0]['name_first']
-    result_last_name = users_all_v1(registered_user_token)['users'][0]['name_last']
-    expected = ["Mary-Ann", "Doe"]
-    assert [result_first_name, result_last_name] == expected
+# THE BELOW TEST IS NOT BLACKBOX!!
+# def test_setname_alphanumeric(registered_user):
+#     registered_user_token = registered_user['token']
+#     user_profile_setname_v1(registered_user_token, "Mary-Ann", "!@#Doe")
+#     result_first_name = users_all_v1(registered_user_token)['users'][0]['name_first']
+#     result_last_name = users_all_v1(registered_user_token)['users'][0]['name_last']
+#     expected = ["Mary-Ann", "Doe"]
+#     assert [result_first_name, result_last_name] == expected
 
 
 def test_setname_invlid_token(registered_user):
@@ -120,6 +120,7 @@ def test_setname_valid_test(registered_user):
     result_last_name = user_profile_v1(registered_user_token, registered_user_id)['user']['name_last']
     expected = ["Janet", "Doe"]
     assert [result_first_name, result_last_name] == expected
+
 #################################
 #     user/profile/setemail/    #
 #################################
@@ -147,6 +148,7 @@ def test_setmail_valid_test(registered_user):
     result = user_profile_v1(registered_user_token, registered_user_id)['user']['email']
     expected = "janet.doe@unsw.ed.au"
     assert result == expected
+
 #################################
 #   user/profile/sethandle/v1   #
 #################################
@@ -185,3 +187,71 @@ def test_sethandle_valid_test(registered_user):
     expected = "johnDoe"
     assert result == expected
     clear_v1()
+
+#################################
+#   user/profile/uploadphoto    #
+#################################
+
+# Not really sure how to test these :(
+def test_user_profile_uploadphoto_not_found(registered_user):
+    token = registered_user['token']
+    img_url = ''
+    
+    x_start = 0
+    y_start = 0
+
+    # THIS NEEDS TO BE CHANGED:
+    x_end = 0
+    y_end = 0
+
+
+def test_user_profile_uploadphoto_invalid_coordinate(registered_user):
+    pass
+
+def test_user_profile_uploadphoto_invalid_token(registered_user):
+    pass
+
+def test_user_profile_uploadphoto_success(registered_user):
+    pass
+
+#################################
+#   user/stats                  #
+#################################
+
+def test_user_stats_invalid_token(registered_user):
+    with pytest.raises(AccessError):
+        user_stats_v1('123')
+
+def test_user_stats_success(registered_user):
+    
+    output = user_stats_v1(registered_user['token'])
+
+    expected_output = {
+        'channels_joined': [],
+        'dms_joined': [], 
+        'messages_sent': [], 
+        'involvement_rate' : 0
+    }
+
+    assert output == expected_output
+
+#################################
+#   users/stats                 #
+#################################
+
+def test_user_stats_invalid_token(registered_user):
+    with pytest.raises(AccessError):
+        users_stats_v1('123')
+
+def test_user_stats_success(registered_user):
+    
+    output = users_stats_v1(registered_user['token'])
+
+    expected_output = {
+        'channels_exist': [], 
+        'dms_exist': [], 
+        'messages_exist': [], 
+        'utilization_rate' : 0
+    }
+
+    assert output == expected_output
