@@ -192,17 +192,18 @@ def test_sethandle_valid_test(registered_user):
 #   user/profile/uploadphoto    #
 #################################
 
-# Not really sure how to test these :(
+# Not really sure how to test these blackbox :(
 def test_user_profile_uploadphoto_not_found(registered_user):
-    token = registered_user['token']
-    img_url = ''
+    pass
+    # token = registered_user['token']
+    # img_url = ''
     
-    x_start = 0
-    y_start = 0
+    # x_start = 0
+    # y_start = 0
 
-    # THIS NEEDS TO BE CHANGED:
-    x_end = 0
-    y_end = 0
+    # # THIS NEEDS TO BE CHANGED:
+    # x_end = 0
+    # y_end = 0
 
 
 def test_user_profile_uploadphoto_invalid_coordinate(registered_user):
@@ -239,11 +240,11 @@ def test_user_stats_success(registered_user):
 #   users/stats                 #
 #################################
 
-def test_user_stats_invalid_token(registered_user):
+def test_users_stats_invalid_token(registered_user):
     with pytest.raises(AccessError):
         users_stats_v1('123')
 
-def test_user_stats_success(registered_user):
+def test_users_stats_success(registered_user):
     
     output = users_stats_v1(registered_user['token'])
 
