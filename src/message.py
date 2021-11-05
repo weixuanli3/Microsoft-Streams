@@ -68,7 +68,14 @@ def message_send_v1(token, channel_id, message):
     time = datetime.now()
     timestamp = int(datetime.timestamp(time))
 
-    message = {'message_id' : message_id, 'u_id' : user_id, 'message' : message, 'time_created' : timestamp}
+    message = {
+        'message_id' : message_id,
+        'u_id' : user_id,
+        'message' : message,
+        'time_created' : timestamp,
+        'reacts' : [],
+        'is_pinned' : False
+    }
 
     # adding message to channel_data
     for channel in channel_data:
@@ -246,7 +253,9 @@ def message_senddm_v1(token, dm_id, message):
         'message_id' : message_id,
         'u_id' : user_id,
         'message' : message,
-        'time_created' : timestamp
+        'time_created' : timestamp,
+        'reacts' : [],
+        'is_pinned' : False
     }
 
     # adding message to dm_data
