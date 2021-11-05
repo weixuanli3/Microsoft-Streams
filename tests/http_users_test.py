@@ -26,21 +26,21 @@ def test_invalid_token():
     registered_user_token = 'HMMMMM'
     assert users_all_req(registered_user_token)['code'] == AccessError.code
 
-# def test_valid_test(registered_user):
-#     token = registered_user['token']
-#     user_id = auth_register_req('jane.doe@unsw.edu.au', '123123', 'jane', 'Doe')['auth_user_id']
-#     admin_user_remove_req(token, user_id)
-#     result = users_all_req(token)
-#     expected = {
-#         'users':[{
-#             'email': 'john.doe@unsw.edu.au',
-#             'handle_str': 'johndoe',
-#             'name_first': 'John',
-#             'name_last': 'Doe',
-#             'u_id': 1
-#         }]
-#     }
-#     assert result == expected
+def test_valid_test(registered_user):
+    token = registered_user['token']
+    user_id = auth_register_req('jane.doe@unsw.edu.au', '123123', 'jane', 'Doe')['auth_user_id']
+    admin_user_remove_req(token, user_id)
+    result = users_all_req(token)
+    expected = {
+        'users':[{
+            'email': 'john.doe@unsw.edu.au',
+            'handle_str': 'johndoe',
+            'name_first': 'John',
+            'name_last': 'Doe',
+            'u_id': 1
+        }]
+    }
+    assert result == expected
 #################################
 #       user/profile/req        #
 #################################
