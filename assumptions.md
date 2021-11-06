@@ -25,3 +25,5 @@ Current assumptions for functions:
 
 - You cannot change the permission ID of a person to the permission ID that they already have
     - This is to prevent mistakes where you mean to change the ID of someone, but you missclick and select the wrong option. 
+
+- The funciton message_sendlater will not allow a message less than one character like message_send
