@@ -49,14 +49,23 @@ Example Storage: (Joseph)
                 'name': 'Channel 1',
                 'owner_id': [1],
                 'users_id' : [1, 2, 3],
-                'is_public': True
-                'messages': []
+                'is_public': True,
+                'messages': [],
+                'standup': {},
             },
         ],
         'global_owners':[],
         'DMs' : [],
         'msgs' : []
     }
+    
+    'standup': {
+        'is_active': True,
+        'start_user': 1,
+        'finish_time': [],
+        'messages': []
+    }
+    'messages': []
 '''
 ## YOU SHOULD MODIFY THIS OBJECT BELOW
 initial_object = {

@@ -1,4 +1,6 @@
 ''' Contains the functions to create a new channel and to list pub/priv channels'''
+from datetime import timezone
+
 from src.data_store import data_store, update_permanent_storage
 from src.error import InputError
 from src.error import AccessError
@@ -164,6 +166,12 @@ def channels_create_v1(token, name, is_public):
         'users_id': [auth_user_id],
         'is_public': is_public,
         'messages': [],
+        'standups': {
+            'is_active': True,
+            'start_user': -1,
+            'finish_time': datetime.datetime(2000, 1, 1).replace(tzinfo=timezone.utc).timestamp(),
+            'messages': []
+        },
     })
     update_permanent_storage()
     return {
