@@ -143,7 +143,13 @@ def auth_register_v1(email, password, name_first, name_last):
             'handle': generate_handle(name_first, name_last),
             'channels': [],
             'token' : [],
-            'is_removed' : False
+            'is_removed' : False,
+            'user_stats': {
+                'channels_joined': [{'num_channels_joined': 0, 'time_stamp': datetime.now()}],
+                'dms_joined': [{'num_dms_joined': 0, 'time_stamp': datetime.now()}],
+                'messages_sent': [{'num_messages_sent': 0, 'time_stamp': datetime.now()}],
+                'involvement_rate' : 0
+            }
         }
         # print("Adding user", new_user)
         token = generate_token(new_user)
