@@ -1,4 +1,5 @@
 ''' Contains the functions to create a new channel and to list pub/priv channels'''
+import datetime
 from datetime import timezone
 
 from src.data_store import data_store, update_permanent_storage

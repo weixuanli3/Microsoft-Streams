@@ -61,7 +61,7 @@ def standup_active_v1(token, channel_id):
     if not token_exists:
         raise AccessError("Token doesn't exist")    
     
-        channel_data = data_store.get_data()['channels']
+    channel_data = data_store.get_data()['channels']
     user_id = get_u_id(token)
 
     channel_exists = False
@@ -89,8 +89,8 @@ def standup_active_v1(token, channel_id):
     else:
         if curr_channel['standup']['is_active']:
             # SEND MESSAGES
-        pass
-            
+            pass
+        pass      
     
     return {
         "is_active": is_active,
@@ -136,7 +136,7 @@ def standup_send_v1(token, channel_id, message):
         user_data = data_store.get_data()['users']
         for user in user_data:
             if user_id == user['id']:
-                curr_channel['standup']['messages'].append(f"{user['handle']}: {messgae}")
+                curr_channel['standup']['messages'].append(f"{user['handle']}: {message}")
                 break
     
     return {}
