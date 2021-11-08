@@ -540,14 +540,14 @@
 #     clear_v1()
 #     token1 = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['token']
 #     with pytest.raises(InputError): 
-#         message_sendlater_v1(token1, -1, "Boss", datetime.datetime.now().replace(tzinfo=timezone.utc).timestamp())
+#         message_sendlater_v1(token1, -1, "Boss", datetime.now().replace(tzinfo=timezone.utc).timestamp())
 
 # def test_message_sendlater_multi_msgs():
 #     clear_v1()
 #     token1 = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['token']
 #     channel_id = channels_create_v1(token1, "Channel 1", True)['channel_id']
-#     msg1_id = message_sendlater_v1(token1, channel_id, "Hi there!", datetime.datetime.now().replace(tzinfo=timezone.utc).timestamp())['message_id']
-#     msg2_id = message_sendlater_v1(token1, channel_id, "Hi there!", datetime.datetime.now().replace(tzinfo=timezone.utc).timestamp())['message_id']
+#     msg1_id = message_sendlater_v1(token1, channel_id, "Hi there!", datetime.now().replace(tzinfo=timezone.utc).timestamp())['message_id']
+#     msg2_id = message_sendlater_v1(token1, channel_id, "Hi there!", datetime.now().replace(tzinfo=timezone.utc).timestamp())['message_id']
 #     assert msg1_id != msg2_id
     
 # def test_message_sendlater_msent_in_past():
@@ -562,7 +562,7 @@
 #     token1 = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['token']
 #     channel_id = channels_create_v1(token1, "Channel 1", True)['channel_id']  
 #     with pytest.raises(InputError): 
-#         message_sendlater_v1(token1, channel_id, "", datetime.datetime.now().replace(tzinfo=timezone.utc).timestamp())
+#         message_sendlater_v1(token1, channel_id, "", datetime.now().replace(tzinfo=timezone.utc).timestamp())
 
 # def test_message_sendlater_msg_length_too_big():
 #     clear_v1()
@@ -578,14 +578,14 @@
 #             as altruisme, for an antonym of egoism.[1][2] He derived it from the Italian altrui, which in turn was derived from Latin 
 #             alteri, meaning other people or somebody else.[3] Altruism in biological observations in field populations of the day organisms 
 #             is an individual performing an action which is at a cost to themselves (e.g., pleasure and quality of life, time, probability of 
-#             survival or reproduction), but benefits, either directly or indirectly, another""", datetime.datetime.now().replace(tzinfo=timezone.utc).timestamp())
+#             survival or reproduction), but benefits, either directly or indirectly, another""", datetime.now().replace(tzinfo=timezone.utc).timestamp())
     
 # def test_message_send_token_invalid():
 #     clear_v1()
 #     token1 = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['token']
 #     channel_id = channels_create_v1(token1, "Channel 1", True)['channel_id']
 #     with pytest.raises(AccessError): 
-#         message_sendlater_v1(78534290, channel_id, "Hi there!", datetime.datetime.now().replace(tzinfo=timezone.utc).timestamp())
+#         message_sendlater_v1(78534290, channel_id, "Hi there!", datetime.now().replace(tzinfo=timezone.utc).timestamp())
 
 # def test_message_send_user_not_part_of_channel():  # NEED TO CHECK FOR GLOBAL USERS
 #     clear_v1()
@@ -593,4 +593,4 @@
 #     token2 = auth_register_v1("jane.doe@unsw.edu.au", "password","Jane","Doe")['token']
 #     channel_id = channels_create_v1(token1, "Channel 1", True)['channel_id']
 #     with pytest.raises(AccessError): 
-#         message_sendlater_v1(token2, channel_id, "Hi there!", datetime.datetime.now().replace(tzinfo=timezone.utc).timestamp())
+#         message_sendlater_v1(token2, channel_id, "Hi there!", datetime.now().replace(tzinfo=timezone.utc).timestamp())

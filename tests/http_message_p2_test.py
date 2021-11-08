@@ -438,18 +438,18 @@ def test_message_unpin_valid_dm(dms_setup):
 def test_message_sendlater_invalid_token(Channel_setup):
     u1, u2, chan1_id = Channel_setup
     channel_join_req(u2['token'], chan1_id)
-    assert message_sendlater_req(3434, chan1_id, "Boss", datetime.datetime.now().replace(tzinfo=timezone.utc).timestamp())['code'] == AccessError.code
+    assert message_sendlater_req(3434, chan1_id, "Boss", datetime.now().replace(tzinfo=timezone.utc).timestamp())['code'] == AccessError.code
     
 
 def test_message_sendlater_channel_id_invalid():
     u1 = auth_register_req("patrick.liang@unsw.com", "katrick", "Patrick", "Liang")
-    assert message_sendlater_req(u1['token'], -1, "Boss", datetime.datetime.now().replace(tzinfo=timezone.utc).timestamp())['code'] == InputError.code
+    assert message_sendlater_req(u1['token'], -1, "Boss", datetime.now().replace(tzinfo=timezone.utc).timestamp())['code'] == InputError.code
 
 def test_message_sendlater_multi_msgs(Channel_setup):
     u1, u2, chan1_id = Channel_setup
     channel_join_req(u2['token'], chan1_id)
-    msg_id1 = message_sendlater_req(u1['token'], chan1_id, "Boss", datetime.datetime.now().replace(tzinfo=timezone.utc).timestamp())['message_id']
-    msg_id2 = message_sendlater_req(u1['token'], chan1_id, "Boss", datetime.datetime.now().replace(tzinfo=timezone.utc).timestamp())['message_id']
+    msg_id1 = message_sendlater_req(u1['token'], chan1_id, "Boss", datetime.now().replace(tzinfo=timezone.utc).timestamp())['message_id']
+    msg_id2 = message_sendlater_req(u1['token'], chan1_id, "Boss", datetime.now().replace(tzinfo=timezone.utc).timestamp())['message_id']
     assert msg1_id != msg2_id
 
 def test_message_sendlater_sent_in_past(Channel_setup):
@@ -460,7 +460,7 @@ def test_message_sendlater_sent_in_past(Channel_setup):
 # def test_message_sendlater_msg_length_too_small(Channel_setup):
 #     u1, u2, chan1_id = Channel_setup
 #     channel_join_req(u2['token'], chan1_id)
-#     assertmessage_sendlater_req(u1['token'], chan1_id, "", datetime.datetime.now().replace(tzinfo=timezone.utc).timestamp())['code'] == InputError.code
+#     assertmessage_sendlater_req(u1['token'], chan1_id, "", datetime.now().replace(tzinfo=timezone.utc).timestamp())['code'] == InputError.code
 
 def test_message_sendlater_msg_length_too_big(Channel_setup):
     u1, u2, chan1_id = Channel_setup
@@ -474,9 +474,9 @@ def test_message_sendlater_msg_length_too_big(Channel_setup):
             as altruisme, for an antonym of egoism.[1][2] He derived it from the Italian altrui, which in turn was derived from Latin 
             alteri, meaning other people or somebody else.[3] Altruism in biological observations in field populations of the day organisms 
             is an individual performing an action which is at a cost to themselves (e.g., pleasure and quality of life, time, probability of 
-            survival or reproduction), but benefits, either directly or indirectly, another""", datetime.datetime.now().replace(tzinfo=timezone.utc).timestamp())['code'] == InputError.code
+            survival or reproduction), but benefits, either directly or indirectly, another""", datetime.now().replace(tzinfo=timezone.utc).timestamp())['code'] == InputError.code
 
 def test_message_send_user_not_part_of_channel(default_setup): # NEED TO CHECK FOR GLOBAL USERS
     u1, u2 = default_setup
     chan1_id = channels_create_req(u1['token'], "Channel 1", True)['channel_id']
-    assert message_sendlater_req(u2['token'], chan1_id, "Boss", datetime.datetime(2000, 1, 1).replace(tzinfo=timezone.utc).timestamp())['code'] == AccessError.code
+    assert message_sendlater_req(u2['token'], chan1_id, "Boss", datetime.now().replace(tzinfo=timezone.utc).timestamp())['code'] == AccessError.code

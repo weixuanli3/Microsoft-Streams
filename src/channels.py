@@ -1,5 +1,6 @@
 ''' Contains the functions to create a new channel and to list pub/priv channels'''
 import datetime
+from datetime import datetime
 from datetime import timezone
 
 from src.data_store import data_store, update_permanent_storage
@@ -167,10 +168,10 @@ def channels_create_v1(token, name, is_public):
         'users_id': [auth_user_id],
         'is_public': is_public,
         'messages': [],
-        'standups': {
-            'is_active': True,
+        'standup': {
+            'is_active': False,
             'start_user': -1,
-            'finish_time': datetime.datetime(2000, 1, 1).replace(tzinfo=timezone.utc).timestamp(),
+            'finish_time': datetime.now().replace(tzinfo=timezone.utc).timestamp(),
             'messages': []
         },
     })
