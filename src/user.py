@@ -312,7 +312,6 @@ def calculate_involvement_util(target_stats):
 
     # Find the denominator of the involvement formula
     work_stats = data_store.get_data()['workspace_stats']
-    print(work_stats)
     num_chans = work_stats['channels_exist'][-1]['num_channels_exist']
     num_dms = work_stats['dms_exist'][-1]['num_dms_exist']
     num_msgs = work_stats['messages_exist'][-1]['num_messages_exist']

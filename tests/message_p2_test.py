@@ -9,7 +9,7 @@ from src.dm import dm_create_v1
 from src.error import InputError
 from src.error import AccessError
 from src.other import clear_v1
-from src.message import message_send_v1, message_edit_v1, message_send_v1, message_senddm_v1, message_remove_v1, message_sendlaterdm_v1
+from src.message import message_send_v1, message_edit_v1, message_send_v1, message_senddm_v1, message_remove_v1
 from src.message_react import message_react_v1, message_unreact_v1 
 from src.message_pin import message_pin_v1, message_unpin_v1 
 from src.message_later import message_sendlater_v1, message_sendlaterdm_v1
