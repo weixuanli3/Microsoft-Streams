@@ -1,6 +1,7 @@
 '''Contains function clear which clears all previously stored data'''
 # from data_store import data_store, update_permanent_storage
 from src.data_store import data_store, update_permanent_storage
+from datetime import datetime
 
 '''
 Eg.
