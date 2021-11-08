@@ -12,7 +12,7 @@ from src.other import clear_v1
 from src.message import message_send_v1, message_edit_v1, message_send_v1, message_senddm_v1, message_remove_v1, message_sendlaterdm_v1
 from src.message_react import message_react_v1, message_unreact_v1 
 from src.message_pin import message_pin_v1, message_unpin_v1 
-from src.message_later import message_sendlater_v1
+from src.message_later import message_sendlater_v1, message_sendlaterdm_v1
 
 ## NEED TO CHECK WHEN BOTH INPUT AND ACCESS ERRORS ARE SPIT OUT
 
@@ -551,7 +551,7 @@ def test_message_sendlater_multi_msgs():
     time_sent2 = dt.datetime.timestamp(dt.datetime.now() + dt.timedelta(seconds=1))
     msg2_id = message_sendlater_v1(token1, channel_id, "Hi there!", time_sent2)['message_id']
     assert msg1_id != msg2_id
-    
+
 def test_message_sendlater_msent_in_past():
     clear_v1()
     token1 = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['token']
@@ -601,3 +601,79 @@ def test_message_send_user_not_part_of_channel():  # NEED TO CHECK FOR GLOBAL US
     time_sent = dt.datetime.timestamp(dt.datetime.now() + dt.timedelta(seconds=5))
     with pytest.raises(AccessError): 
         message_sendlater_v1(token2, channel_id, "Hi there!", time_sent)
+
+# # The following test are for message_sendlaterdm_v1
+
+def test_message_sendlaterdm_dm_id_invalid():
+    clear_v1()
+    token1 = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['token']
+    u_id2 = auth_register_v1("james.smith@aunsw.edu.au","password","James","Smith")['auth_user_id']
+    time_sent = dt.datetime.timestamp(dt.datetime.now() + dt.timedelta(seconds=5))
+    with pytest.raises(InputError): 
+        message_sendlaterdm_v1(token1, -1, "Boss", time_sent)
+
+def test_message_sendlaterdm_multi_msgs():
+    clear_v1()
+    token1 = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['token']
+    u_id2 = auth_register_v1("james.smith@aunsw.edu.au","password","James","Smith")['auth_user_id']
+    dm_id = dm_create_v1(token1, [u_id2])['dm_id']
+    time_sent1 = dt.datetime.timestamp(dt.datetime.now() + dt.timedelta(seconds=1))
+    msg1_id = message_sendlaterdm_v1(token1, dm_id, "Hi there!", time_sent1)['message_id']
+    time_sent2 = dt.datetime.timestamp(dt.datetime.now() + dt.timedelta(seconds=1))
+    msg2_id = message_sendlaterdm_v1(token1, dm_id, "Hi there!", time_sent2)['message_id']
+    assert msg1_id != msg2_id
+
+def test_message_sendlaterdm_sent_in_past():
+    clear_v1()
+    token1 = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['token']
+    u_id2 = auth_register_v1("james.smith@aunsw.edu.au","password","James","Smith")['auth_user_id']
+    dm_id = dm_create_v1(token1, [u_id2])['dm_id']
+    time_sent = dt.datetime.timestamp(dt.datetime.now() - dt.timedelta(seconds=5))
+    with pytest.raises(InputError):
+        message_sendlaterdm_v1(token1, dm_id, "Hi there!", time_sent)
+
+def test_message_sendlaterdm_msg_length_too_small():
+    clear_v1()
+    token1 = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['token']
+    u_id2 = auth_register_v1("james.smith@aunsw.edu.au","password","James","Smith")['auth_user_id']
+    dm_id = dm_create_v1(token1, [u_id2])['dm_id']
+    time_sent = (dt.datetime.timestamp(dt.datetime.now() + dt.timedelta(seconds=5)))
+    with pytest.raises(InputError): 
+        message_sendlaterdm_v1(token1, dm_id, "", time_sent)
+
+def test_message_sendlaterdm_msg_length_too_big():
+    clear_v1()
+    token1 = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['token']
+    u_id2 = auth_register_v1("james.smith@aunsw.edu.au","password","James","Smith")['auth_user_id']
+    dm_id = dm_create_v1(token1, [u_id2])['dm_id']
+    time_sent = dt.datetime.timestamp(dt.datetime.now() + dt.timedelta(seconds=5))
+    with pytest.raises(InputError): 
+        message_sendlaterdm_v1(token1, dm_id, """Altruism is the principle and moral practice of concern for 
+            happiness of other human beings or other animals, resulting in a quality of life both material and spiritual. 
+            It is a traditional virtue in many cultures and a core aspect of various religious traditions and secular worldviews, 
+            though the concept of others toward whom concern should be directed can vary among cultures and religions. 
+            In an extreme case, altruism may become a synonym of selflessness, which is the opposite of selfishness. 
+            The word altrusim was popularized (and possibly coined) by the French philosopher Auguste Comte in French, 
+            as altruisme, for an antonym of egoism.[1][2] He derived it from the Italian altrui, which in turn was derived from Latin 
+            alteri, meaning other people or somebody else.[3] Altruism in biological observations in field populations of the day organisms 
+            is an individual performing an action which is at a cost to themselves (e.g., pleasure and quality of life, time, probability of 
+            survival or reproduction), but benefits, either directly or indirectly, another""", time_sent)
+    
+def test_message_senddm_token_invalid():
+    clear_v1()
+    token1 = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['token']
+    u_id2 = auth_register_v1("james.smith@aunsw.edu.au","password","James","Smith")['auth_user_id']
+    dm_id = dm_create_v1(token1, [u_id2])['dm_id']
+    time_sent = dt.datetime.timestamp(dt.datetime.now() + dt.timedelta(seconds=5))
+    with pytest.raises(AccessError): 
+        message_sendlaterdm_v1(78534290, dm_id, "Hi there!", time_sent)
+
+def test_message_send_user_not_part_of_dm():  # NEED TO CHECK FOR GLOBAL USERS
+    clear_v1()
+    token1 = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['token']
+    u_id2 = auth_register_v1("james.smith@aunsw.edu.au","password","James","Smith")['auth_user_id']
+    token3 = auth_register_v1("jane.doe@unsw.edu.au", "password","Jane","Doe")['token']
+    dm_id = dm_create_v1(token1, [u_id2])['dm_id']
+    time_sent = dt.datetime.timestamp(dt.datetime.now() + dt.timedelta(seconds=5))
+    with pytest.raises(AccessError): 
+        message_sendlaterdm_v1(token3, dm_id, "Hi there!", time_sent)
