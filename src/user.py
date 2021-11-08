@@ -261,18 +261,18 @@ def users_stats_v1(token):
 ######## Helper functions #########
 
 def update_workspace_stats(key_str, is_add):
-    work_stats = data_store.get_data()['workspace_stats']
+    work_stats = data_store.get_data()['workspace_stats'][key_str]
 
     # Obtain the previous number for requested workspace stat
     init_num = work_stats[-1]['num_' + key_str]
     if is_add:
         work_stats.append({
-            'num' + key_str: init_num + 1,
+            'num_' + key_str: init_num + 1,
             'time_stamp': datetime.now()
         })
     else:
         work_stats.append({
-            'num' + key_str: init_num - 1,
+            'num_' + key_str: init_num - 1,
             'time_stamp': datetime.now()
         })
     
@@ -283,19 +283,19 @@ def update_user_stats(u_id, key_str, is_add):
     user_data = data_store.get_data()['users']
     for user in user_data:
         if user['id'] == u_id:
-            target_stats = user['user_stats'][key_str]
+            target_stats = user['user_stats']
     
     # Obtain the previous number for requested stat
-    init_num = target_stats[-1]['num_' + key_str]
+    init_num = target_stats[key_str][-1]['num_' + key_str]
     if is_add:
         # If we are adding to the number
-        target_stats.append({
+        target_stats[key_str].append({
             'num_' + key_str: init_num + 1,
             'time_stamp': datetime.now()
         })
     else:
         # If we are subtracting from the number
-        target_stats.append({
+        target_stats[key_str].append({
             'num_' + key_str: init_num - 1,
             'time_stamp': datetime.now()
         })
@@ -305,21 +305,22 @@ def update_user_stats(u_id, key_str, is_add):
 
 def calculate_involvement_util(target_stats):
     # Find the numerator of the involvement formula
-    num_chans_joined = target_stats[-1]['num_channels_joined']
-    num_dms_joined = target_stats[-1]['num_dms_joined']
-    num_msgs_sent = target_stats[-1]['num_msgs_sent']
+    num_chans_joined = target_stats['channels_joined'][-1]['num_channels_joined']
+    num_dms_joined = target_stats['dms_joined'][-1]['num_dms_joined']
+    num_msgs_sent = target_stats['messages_sent'][-1]['num_messages_sent']
     sum_user = num_chans_joined + num_dms_joined + num_msgs_sent
 
     # Find the denominator of the involvement formula
     work_stats = data_store.get_data()['workspace_stats']
-    num_chans = work_stats[-1]['num_channels_exist']
-    num_dms = work_stats[-1]['num_dms_exist']
-    num_msgs = work_stats[-1]['num_messages_exist']
+    print(work_stats)
+    num_chans = work_stats['channels_exist'][-1]['num_channels_exist']
+    num_dms = work_stats['dms_exist'][-1]['num_dms_exist']
+    num_msgs = work_stats['messages_exist'][-1]['num_messages_exist']
     sum_total = num_chans + num_dms + num_msgs
 
     if sum_total == 0:
         target_stats['involvement_rate'] = 0
-    if sum_user / sum_total > 1:
+    elif sum_user / sum_total > 1:
         target_stats['involvement_rate'] = 1
     else:
         target_stats['involvement_rate'] = sum_user / sum_total
