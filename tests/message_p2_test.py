@@ -607,7 +607,6 @@ def test_message_send_user_not_part_of_channel():  # NEED TO CHECK FOR GLOBAL US
 def test_message_sendlaterdm_dm_id_invalid():
     clear_v1()
     token1 = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['token']
-    u_id2 = auth_register_v1("james.smith@aunsw.edu.au","password","James","Smith")['auth_user_id']
     time_sent = dt.datetime.timestamp(dt.datetime.now() + dt.timedelta(seconds=5))
     with pytest.raises(InputError): 
         message_sendlaterdm_v1(token1, -1, "Boss", time_sent)
