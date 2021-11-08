@@ -90,7 +90,7 @@ def message_sendlater_v1(token, channel_id, message, time_sent):
         # adding message to channel_data
         for channel in channel_data:
             if channel['chan_id'] == channel_id:
-                channel['messages'].append(message)
+                channel['messages'].append(message_data)
 
         update_permanent_storage()
 
@@ -188,7 +188,7 @@ def message_sendlaterdm_v1(token, dm_id, message, time_sent):
         # adding message to dm_data
         for dm in dm_data:
             if dm['dm_id'] == dm_id:
-                dm['messages'].append(message)
+                dm['messages'].append(message_data)
 
         update_permanent_storage()
 
