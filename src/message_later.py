@@ -1,5 +1,6 @@
 '''Contains all functions related to sending, editing and deleting messages'''
 from src.data_store import data_store, update_permanent_storage, get_u_id
+from src.user import update_workspace_stats, update_user_stats
 from src.error import InputError
 from src.error import AccessError
 from datetime import datetime
@@ -92,6 +93,8 @@ def message_sendlater_v1(token, channel_id, message, time_sent):
             if channel['chan_id'] == channel_id:
                 channel['messages'].append(message_data)
 
+        update_workspace_stats('messages_exist', True)
+        update_user_stats(user_id, 'messages_sent', True)
         update_permanent_storage()
 
     # delaying the message
@@ -190,6 +193,8 @@ def message_sendlaterdm_v1(token, dm_id, message, time_sent):
             if dm['dm_id'] == dm_id:
                 dm['messages'].append(message_data)
 
+        update_workspace_stats('messages_exist', True)
+        update_user_stats(user_id, 'messages_sent', True)
         update_permanent_storage()
 
     # delaying the message
