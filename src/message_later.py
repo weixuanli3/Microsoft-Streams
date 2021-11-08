@@ -3,7 +3,7 @@ from src.data_store import data_store, update_permanent_storage, get_u_id
 from src.error import InputError
 from src.error import AccessError
 from datetime import datetime
-import time
+import threading
 
 def message_sendlater_v1(token, channel_id, message, time_sent):
     """
@@ -70,33 +70,36 @@ def message_sendlater_v1(token, channel_id, message, time_sent):
     if not time_valid:
         raise InputError("Time for the message to be sent is in the past")
 
-    # delaying the message
-    delay = int(time_sent) - int(now)
-    time.sleep(delay)
-
     # creating message_id
     msgs = data_store.get_data()['msgs']
     message_id = len(msgs) + 1
 
-    message_data = {
-        'message_id' : message_id,
-        'u_id' : user_id,
-        'message' : message,
-        'time_created' : int(time_sent),
-        'reacts' : [],
-        'is_pinned' : False
-    }
-
-    # adding message to channel_data
-    for channel in channel_data:
-        if channel['chan_id'] == channel_id:
-            channel['messages'].append(message)
-
     # updating msgs
     msgs.append(message_id)
 
-    update_permanent_storage()
+    def job():
+        message_data = {
+            'message_id' : message_id,
+            'u_id' : user_id,
+            'message' : message,
+            'time_created' : int(time_sent),
+            'reacts' : [],
+            'is_pinned' : False
+        }
 
+        # adding message to channel_data
+        for channel in channel_data:
+            if channel['chan_id'] == channel_id:
+                channel['messages'].append(message)
+
+        update_permanent_storage()
+
+    # delaying the message
+    delay = int(time_sent) - int(now)
+    t = threading.Timer(delay, job)
+    t.start()
+
+    update_permanent_storage()
     return {'message_id' : message_id}
 
 def message_sendlaterdm_v1(token, dm_id, message, time_sent):
@@ -136,7 +139,7 @@ def message_sendlaterdm_v1(token, dm_id, message, time_sent):
     if not token_exists:
         raise AccessError("Token doesn't exist")
 
-    dm_data = data_store.get_data()['channels']
+    dm_data = data_store.get_data()['DMs']
     user_id = get_u_id(token)
     now = datetime.timestamp(datetime.now())
 
@@ -165,31 +168,34 @@ def message_sendlaterdm_v1(token, dm_id, message, time_sent):
     if not time_valid:
         raise InputError("Time for the message to be sent is in the past")
 
-    # delaying the message
-    delay = int(time_sent) - int(now)
-    time.sleep(delay)
-
     # creating message_id
     msgs = data_store.get_data()['msgs']
     message_id = len(msgs) + 1
 
-    message_data = {
-        'message_id' : message_id,
-        'u_id' : user_id,
-        'message' : message,
-        'time_created' : int(time_sent),
-        'reacts' : [],
-        'is_pinned' : False
-    }
-
-    # adding message to dm_data
-    for dm in dm_data:
-        if dm['dm_id'] == dm_id:
-            dm['messages'].append(message)
-
     # updating msgs
     msgs.append(message_id)
 
-    update_permanent_storage()
+    def job():
+        message_data = {
+            'message_id' : message_id,
+            'u_id' : user_id,
+            'message' : message,
+            'time_created' : int(time_sent),
+            'reacts' : [],
+            'is_pinned' : False
+        }
 
+        # adding message to dm_data
+        for dm in dm_data:
+            if dm['dm_id'] == dm_id:
+                dm['messages'].append(message)
+
+        update_permanent_storage()
+
+    # delaying the message
+    delay = int(time_sent) - int(now)
+    t = threading.Timer(delay, job)
+    t.start()
+
+    update_permanent_storage()
     return {'message_id' : message_id}
