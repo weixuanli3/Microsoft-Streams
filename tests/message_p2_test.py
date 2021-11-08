@@ -350,7 +350,7 @@
 #     with pytest.raises(InputError):
 #         message_pin_v1(token2, msg_id1)
         
-# def test_message_pin_invalid():
+# def test_message_pin_invalid_msg_id():
 #     clear_v1()
 #     token = auth_register_v1("john.doe@aunsw.edu.au","password","John","Doe")['token']
 #     chan_id = channels_create_v1(token, "Channel 1", True)['channel_id']
