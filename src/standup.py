@@ -94,7 +94,7 @@ def standup_active_v1(token, channel_id):
         if curr_channel['standup']['is_active']:
             # SEND MESSAGES
             message_sendlater_req(token, curr_channel['chan_id'], 
-                                  message, datetime.now().replace(tzinfo=timezone.utc).timestamp() + length)
+                                  "curr_channel['standup']['messages']", datetime.now().replace(tzinfo=timezone.utc).timestamp() + length)
             pass
         pass      
     
