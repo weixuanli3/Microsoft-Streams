@@ -6,7 +6,7 @@ from flask import Flask, request
 from flask_cors import CORS
 from src.error import InputError
 from src import config
-from src.auth import auth_login_v1, auth_register_v1, auth_logout_v1
+from src.auth import auth_login_v1, auth_passwordreset_request_v1, auth_passwordreset_reset_v1, auth_register_v1, auth_logout_v1
 from src.admin import admin_user_remove_id, admin_userpermission_change_v1
 from src.channel import channel_invite_v1, channel_details_v1, channel_messages_v1
 from src.channel import channel_join_v1, channel_leave_v1, channel_add_owner_v1, channel_remove_owner_v1
@@ -67,6 +67,18 @@ def auth_login():
 def auth_logout():
     request_data = request.get_json(force = True)
     return json.dumps(auth_logout_v1(request_data['token']))
+
+# Request password reset
+@APP.route("/auth/passwordreset/request/v1", methods=['POST'])
+def auth_pasword_reset_request():
+    request_data = request.get_json(force = True)
+    return json.dumps(auth_passwordreset_request_v1(request_data['email']))
+
+# Actually change password
+@APP.route("/auth/passwordreset/reset/v1", methods=['POST'])
+def auth_pasword_reset():
+    request_data = request.get_json(force = True)
+    return json.dumps(auth_passwordreset_reset_v1(request_data['reset_code'], request_data['new_password']))
 
 ##########CHANNEL.PY##########
 # Invite user to channel
@@ -252,6 +264,7 @@ def message_senddm():
     request_data = request.get_json(force = True)
     return json.dumps(message_senddm_v1(request_data['token'], request_data['dm_id'], request_data['message']))
 
+##########MESSAGE.PY##########
 
 #### NO NEED TO MODIFY BELOW THIS POINT
 
