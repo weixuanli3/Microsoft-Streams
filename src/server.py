@@ -12,10 +12,17 @@ from src.channel import channel_invite_v1, channel_details_v1, channel_messages_
 from src.channel import channel_join_v1, channel_leave_v1, channel_add_owner_v1, channel_remove_owner_v1
 from src.channels import  channels_list_v1, channels_listall_v1, channels_create_v1
 from src.dm import dm_create_v1, dm_list_v1, dm_remove_v1, dm_details_v1, dm_leave_v1, dm_messages_v1
-from src.user import users_all_v1, user_profile_v1, user_profile_setname_v1, user_profile_setemail_v1, user_profile_sethandle_v1
-from src.message import message_send_v1, message_edit_v1, message_senddm_v1, message_remove_v1
+from src.user import users_all_v1, user_profile_v1, user_profile_setname_v1, user_profile_setemail_v1 
+from src.user import user_profile_sethandle_v1, user_profile_uploadphoto_v1, user_stats_v1, users_stats_v1
+from src.message import message_send_v1, message_edit_v1, message_senddm_v1
+from src.message import message_remove_v1, message_share_v1
+from src.message_later import message_sendlater_v1, message_sendlaterdm_v1
+from src.message_pin import message_pin_v1, message_unpin_v1
+from src.message_react import message_react_v1, message_unreact_v1
+from src.notifications import notifications_get_v1
 from src.other import clear_v1
-from src.admin import admin_user_remove_id, admin_userpermission_change_v1
+from src.search import search_v1
+from src.standup import standup_start_v1, standup_active_v1, standup_send_v1
 from src.echo import echo
 import src.data_store
 import json
@@ -76,7 +83,7 @@ def auth_pasword_reset_request():
 
 # Actually change password
 @APP.route("/auth/passwordreset/reset/v1", methods=['POST'])
-def auth_pasword_reset():
+def auth_passwordreset_reset():
     request_data = request.get_json(force = True)
     return json.dumps(auth_passwordreset_reset_v1(request_data['reset_code'], request_data['new_password']))
 
@@ -102,7 +109,7 @@ def channel_messages():
     start = int(request.args.get('start'))
     return json.dumps(channel_messages_v1(token, channel_id, start))
 
-# Make a particular channel
+# Join a particular channel
 @APP.route("/channel/join/v2", methods=['POST'])
 def channel_join():
     request_data = request.get_json(force = True)
@@ -114,13 +121,13 @@ def channel_leave():
     request_data = request.get_json(force = True)
     return json.dumps(channel_leave_v1(request_data['token'], request_data['channel_id']))
 
-# Make a particular channel
+# Add an owner to a particular channel
 @APP.route("/channel/addowner/v1", methods=['POST'])
 def channel_add_owner():
     request_data = request.get_json(force = True)
     return json.dumps(channel_add_owner_v1(request_data['token'], request_data['channel_id'], request_data['u_id']))
 
-# Make a particular channel
+# Remove an owner to a particular channel
 @APP.route("/channel/removeowner/v1", methods=['POST'])
 def channel_remove_owner():
     request_data = request.get_json(force = True)
@@ -212,59 +219,161 @@ def admin_change():
 
 ##########USER.PY##########
 
-# 
+# User profile
 @APP.route("/user/profile/v1", methods=['GET'])
 def user_profile():
     token = request.args.get('token')
     u_id = int(request.args.get('u_id'))
     return json.dumps(user_profile_v1(token, u_id))
 
-# 
+# All users
 @APP.route("/users/all/v1", methods=['GET'])
 def users_all():
     token = request.args.get('token')
     return json.dumps(users_all_v1(token))
 
-# 
+# User set name
 @APP.route("/user/profile/setname/v1", methods=['PUT'])
 def user_profile_setname():
     request_data = request.get_json(force = True)
     return json.dumps(user_profile_setname_v1(request_data['token'], request_data['name_first'], request_data['name_last']))
 
-# 
+# User set email
 @APP.route("/user/profile/setemail/v1", methods=['PUT'])
 def user_profile_setemail():
     request_data = request.get_json(force = True)
     return json.dumps(user_profile_setemail_v1(request_data['token'], request_data['email']))
 
+# User set handle
 @APP.route("/user/profile/sethandle/v1", methods=['PUT'])
 def user_profile_sethandle():
     request_data = request.get_json(force = True)
     return json.dumps(user_profile_sethandle_v1(request_data['token'], request_data['handle_str']))
 
+# User set profile photo
+@APP.route("/user/profile/uploadphoto/v1", methods=['POST'])
+def user_profile_uploadphoto():
+    data = request.get_json(force = True)
+    return json.dumps(user_profile_uploadphoto_v1(data['token'], data['img_url'], data['x_start'], \
+        data['y_start'], data['x_end'], data['y_end'])
+    )
+
+# User stats
+@APP.route("/user/stats/v1", methods=['GET'])
+def user_stats():
+    token = request.args.get('token')
+    return json.dumps(user_stats_v1(token))
+
+# ALL stats
+@APP.route("/users/stats/v1", methods=['GET'])
+def users_stats():
+    token = request.args.get('token')
+    return json.dumps(users_stats_v1(token))
+
 ##########MESSAGE.PY##########
 
+# Send a message to channel
 @APP.route("/message/send/v1", methods=['POST'])
 def message_send():
     request_data = request.get_json(force = True)
     return json.dumps(message_send_v1(request_data['token'], request_data['channel_id'], request_data['message']))
 
+# Edit a message
 @APP.route("/message/edit/v1", methods=['PUT'])
 def message_edit():
     request_data = request.get_json(force = True)
     return json.dumps(message_edit_v1(request_data['token'], request_data['message_id'], request_data['message']))
 
+# Remove a message
 @APP.route("/message/remove/v1", methods=['DELETE'])
 def message_delete():
     request_data = request.get_json(force = True)
     return json.dumps(message_remove_v1(request_data['token'],request_data['message_id']))
 
+# Send a message to a dm
 @APP.route("/message/senddm/v1", methods=['POST'])
 def message_senddm():
     request_data = request.get_json(force = True)
     return json.dumps(message_senddm_v1(request_data['token'], request_data['dm_id'], request_data['message']))
 
-##########MESSAGE.PY##########
+# Share a message
+@APP.route("/message/share/v1", methods=['POST'])
+def message_share():
+    data = request.get_json(force = True)
+    return json.dumps(message_share_v1(data['token'], data['og_message_id'], data['message'], data['channel_id'], data['dm_id']))
+
+# React to a message
+@APP.route("/message/react/v1", methods=['POST'])
+def message_react():
+    data = request.get_json(force = True)
+    return json.dumps(message_react_v1(data['token'], data['message_id'], data['react_id']))
+
+# Unreact to a message
+@APP.route("/message/unreact/v1", methods=['POST'])
+def message_unreact():
+    data = request.get_json(force = True)
+    return json.dumps(message_unreact_v1(data['token'], data['message_id'], data['react_id']))
+
+# Pin a message
+@APP.route("/message/pin/v1", methods=['POST'])
+def message_pin():
+    data = request.get_json(force = True)
+    return json.dumps(message_pin_v1(data['token'], data['message_id']))
+
+# Unpin a message
+@APP.route("/message/unpin/v1", methods=['POST'])
+def message_unpin():
+    data = request.get_json(force = True)
+    return json.dumps(message_unpin_v1(data['token'], data['message_id']))
+
+# Send a message to channel later
+@APP.route("/message/sendlater/v1", methods=['POST'])
+def message_sendlater():
+    data = request.get_json(force = True)
+    return json.dumps(message_sendlater_v1(data['token'], data['channel_id'], data['message'], data['time_sent']))
+
+# Send a message to dm later
+@APP.route("/message/sendlaterdm/v1", methods=['POST'])
+def message_sendlaterdm():
+    data = request.get_json(force = True)
+    return json.dumps(message_sendlaterdm_v1(data['token'], data['dm_id'], data['message'], data['time_sent']))
+
+##########NOTIFICATIONS.PY##########
+
+# Return notifications for user
+@APP.route("/notifications/get/v1", methods=['GET'])
+def notifications_get():
+    token = request.args.get('token')
+    return json.dumps(notifications_get_v1(token))
+
+##########SEARCH.PY##########
+
+# Searches for matching query strings for user
+@APP.route("/search/v1", methods=['GET'])
+def search_get():
+    token = request.args.get('token')
+    query_str = request.args.get('query_str')
+    return json.dumps(search_v1(token, query_str))
+
+##########STANDUP.PY##########
+# Starts a standup
+@APP.route("/standup/start/v1", methods=['POST'])
+def standup_start():
+    data = request.get_json(force = True)
+    return json.dumps(standup_start_v1(data['token'], data['channel_id'], data['length']))
+
+# Check if standup is active
+@APP.route("/standup/active/v1", methods=['GET'])
+def standup_active():
+    token = request.args.get('token')
+    channel_id = request.args.get('channel_id')
+    return json.dumps(standup_active_v1(token, channel_id))
+
+# Send a message to be buffered
+@APP.route("/standup/send/v1", methods=['POST'])
+def standup_send():
+    data = request.get_json(force = True)
+    return json.dumps(standup_send_v1(data['token'], data['channel_id'], data['message']))
 
 #### NO NEED TO MODIFY BELOW THIS POINT
 

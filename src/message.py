@@ -1,5 +1,6 @@
 '''Contains all functions related to sending, editing and deleting messages'''
 from src.data_store import data_store, update_permanent_storage, get_u_id
+from src.user import update_workspace_stats, update_user_stats
 from src.error import InputError
 from src.error import AccessError
 from datetime import datetime
@@ -68,7 +69,14 @@ def message_send_v1(token, channel_id, message):
     time = datetime.now()
     timestamp = int(datetime.timestamp(time))
 
-    message = {'message_id' : message_id, 'u_id' : user_id, 'message' : message, 'time_created' : timestamp}
+    message = {
+        'message_id' : message_id,
+        'u_id' : user_id,
+        'message' : message,
+        'time_created' : timestamp,
+        'reacts' : [],
+        'is_pinned' : False
+    }
 
     # adding message to channel_data
     for channel in channel_data:
@@ -78,6 +86,8 @@ def message_send_v1(token, channel_id, message):
     # updating msgs
     msgs.append(message_id)
 
+    update_workspace_stats("messages_exist", True)
+    update_user_stats(user_id, "messages_sent", True)
     update_permanent_storage()
     return {'message_id' : message_id}
 
@@ -246,7 +256,9 @@ def message_senddm_v1(token, dm_id, message):
         'message_id' : message_id,
         'u_id' : user_id,
         'message' : message,
-        'time_created' : timestamp
+        'time_created' : timestamp,
+        'reacts' : [],
+        'is_pinned' : False
     }
 
     # adding message to dm_data
@@ -256,7 +268,9 @@ def message_senddm_v1(token, dm_id, message):
 
     # updating msgs
     msgs.append(message_id)
-
+    
+    update_workspace_stats("messages_exist", True)
+    update_user_stats(user_id, "messages_sent", True)
     update_permanent_storage()
     return {'message_id' : message_id}
     
@@ -330,6 +344,7 @@ def message_remove_v1(token, message_id):
         for msg in channel['messages']:
             if msg['message_id'] == message_id:
                 channel['messages'].remove(msg)
+                update_workspace_stats("messages_exist", False)
                 update_permanent_storage()
 
     # removing msg in DM
@@ -337,33 +352,16 @@ def message_remove_v1(token, message_id):
         for msg in dm['messages']:
             if msg['message_id'] == message_id:
                 dm['messages'].remove(msg)
+                update_workspace_stats("messages_exist", False)
                 update_permanent_storage()
 
     return {}
 
 def message_share_v1(token, og_message_id, message, channel_id, dm_id):
+    user_id = get_u_id(token)
+    update_workspace_stats("messages_exist", True)
+    update_user_stats(user_id, "messages_sent", True)
+    update_permanent_storage()
     return {
         "shared_message_id": 1
-    }
-
-def message_react_v1(token, message_id, react_id):
-    return {}
-
-def message_unreact_v1(token, message_id, react_id):
-    return {}
-
-def message_pin_v1(token, message_id):
-    return {}
-
-def message_unpin_v1(token, message_id):
-    return {}
-
-def message_sendlater_v1(token, channel_id, message, time_sent):
-    return {
-        "message_id": 1
-    }
-
-def message_sendlaterdm_v1(token, dm_id, message, time_sent):
-    return {
-        "message_id": 1
     }

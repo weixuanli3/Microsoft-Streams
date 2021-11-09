@@ -1,6 +1,7 @@
 '''Conatins functions to invite to channel, joins channel, return channel messages and return channel details'''
 import copy
 from src.data_store import data_store, update_permanent_storage, get_u_id
+from src.user import update_user_stats
 from src.error import InputError
 from src.error import AccessError
 
@@ -99,7 +100,7 @@ def channel_invite_v1(token, channel_id, u_id):
     for user in user_data:
         if (user['id']) == (u_id):
             user['channels'].append(channel_id)
-
+    update_user_stats(u_id, "channels_joined", True)
     update_permanent_storage()
     return {}
 
@@ -253,6 +254,7 @@ def channel_messages_v1(token, channel_id, start):
                             'message_id': 1,
                             'u_id': 1,
                             'message': 'Hello world',
+                            'reacts' : [{'user_id' : 1, 'react_id' : 1}]
                             'time_created': 1582426789,
                         }
                     ],
@@ -359,6 +361,8 @@ def channel_messages_v1(token, channel_id, start):
     #             'u_id': 1,
     #             'message': 'Hello world',
     #             'time_created': 1582426789,
+    #             'reacts' : [{'user_id' : 1, 'react_id' : 1}]
+    #             'is_pinned' : False
     #         }
     #     ],
     #     'start': 0,
@@ -440,6 +444,7 @@ def channel_join_v1(token, channel_id):
         if (user['id']) == (auth_user_id):
             user['channels'].append(channel_id)
 
+    update_user_stats(auth_user_id, "channels_joined", True)
     update_permanent_storage()
     return {}
 
@@ -504,7 +509,8 @@ def channel_leave_v1(token, channel_id):
     
     if auth_user_id in channel_data[channel_id - 1]['owner_id']:
         channel_data[channel_id - 1]['owner_id'].remove(auth_user_id)
-        
+
+    update_user_stats(auth_user_id, "channels_joined", False)
     update_permanent_storage()
     
     return {}

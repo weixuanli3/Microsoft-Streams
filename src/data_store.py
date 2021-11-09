@@ -1,5 +1,6 @@
 import jwt
 import shelve
+from datetime import datetime
 
 DATABASE_FILE_NAME = "src/data_base_files/database"
 
@@ -66,7 +67,13 @@ initial_object = {
     'channels': [], 
     'global_owners': [],
     'DMs': [],
-    'msgs' : []
+    'msgs' : [],
+    'workspace_stats': {
+        'channels_exist': [{'num_channels_exist': 0, 'time_stamp': datetime.now()}],
+        'dms_exist': [{'num_dms_exist': 0, 'time_stamp': datetime.now()}],
+        'messages_exist': [{'num_messages_exist': 0, 'time_stamp': datetime.now()}],
+        'utilization_rate': 0
+    }
 }
 
 ## YOU SHOULD MODIFY THIS OBJECT ABOVE
