@@ -4,6 +4,7 @@ from src.user import update_workspace_stats, update_user_stats
 from src.error import InputError
 from src.error import AccessError
 from datetime import datetime
+import datetime as dt
 
 def message_send_v1(token, channel_id, message):
     """
@@ -390,12 +391,12 @@ def message_share_v1(token, og_message_id, message, channel_id, dm_id):
     for channel in channel_data:
         if user_id in channel['users_id']:
             for msg in channel['messages']:
-                if og_message_id == msg['messaage_id']:
+                if og_message_id == msg['message_id']:
                     valid_message_id_channel = True
                     #Find og_message from id
                     og_message = msg['message']
     
-    if not valid_message_id_channel and not valid_message_id_dm:
+    if (not valid_message_id_channel) and (not valid_message_id_dm):
         raise InputError("og_message_id does not refer to a valid message within a channel/DM that the authorised user has joined")
     
     #Check if length of message is greater than 1000

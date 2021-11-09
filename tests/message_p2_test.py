@@ -9,7 +9,7 @@ from src.dm import dm_create_v1
 from src.error import InputError
 from src.error import AccessError
 from src.other import clear_v1
-from src.message import message_send_v1, message_edit_v1, message_send_v1, message_senddm_v1, message_remove_v1
+from src.message import message_send_v1, message_edit_v1, message_send_v1, message_senddm_v1, message_remove_v1, message_share_v1
 from src.message_react import message_react_v1, message_unreact_v1 
 from src.message_pin import message_pin_v1, message_unpin_v1 
 from src.message_later import message_sendlater_v1, message_sendlaterdm_v1
@@ -32,7 +32,7 @@ def test_message_share_idm_and_chan_id_neg():
     channel_id = channels_create_v1(token, "Channel 1", True)['channel_id']
     msg_id = message_send_v1(token, channel_id, "Hi there!")['message_id']
     with pytest.raises(InputError):
-        message_share_v1(444, msg_id, "heyo", -1, -1)
+        message_share_v1(token, msg_id, "heyo", -1, -1)
 
 def test_message_share_invalid_chan_id():
     clear_v1()
