@@ -6,8 +6,7 @@ from flask import Flask, request
 from flask_cors import CORS
 from src.error import InputError
 from src import config
-from src.auth import auth_login_v1, auth_register_v1, auth_logout_v1
-from src.auth import auth_passwordreset_request_v1, auth_passwordreset_reset_v1
+from src.auth import auth_login_v1, auth_passwordreset_request_v1, auth_passwordreset_reset_v1, auth_register_v1, auth_logout_v1
 from src.admin import admin_user_remove_id, admin_userpermission_change_v1
 from src.channel import channel_invite_v1, channel_details_v1, channel_messages_v1
 from src.channel import channel_join_v1, channel_leave_v1, channel_add_owner_v1, channel_remove_owner_v1
@@ -76,13 +75,13 @@ def auth_logout():
     request_data = request.get_json(force = True)
     return json.dumps(auth_logout_v1(request_data['token']))
 
-# Request a pw reset
+# Request password reset
 @APP.route("/auth/passwordreset/request/v1", methods=['POST'])
-def auth_passwordreset_request():
+def auth_pasword_reset_request():
     request_data = request.get_json(force = True)
     return json.dumps(auth_passwordreset_request_v1(request_data['email']))
 
-# Reset a pw
+# Actually change password
 @APP.route("/auth/passwordreset/reset/v1", methods=['POST'])
 def auth_passwordreset_reset():
     request_data = request.get_json(force = True)
