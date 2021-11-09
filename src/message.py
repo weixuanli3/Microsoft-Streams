@@ -1,5 +1,6 @@
 '''Contains all functions related to sending, editing and deleting messages'''
 from src.data_store import data_store, update_permanent_storage, get_u_id
+from src.user import update_workspace_stats, update_user_stats
 from src.error import InputError
 from src.error import AccessError
 from datetime import datetime
@@ -68,7 +69,14 @@ def message_send_v1(token, channel_id, message):
     time = datetime.now()
     timestamp = int(datetime.timestamp(time))
 
-    message = {'message_id' : message_id, 'u_id' : user_id, 'message' : message, 'time_created' : timestamp}
+    message = {
+        'message_id' : message_id,
+        'u_id' : user_id,
+        'message' : message,
+        'time_created' : timestamp,
+        'reacts' : [],
+        'is_pinned' : False
+    }
 
     # adding message to channel_data
     for channel in channel_data:
@@ -78,6 +86,8 @@ def message_send_v1(token, channel_id, message):
     # updating msgs
     msgs.append(message_id)
 
+    update_workspace_stats("messages_exist", True)
+    update_user_stats(user_id, "messages_sent", True)
     update_permanent_storage()
     return {'message_id' : message_id}
 
@@ -246,7 +256,9 @@ def message_senddm_v1(token, dm_id, message):
         'message_id' : message_id,
         'u_id' : user_id,
         'message' : message,
-        'time_created' : timestamp
+        'time_created' : timestamp,
+        'reacts' : [],
+        'is_pinned' : False
     }
 
     # adding message to dm_data
@@ -256,7 +268,9 @@ def message_senddm_v1(token, dm_id, message):
 
     # updating msgs
     msgs.append(message_id)
-
+    
+    update_workspace_stats("messages_exist", True)
+    update_user_stats(user_id, "messages_sent", True)
     update_permanent_storage()
     return {'message_id' : message_id}
     
@@ -330,6 +344,7 @@ def message_remove_v1(token, message_id):
         for msg in channel['messages']:
             if msg['message_id'] == message_id:
                 channel['messages'].remove(msg)
+                update_workspace_stats("messages_exist", False)
                 update_permanent_storage()
 
     # removing msg in DM
@@ -337,33 +352,111 @@ def message_remove_v1(token, message_id):
         for msg in dm['messages']:
             if msg['message_id'] == message_id:
                 dm['messages'].remove(msg)
+                update_workspace_stats("messages_exist", False)
                 update_permanent_storage()
 
     return {}
 
 def message_share_v1(token, og_message_id, message, channel_id, dm_id):
-    return {
-        "shared_message_id": 1
-    }
+    
+    user_data = data_store.get_data()['users']
+    dm_data = data_store.get_data()['DMs']
+    channel_data = data_store.get_data()['channels']
+    
+    #Check if user token is valid
+    valid_token = False
+    for user in user_data:
+        if token in user['token']:
+            valid_token = True
 
-def message_react_v1(token, message_id, react_id):
-    return {}
+    if not valid_token:
+        raise AccessError("Invalid Token")
+    
+    user_id = get_u_id(token)
+    
+    #Check if og_message is in a valid channel or dm the user is in
+    #Check dm
+    valid_message_id_dm = False
+    for dm in dm_data:
+        if user_id in dm['members']:
+            for msg in dm['messages']:
+                if og_message_id == msg['message_id']:
+                    valid_message_id_dm = True
+                    #Find og_message from id
+                    og_message = msg['message']
+    
+    #Check channels
+    valid_message_id_channel = False
+    for channel in channel_data:
+        if user_id in channel['users_id']:
+            for msg in channel['messages']:
+                if og_message_id == msg['messaage_id']:
+                    valid_message_id_channel = True
+                    #Find og_message from id
+                    og_message = msg['message']
+    
+    if not valid_message_id_channel and not valid_message_id_dm:
+        raise InputError("og_message_id does not refer to a valid message within a channel/DM that the authorised user has joined")
+    
+    #Check if length of message is greater than 1000
+    if len(message) > 1000:
+        raise InputError("length of message is more than 1000 characters")
+    
+    #Check if message is a string
+    if not isinstance(message, str):
+        raise InputError("Message is not a string")
+    
+    #Check channel/dm ID pair contains a -1
+    if channel_id != -1:
+        if dm_id != -1:
+            #Neither ids are -1
+            raise InputError("Neither channel_id nor dm_id are -1")
+    elif channel_id == -1:
+        if dm_id == -1:
+            #Both ids are -1
+            raise InputError("Both channel_id and dm_id are invalid")
+    
+    #If channel_id is not -1
+    if channel_id != -1:
+    
+        channel_exists = False
+        user_in_channel = False
+        
+        #Check if the channel exists and if the user is in the channel
+        for channel in channel_data:
+            if channel_id == channel['chan_id']:
+                channel_exists = True
+                if user_id in channel['users_id']:
+                    user_in_channel = True
+                    #Share to channel
+                    shared_message_id = message_send_v1(token, channel_id, f"'Original Message': {og_message}, 'User message': {message}")['message_id']
+                    return {"shared_message_id": shared_message_id}
 
-def message_unreact_v1(token, message_id, react_id):
-    return {}
+        if not channel_exists:
+            raise InputError("Channel ID not valid")
 
-def message_pin_v1(token, message_id):
-    return {}
+        if not user_in_channel:
+            raise AccessError("User isn't part of the channel")
 
-def message_unpin_v1(token, message_id):
-    return {}
+    #If dm_id is not -1
+    if dm_id != -1:
+        
+        dm_exists = False
+        user_in_dm = False
+        
+        #Check if the dm exists and if the user is in the dm
+        for dm in dm_data:
+            if dm_id == dm['dm_id']:
+                dm_exists = True
+                for members in dm['members']:
+                    if user_id == members['u_id']:
+                        user_in_dm = True
+                        #Share to dm
+                        shared_message_id = message_senddm_v1(token, dm_id, f"'Original Message': {og_message}, 'User message': {message}")['dm_id']
+                        return {"shared_message_id": shared_message_id}
 
-def message_sendlater_v1(token, channel_id, message, time_sent):
-    return {
-        "message_id": 1
-    }
+        if not dm_exists:
+            raise InputError("DM ID not valid")
 
-def message_sendlaterdm_v1(token, dm_id, message, time_sent):
-    return {
-        "message_id": 1
-    }
+        if not user_in_dm:
+            raise AccessError("User isn't part of the DM")

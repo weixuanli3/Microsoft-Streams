@@ -1,6 +1,7 @@
 '''Contains function clear which clears all previously stored data'''
 # from data_store import data_store, update_permanent_storage
 from src.data_store import data_store, update_permanent_storage
+from datetime import datetime
 
 '''
 Eg.
@@ -36,7 +37,13 @@ def clear_v1():
         'channels': [],
         'global_owners' : [],
         'DMs': [],
-        'msgs' : []
+        'msgs' : [],
+        'workspace_stats': {
+            'channels_exist': [{'num_channels_exist': 0, 'time_stamp': datetime.now()}],
+            'dms_exist': [{'num_dms_exist': 0, 'time_stamp': datetime.now()}],
+            'messages_exist': [{'num_messages_exist': 0, 'time_stamp': datetime.now()}],
+            'utilization_rate': 0
+        }
     }
     data_store.set(store)
 

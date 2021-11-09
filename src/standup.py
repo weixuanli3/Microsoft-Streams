@@ -1,8 +1,8 @@
 '''Contains all functions related to standups'''
-import datetime
 from src.data_store import data_store, update_permanent_storage, get_u_id
 from src.error import InputError, AccessError
 from datetime import datetime
+import datetime as dt
 from datetime import timezone
 
 def standup_start_v1(token, channel_id, length):
@@ -39,17 +39,23 @@ def standup_start_v1(token, channel_id, length):
         raise AccessError("User isn't part of the channel")
         
     
-    if curr_channel['standup']['finish_time'] < datetime.now().replace(tzinfo=timezone.utc).timestamp():
-        print(datetime.now().replace(tzinfo=timezone.utc).timestamp())
-        curr_channel['standup']['finish_time'] = datetime.now().replace(tzinfo=timezone.utc).timestamp() + length
+    if curr_channel['standup']['finish_time'] < dt.datetime.timestamp(dt.datetime.now():
+        print(dt.datetime.timestamp(dt.datetime.now())
+        curr_channel['standup']['finish_time'] = dt.datetime.timestamp(dt.datetime.now() + dt.timedelta(seconds=length))
         curr_channel['standup']['start_user'] = user_id
+        # delaying the message
+        delay = int(time_sent) - int(now)
+        t = threading.Timer(delay, job)
+        t.start()
     else:
         raise InputError("A standup is already active in this channel")
     
     # message_sendlater_v1(token, channel_id, message, datetime.now().replace(tzinfo=timezone.utc).timestamp() + length)
+    update_permanent_storage()
     return {
         'time_finish': curr_channel['standup']['finish_time']
     }
+    
 
 
 # MAYBE SEND IT HERE?????
@@ -86,15 +92,15 @@ def standup_active_v1(token, channel_id):
     is_active = False
     time_finish = None
     print(curr_channel['standup']['finish_time'])
-    print(datetime.now().replace(tzinfo=timezone.utc).timestamp())
+    print(dt.datetime.timestamp(dt.datetime.now()))
     if curr_channel['standup']['is_active']:
         is_active = True
         time_finish = curr_channel['standup']['finish_time']
     else:
         if curr_channel['standup']['is_active']:
             # SEND MESSAGES
-            message_sendlater_req(token, curr_channel['chan_id'], 
-                                  "curr_channel['standup']['messages']", datetime.now().replace(tzinfo=timezone.utc).timestamp() + length)
+            message_sendlater_req(to/ken, curr_channel['chan_id'], 
+                                  """curr_channel['standup']['messages']""", dt.datetime.timestamp(dt.datetime.now())
             pass
         pass      
     

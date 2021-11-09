@@ -2,6 +2,7 @@
 import copy
 from sys import _clear_type_cache
 from src.data_store import data_store, get_u_id, update_permanent_storage
+from src.user import update_workspace_stats, update_user_stats
 from src.error import InputError
 from src.error import AccessError
 
@@ -106,6 +107,8 @@ def dm_create_v1(token, u_ids):
     
     dm_data.append(new_dm)
     
+    update_workspace_stats("dms_exist", True)
+    update_user_stats(get_u_id(token), "dms_joined", True)
     update_permanent_storage()
     
     return {'dm_id': dm_id}
@@ -218,7 +221,8 @@ def dm_remove_v1(token, dm_id):
     # Set members in the DM to an empty list
     # Do I need to remove the owner as well????
  
-
+    update_workspace_stats("dms_exist", False)
+    update_user_stats(user_id, "dms_joined", False)
     update_permanent_storage()
     #Return type {}
     return{}
@@ -362,9 +366,8 @@ def dm_leave_v1(token, dm_id):
     if not dm_id_valid:
         raise InputError("dm_id does not refer to a valid DM")
     
+    update_user_stats(user_id, "dms_joined", False)
     update_permanent_storage()
-    
-    
     
     return {}    
     #Return type {}

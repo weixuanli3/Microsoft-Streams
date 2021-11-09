@@ -4,6 +4,7 @@ from datetime import datetime
 from datetime import timezone
 
 from src.data_store import data_store, update_permanent_storage
+from src.user import update_user_stats, update_workspace_stats
 from src.error import InputError
 from src.error import AccessError
 
@@ -171,10 +172,12 @@ def channels_create_v1(token, name, is_public):
         'standup': {
             'is_active': False,
             'start_user': -1,
-            'finish_time': datetime.now().replace(tzinfo=timezone.utc).timestamp(),
+            'finish_time': dt.datetime.timestamp(dt.datetime.now()),
             'messages': []
         },
     })
+    update_workspace_stats("channels_exist", True)
+    update_user_stats(auth_user_id, "channels_joined", True)
     update_permanent_storage()
     return {
         'channel_id': new_channel_id,
