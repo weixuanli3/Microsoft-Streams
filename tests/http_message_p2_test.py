@@ -389,9 +389,9 @@ def test_message_sendlater_multi_msgs():
     channel_id = channels_create_req(token1, "Channel 1", True)['channel_id']
     time_sent1 = dt.datetime.timestamp(dt.datetime.now() + dt.timedelta(seconds=1))
     msg1_id = message_sendlater_req(token1, channel_id, "Hi there!", time_sent1)['message_id']
-    time.sleep(2)
     time_sent2 = dt.datetime.timestamp(dt.datetime.now() + dt.timedelta(seconds=1))
     msg2_id = message_sendlater_req(token1, channel_id, "Hi there!", time_sent2)['message_id']
+    time.sleep(2)
     assert msg1_id != msg2_id
 
 def test_message_sendlater_sent_in_past():
@@ -455,9 +455,9 @@ def test_message_sendlaterdm_multi_msgs():
     dm_id = dm_create_req(token1, [u_id2])['dm_id']
     time_sent1 = dt.datetime.timestamp(dt.datetime.now() + dt.timedelta(seconds=1))
     msg1_id = message_sendlaterdm_req(token1, dm_id, "Hi there!", time_sent1)['message_id']
-    time.sleep(2)
     time_sent2 = dt.datetime.timestamp(dt.datetime.now() + dt.timedelta(seconds=1))
     msg2_id = message_sendlaterdm_req(token1, dm_id, "Hi there!", time_sent2)['message_id']
+    time.sleep(2)
     assert msg1_id != msg2_id
 
 def test_message_sendlaterdm_sent_in_past():
