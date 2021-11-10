@@ -193,13 +193,13 @@ def test_channel_details_valid_channel(Channel_setup):
     u1, u2, u3, chan1_id, chan2_id = Channel_setup
     channel_join_req(u3['token'], chan1_id)
     channel_join_req(u3['token'], chan2_id)
-    assert channel_details_req(u1['token'], chan1_id) == {'name' : 'Channel 1','is_public' : True,'owner_members' : [{'email': 'patrick.liang@unsw.com', 'handle_str': 'patrickliang', 'name_first': 'Patrick', 'name_last': 'Liang', 'u_id': u1['auth_user_id']}],'all_members' : [{'email': 'patrick.liang@unsw.com', 'handle_str': 'patrickliang', 'name_first': 'Patrick', 'name_last': 'Liang', 'u_id': u1['auth_user_id']}, {'email': 'john.doe@unsw.com', 'handle_str': 'johndoe', 'name_first': 'John', 'name_last': 'Doe', 'u_id': u3['auth_user_id']}],
+    assert channel_details_req(u1['token'], chan1_id) == {'name' : 'Channel 1','is_public' : True,'owner_members' : [{'email': 'patrick.liang@unsw.com', 'handle_str': 'patrickliang', 'name_first': 'Patrick', 'name_last': 'Liang', 'u_id': u1['auth_user_id'], 'profile_img_url': url + 'imgurl/default.jpg'}],'all_members' : [{'email': 'patrick.liang@unsw.com', 'handle_str': 'patrickliang', 'name_first': 'Patrick', 'name_last': 'Liang', 'u_id': u1['auth_user_id'], 'profile_img_url': url + 'imgurl/default.jpg'}, {'email': 'john.doe@unsw.com', 'handle_str': 'johndoe', 'name_first': 'John', 'name_last': 'Doe', 'u_id': u3['auth_user_id'], 'profile_img_url': url + 'imgurl/default.jpg'}],
     }
     assert channel_details_req(u2['token'], chan2_id) == {
         'name' : 'Channel 2',
         'is_public' : True,
-        'owner_members' : [{'email': 'john.citizen@unsw.com', 'handle_str': 'johncitizen', 'name_first': 'John', 'name_last': 'Citizen', 'u_id': u2['auth_user_id']}],
-        'all_members' : [{'email': 'john.citizen@unsw.com', 'handle_str': 'johncitizen', 'name_first': 'John', 'name_last': 'Citizen', 'u_id': u2['auth_user_id']}, {'email': 'john.doe@unsw.com', 'handle_str': 'johndoe', 'name_first': 'John', 'name_last': 'Doe', 'u_id': u3['auth_user_id']}],
+        'owner_members' : [{'email': 'john.citizen@unsw.com', 'handle_str': 'johncitizen', 'name_first': 'John', 'name_last': 'Citizen', 'u_id': u2['auth_user_id'], 'profile_img_url': url + 'imgurl/default.jpg'}],
+        'all_members' : [{'email': 'john.citizen@unsw.com', 'handle_str': 'johncitizen', 'name_first': 'John', 'name_last': 'Citizen', 'u_id': u2['auth_user_id'], 'profile_img_url': url + 'imgurl/default.jpg'}, {'email': 'john.doe@unsw.com', 'handle_str': 'johndoe', 'name_first': 'John', 'name_last': 'Doe', 'u_id': u3['auth_user_id'], 'profile_img_url': url + 'imgurl/default.jpg'}],
     }
 
 def test_channel_details_valid_private_channel(default_setup):
@@ -209,13 +209,15 @@ def test_channel_details_valid_private_channel(default_setup):
     channel_invite_req(u2['token'], chan2_id, u3['auth_user_id'])
     channel_invite_req(u1['token'], chan1_id, u3['auth_user_id'])
     
-    assert channel_details_req(u1['token'], chan1_id) == {'name' : 'Channel 1','is_public' : False,'owner_members' : [{'email': 'patrick.liang@unsw.com', 'handle_str': 'patrickliang', 'name_first': 'Patrick', 'name_last': 'Liang', 'u_id': u1['auth_user_id']}],'all_members' : [{'email': 'patrick.liang@unsw.com', 'handle_str': 'patrickliang', 'name_first': 'Patrick', 'name_last': 'Liang', 'u_id': u1['auth_user_id']}, {'email': 'john.doe@unsw.com', 'handle_str': 'johndoe', 'name_first': 'John', 'name_last': 'Doe', 'u_id': u3['auth_user_id']}],
+    assert channel_details_req(u1['token'], chan1_id) == {'name' : 'Channel 1','is_public' : False,
+        'owner_members' : [{'email': 'patrick.liang@unsw.com', 'handle_str': 'patrickliang', 'name_first': 'Patrick', 'name_last': 'Liang', 'u_id': u1['auth_user_id'], 'profile_img_url': url + 'imgurl/default.jpg'}],
+        'all_members' : [{'email': 'patrick.liang@unsw.com', 'handle_str': 'patrickliang', 'name_first': 'Patrick', 'name_last': 'Liang', 'u_id': u1['auth_user_id'], 'profile_img_url': url + 'imgurl/default.jpg'}, {'email': 'john.doe@unsw.com', 'handle_str': 'johndoe', 'name_first': 'John', 'name_last': 'Doe', 'u_id': u3['auth_user_id'], 'profile_img_url': url + 'imgurl/default.jpg'}],
     }
     assert channel_details_req(u2['token'], chan2_id) == {
         'name' : 'Channel 2',
         'is_public' : False,
-        'owner_members' : [{'email': 'john.citizen@unsw.com', 'handle_str': 'johncitizen', 'name_first': 'John', 'name_last': 'Citizen', 'u_id': u2['auth_user_id']}],
-        'all_members' : [{'email': 'john.citizen@unsw.com', 'handle_str': 'johncitizen', 'name_first': 'John', 'name_last': 'Citizen', 'u_id': u2['auth_user_id']}, {'email': 'john.doe@unsw.com', 'handle_str': 'johndoe', 'name_first': 'John', 'name_last': 'Doe', 'u_id': u3['auth_user_id']}],
+        'owner_members' : [{'email': 'john.citizen@unsw.com', 'handle_str': 'johncitizen', 'name_first': 'John', 'name_last': 'Citizen', 'u_id': u2['auth_user_id'], 'profile_img_url': url + 'imgurl/default.jpg'}],
+        'all_members' : [{'email': 'john.citizen@unsw.com', 'handle_str': 'johncitizen', 'name_first': 'John', 'name_last': 'Citizen', 'u_id': u2['auth_user_id'], 'profile_img_url': url + 'imgurl/default.jpg'}, {'email': 'john.doe@unsw.com', 'handle_str': 'johndoe', 'name_first': 'John', 'name_last': 'Doe', 'u_id': u3['auth_user_id'], 'profile_img_url': url + 'imgurl/default.jpg'}],
     }
     
 def test_channel_details_non_existant_channel(default_setup):
@@ -544,8 +546,8 @@ def test_channel_leave_valid_token_and_channel(Channel_setup_one):
     assert channel_details_req(u1['token'], chan_id) == {
         'name' : 'Channel 1',
         'is_public' : True,
-        'owner_members' : [{'email': 'patrick.liang@unsw.com', 'handle_str': 'patrickliang', 'name_first': 'Patrick', 'name_last': 'Liang', 'u_id': u1['auth_user_id']}],
-        'all_members' : [{'email': 'patrick.liang@unsw.com', 'handle_str': 'patrickliang', 'name_first': 'Patrick', 'name_last': 'Liang', 'u_id': u1['auth_user_id']}],
+        'owner_members' : [{'email': 'patrick.liang@unsw.com', 'handle_str': 'patrickliang', 'name_first': 'Patrick', 'name_last': 'Liang', 'u_id': u1['auth_user_id'], 'profile_img_url': url + 'imgurl/default.jpg'}],
+        'all_members' : [{'email': 'patrick.liang@unsw.com', 'handle_str': 'patrickliang', 'name_first': 'Patrick', 'name_last': 'Liang', 'u_id': u1['auth_user_id'], 'profile_img_url': url + 'imgurl/default.jpg'}],
     }
     
 def test_channel_owner_leaves_valid_token_and_channel(Channel_setup_one):
@@ -558,6 +560,6 @@ def test_channel_owner_leaves_valid_token_and_channel(Channel_setup_one):
         'name' : 'Channel 1',
         'is_public' : True,
         'owner_members' : [],
-        'all_members' : [{'email': 'john.citizen@unsw.com', 'handle_str': 'johncitizen', 'name_first': 'John', 'name_last': 'Citizen', 'u_id': u2['auth_user_id']}],
+        'all_members' : [{'email': 'john.citizen@unsw.com', 'handle_str': 'johncitizen', 'name_first': 'John', 'name_last': 'Citizen', 'u_id': u2['auth_user_id'], 'profile_img_url': url + 'imgurl/default.jpg'}],
     }
     

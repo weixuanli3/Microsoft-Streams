@@ -60,7 +60,8 @@ def test_admin_user_remove_removed_from_channels(channels_setup):
                 'handle_str': 'johndoe', 
                 'name_first': 'John', 
                 'name_last': 'Doe', 
-                'u_id': u1['auth_user_id']
+                'u_id': u1['auth_user_id'],
+                'profile_img_url': url + 'imgurl/default.jpg'
             }],
         'all_members' : [
                 {
@@ -68,7 +69,8 @@ def test_admin_user_remove_removed_from_channels(channels_setup):
                     'handle_str': 'johndoe', 
                     'name_first': 'John', 
                     'name_last': 'Doe', 
-                    'u_id': u1['auth_user_id']
+                    'u_id': u1['auth_user_id'],
+                    'profile_img_url': url + 'imgurl/default.jpg'
                 }
             ],
         }
@@ -94,7 +96,8 @@ def test_admin_user_remove_remove_from_dms(default_setup):
             'email': 'john.doe@aunsw.edu.au',
             'name_first': 'John',
             'name_last': 'Doe',
-            'handle_str': 'johndoe'
+            'handle_str': 'johndoe',
+            'profile_img_url': url + 'imgurl/default.jpg'
         } ]
     }
     
