@@ -262,7 +262,7 @@ def user_profile_uploadphoto_v1(token, img_url, x_start, y_start, x_end, y_end):
         or y_start not in range(0, height) or y_end not in range(0, height):
         raise InputError("any of x_start, y_start, x_end, y_end are not within the dimensions of the image at the URL")
 
-    cropped_img = im.crop((x_start, y_start, x_end, y_end))
+    cropped_img = img.crop((x_start, y_start, x_end, y_end))
     cropped_img.save(IMAGE_DIR_NAME + token + '.jpg')
     auth_user['profile_img_name'] = token + '.jpg'
     update_permanent_storage()

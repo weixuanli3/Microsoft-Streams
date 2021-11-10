@@ -49,7 +49,8 @@ def test_valid_test(registered_user):
             'handle_str': 'johndoe',
             'name_first': 'John',
             'name_last': 'Doe',
-            'u_id': 1
+            'u_id': 1,
+            'profile_img_url': url + 'imgurl/default.jpg'
         }]
     }
     assert result == expected
