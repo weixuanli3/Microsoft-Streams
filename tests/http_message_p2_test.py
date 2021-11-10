@@ -1,5 +1,6 @@
 '''Contains http tests for message functions in it3'''
 import pytest
+import datetime as dt
 import requests
 import json
 from src.error import AccessError, InputError
@@ -180,7 +181,7 @@ def test_message_pin_invalid_token():
     assert message_pin_req(5342, msg_id) == AccessError.code
 
 def test_message_pin_user_in_wrong_dm():
-    == AccessError.code clear_req()
+    clear_req()
     token1 = auth_register_req("john.doe@aunsw.edu.au","password","John","Doe")['token']
     u_id2 = auth_register_req("james.smith@aunsw.edu.au","password","James","Smith")['auth_user_id']
     user3 = auth_register_req("Tim.doe@aunsw.edu.au","password","Tim","Doe")
@@ -226,7 +227,6 @@ def test_message_pin_user_not_owner_channel():
     assert message_pin_req(token3, msg_id) == AccessError.code
 
 def test_message_pin_global_user_not_owner_channel():
-  == AccessError.code   clear_req()
     token1 = auth_register_req("john.doe@aunsw.edu.au","password","John","Doe")['token']
     token2 = auth_register_req("jane.doe@aunsw.edu.au","password","Jane","Doe")['token']
     chan_id = channels_create_req(token2, "Channel 1", True)['channel_id']
@@ -275,7 +275,7 @@ def test_message_unpin_invalid_token():
     assert message_unpin_req(5342, msg_id) == AccessError.code
 
 def test_message_unpin_user_in_wrong_dm():
-  == AccessError.code   clear_req()
+    clear_req()
     token1 = auth_register_req("john.doe@aunsw.edu.au","password","John","Doe")['token']
     u_id2 = auth_register_req("james.smith@aunsw.edu.au","password","James","Smith")['auth_user_id']
     user3 = auth_register_req("Tim.doe@aunsw.edu.au","password","Tim","Doe")
@@ -324,8 +324,8 @@ def test_message_unpin_user_not_owner_channel():
     msg_id = message_send_req(token2, chan_id, "Hi there!")['message_id']
     message_pin_req(token2, msg_id)
     assert message_unpin_req(token3, msg_id) == AccessError.code
-        
- == AccessError.codedef test_message_unpin_global_user_not_owner_channel():
+
+def test_message_unpin_global_user_not_owner_channel():
     clear_req()
     token1 = auth_register_req("john.doe@aunsw.edu.au","password","John","Doe")['token']
     token2 = auth_register_req("jane.doe@aunsw.edu.au","password","Jane","Doe")['token']
