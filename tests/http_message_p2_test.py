@@ -8,6 +8,101 @@ from src.error import AccessError, InputError
 from other_functions.request_helper_functions import *
 from src.config import url
 
+## NEED TO CHECK WHEN BOTH INCPUT AND ACCESS ERRORS ARE SPIT OUT
+
+## The following tests are for message_share
+        
+# def test_message_share_invalid_token(Channel_setup):
+#     u1, u2, chan1_id = Channel_setup
+#     channel_join_req(u2['token'], chan1_id)
+#     msg_id = message_send_req(u1['token'], chan1_id, "Hi there!")['message_id']
+#     assert message_share_req(444, msg_id, "heyo", chan1_id, -1)['code'] == AccessError.code
+
+# def test_message_share_idm_and_chan_id_neg(Channel_setup):
+#     u1, u2, chan1_id = Channel_setup
+#     channel_join_req(u2['token'], chan1_id)
+#     msg_id = message_send_req(u1['token'], chan1_id, "Hi there!")['message_id']
+#     assert message_share_req(u1['token'], msg_id, "heyo", -1, -1)['code'] == InputError.code    
+
+# def test_message_share_invalid_chan_id(Channel_setup):
+#     u1, u2, chan1_id = Channel_setup
+#     channel_join_req(u2['token'], chan1_id)
+#     msg_id = message_send_req(u1['token'], chan1_id, "Hi there!")['message_id']
+#     assert message_share_req(u1['token'], msg_id, "heyo", 33, -1)['code'] == InputError.code  
+
+# def test_message_share_invalid_dm_id(dms_setup):
+#     u1, u2, dm_id1 = dms_setup
+#     dm_msg_id = message_senddm_req(u1['token'], dm_id1, "Hey")['message_id']
+#     assert message_share_req(u1['token'], dm_msg_id, "heyo", -1, 66)['code'] == InputError.code
+
+# def test_message_share_invalid_dm_and_chan_id(dms_setup):
+#     u1, u2, dm_id1 = dms_setup
+#     dm_msg_id = message_senddm_req(u1['token'], dm_id1, "Hey")['message_id']
+#     u1_tok = u1['token']
+#     chan1_id = channels_create_req(u1_tok, "Channel 1", True)['channel_id']
+#     msg_id = message_send_req(u1['token'], chan1_id, "Hi there!")['message_id']
+#     assert message_share_req(u1['token'], msg_id, "heyo", 77, 66)['code'] == InputError.code 
+#     assert message_share_req(u1['token'], dm_msg_id, "heyo", 77, 66)['code'] == InputError.code 
+
+# def test_message_share_invalid_dm_msg_id(dms_setup):
+#     u1, u2, dm_id1 = dms_setup
+#     dm_msg_id = message_senddm_req(u1['token'], dm_id1, "Hey")['message_id']
+#     assert message_share_req(u1['token'], 33, "heyo", -1, dm_id1)['code'] == InputError.code
+
+# def test_message_share_invalid_msg_id(Channel_setup):
+#     u1, u2, chan1_id = Channel_setup
+#     channel_join_req(u2['token'], chan1_id)
+#     message_send_req(u1['token'], chan1_id, "Hi there!")['message_id']
+#     assert message_share_req(u1['token'], 44, "heyo", chan1_id, -1)['code'] == InputError.code
+        
+# def test_message_share_more_than_100_chars(Channel_setup):
+#     u1, u2, chan1_id = Channel_setup
+#     channel_join_req(u2['token'], chan1_id)
+#     msg_id = message_send_req(u1['token'], chan1_id, "Hi there!")['message_id']
+#     assert message_share_req(u1['token'], msg_id, """
+#                         Hey Thereivbfriehuferhuifferhuierfihuerfiphuerfpihuerfphuierfpihuer
+#                         fiphuerfihuperfpppppppppppppppppppppppppppppppppppppppppppppppppppppp
+#                         pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppprefihuopppp
+#                         pppppppppppiooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
+#                         oooooooooooooooooooooooooooooooooooooooooooooooooooooooooiiiiiiiiiiiii
+#                         iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii
+#                         iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii
+#                         iiiiiiiiiiiiiiiiii HeyThereivbfriehuferhuifferhuierfihuerfiphuerfpihuer
+#                         fphuierfpihuerfiphuerfihuperfpppppppppppppppppppppppppppppppppppppppppp
+#                         pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp
+#                         refihuopppppppppppppppiooooooooooooooooooooooooooooooooooooooooooooooooo
+#                         oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooiiiiii
+#                         iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii
+#                         iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii
+#                         iiiiiiiiiiiiiiiiiii""", chan1_id, -1)['code'] == InputError.code
+
+# def test_message_share_user_not_in_chan(Channel_setup):
+#     u1, u2, chan1_id = Channel_setup
+#     msg_id = message_send_req(u1['token'], chan1_id, "Hi there!")['message_id']
+#     assert message_share_req(u2['token'], msg_id, "heyo", chan1_id, -1)['code'] == AccessError.code
+
+# def test_message_share_user_not_in_dm(dms_setup):
+#     u1, u2, dm_id1 = dms_setup
+#     dm_msg_id = message_senddm_req(u1['token'], dm_id1, "Hey")['message_id']
+#     dm_msg_id2 = message_senddm_req(u2['token'], dm_id1, "Hey")['message_id']
+#     u3 = auth_register_req("gooba.smith@unsw.com", "password", "Gooba", "Smoth")
+#     assert message_share_req(u3['token'], dm_msg_id, "heyo", -1, dm_id1)['code'] == AccessError.code
+#     assert message_share_req(u3['token'], dm_msg_id2, "heyo", -1, dm_id1)['code'] == AccessError.code
+
+# def test_message_share_dm_valid(dms_setup):
+#     u1, u2, dm_id1 = dms_setup
+#     dm_msg_id1 = message_senddm_req(u1['token'], dm_id1, "Hey")['message_id']
+#     dm_msg_id2 = message_senddm_req(u2['token'], dm_id1, "Hey")['message_id']
+#     message_share_req(u1['token'], dm_msg_id1, "heyo", -1, dm_id1)
+#     message_share_req(u1['token'], dm_msg_id2, "heyo", -1, dm_id1)
+
+
+# def test_message_share_valid_channel(Channel_setup):
+#     u1, u2, chan1_id = Channel_setup
+#     channel_join_req(u2['token'], chan1_id)
+#     msg_id = message_send_req(u1['token'], chan1_id, "Hi there!")['message_id']
+#     message_share_req(u1['token'], msg_id, "heyo", chan1_id, -1)
+
 # The following tests are for message_react_req
 def test_message_react_invalid_token():
     clear_req()

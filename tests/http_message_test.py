@@ -1,4 +1,4 @@
-'''Contains http tests for message.py'''
+'''Contains some http tests for message.py'''
 import pytest
 import requests
 import json
