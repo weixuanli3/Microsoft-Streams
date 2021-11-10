@@ -1,6 +1,7 @@
 '''Contains functions relating to creating, listing, removing DMs'''
 import copy
 from sys import _clear_type_cache
+from src.config import url
 from src.data_store import data_store, get_u_id, update_permanent_storage
 from src.user import update_workspace_stats, update_user_stats
 from src.error import InputError
@@ -76,7 +77,8 @@ def dm_create_v1(token, u_ids):
                         'handle_str': user['handle'],
                         'name_first': user['names'],
                         'name_last': user['name_lasts'],
-                        'u_id': user['id']})
+                        'u_id': user['id'],
+                        'profile_img_url': url + 'imgurl/' + user['profile_img_name']})
     
     # add each user's handle to name list
     for u_id in u_ids:
@@ -87,7 +89,8 @@ def dm_create_v1(token, u_ids):
                         'handle_str': user['handle'],
                         'name_first': user['names'],
                         'name_last': user['name_lasts'],
-                        'u_id': user['id']})
+                        'u_id': user['id'],
+                        'profile_img_url': url + 'imgurl/' + user['profile_img_name']})
                 
     
     # sort handles in alphabetical order
