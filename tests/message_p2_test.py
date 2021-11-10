@@ -1,6 +1,7 @@
 '''Contains tests for message.py'''
 import pytest
 import datetime as dt
+import time
 
 from src.auth import auth_register_v1
 from src.channels import channels_create_v1, channels_list_v1, channels_listall_v1
@@ -624,6 +625,7 @@ def test_message_sendlaterdm_multi_msgs():
     dm_id = dm_create_v1(token1, [u_id2])['dm_id']
     time_sent1 = dt.datetime.timestamp(dt.datetime.now() + dt.timedelta(seconds=1))
     msg1_id = message_sendlaterdm_v1(token1, dm_id, "Hi there!", time_sent1)['message_id']
+    time.sleep(2)
     time_sent2 = dt.datetime.timestamp(dt.datetime.now() + dt.timedelta(seconds=1))
     msg2_id = message_sendlaterdm_v1(token1, dm_id, "Hi there!", time_sent2)['message_id']
     assert msg1_id != msg2_id
