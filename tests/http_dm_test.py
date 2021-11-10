@@ -83,21 +83,24 @@ def test_dm_details_valid(default_setup):
         "email": "patrick.liang@unsw.com",
         "name_first": "Patrick",
         "name_last": "Liang",
-        "handle_str": "patrickliang"
+        "handle_str": "patrickliang",
+        'profile_img_url': url + 'imgurl/default.jpg'
     }
     user2 = {
         "u_id": u2_id,
         "email": "john.citizen@unsw.com",
         "name_first": "John",
         "name_last": "Citizen",
-        "handle_str": "johncitizen"
+        "handle_str": "johncitizen",
+        'profile_img_url': url + 'imgurl/default.jpg'
     }
     user3 = {
         "u_id": u3_id,
         "email": "john.doe@unsw.com",
         "name_first": "John",
         "name_last": "Doe",
-        "handle_str": "johndoe"
+        "handle_str": "johndoe",
+        'profile_img_url': url + 'imgurl/default.jpg'
     }
     dm_id0 = dm_create_req(u1_tok, [u3_id, u2_id])['dm_id']
     details = dm_details_req(u1_tok, dm_id0)
@@ -128,14 +131,16 @@ def test_dm_leave_valid(dms_setup):
         'email': "john.citizen@unsw.com",
         'name_first': "John",
         'name_last': "Citizen",
-        'handle_str': "johncitizen"
+        'handle_str': "johncitizen",
+        'profile_img_url': url + 'imgurl/default.jpg'
     }
     user3 = {
         "u_id": u3_id,
         "email": "john.doe@unsw.com",
         "name_first": "John",
         "name_last": "Doe",
-        "handle_str": "johndoe"
+        "handle_str": "johndoe",
+        'profile_img_url': url + 'imgurl/default.jpg'
     }
     assert dm_leave_req(u1_tok, dm_id1) == {}
     assert dm_leave_req(u3_tok, dm_id2) == {}

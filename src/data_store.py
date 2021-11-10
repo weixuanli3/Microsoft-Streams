@@ -68,12 +68,7 @@ initial_object = {
     'global_owners': [],
     'DMs': [],
     'msgs' : [],
-    'workspace_stats': {
-        'channels_exist': [{'num_channels_exist': 0, 'time_stamp': datetime.now()}],
-        'dms_exist': [{'num_dms_exist': 0, 'time_stamp': datetime.now()}],
-        'messages_exist': [{'num_messages_exist': 0, 'time_stamp': datetime.now()}],
-        'utilization_rate': 0
-    }
+    'workspace_stats': {}
 }
 
 ## YOU SHOULD MODIFY THIS OBJECT ABOVE

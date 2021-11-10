@@ -2,7 +2,7 @@
 import sys
 import signal
 from json import dumps
-from flask import Flask, request
+from flask import Flask, request, send_file
 from flask_cors import CORS
 from src.error import InputError
 from src import config
@@ -257,6 +257,10 @@ def user_profile_uploadphoto():
     return json.dumps(user_profile_uploadphoto_v1(data['token'], data['img_url'], data['x_start'], \
         data['y_start'], data['x_end'], data['y_end'])
     )
+
+@APP.route("/imgurl/<user_image_name>")
+def get_image(user_image_name):
+    return send_file("./src/images/" + user_image_name, mimetype='images/jpg')
 
 # User stats
 @APP.route("/user/stats/v1", methods=['GET'])
