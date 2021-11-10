@@ -260,7 +260,7 @@ def user_profile_uploadphoto():
 
 @APP.route("/imgurl/<user_image_name>")
 def get_image(user_image_name):
-    return send_file("./src/images/" + user_image_name, mimetype='images/jpg')
+    return send_file("images/" + user_image_name, mimetype='images/jpg')
 
 # User stats
 @APP.route("/user/stats/v1", methods=['GET'])

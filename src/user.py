@@ -7,7 +7,7 @@ from PIL import Image
 import requests
 import re
 
-IMAGE_DIR_NAME = "src/images/"
+IMAGE_DIR_NAME = "./src/images/"
 
 def users_all_v1(token):
     """
@@ -302,15 +302,17 @@ def update_workspace_stats(key_str, is_add):
 
     # Obtain the previous number for requested workspace stat
     init_num = work_stats[-1]['num_' + key_str]
+    dt = datetime.now()
+    timestamp = dt.timestamp()
     if is_add:
         work_stats.append({
             'num_' + key_str: init_num + 1,
-            'time_stamp': datetime.now()
+            'time_stamp': timestamp
         })
     else:
         work_stats.append({
             'num_' + key_str: init_num - 1,
-            'time_stamp': datetime.now()
+            'time_stamp': timestamp
         })
     
     return
@@ -324,17 +326,19 @@ def update_user_stats(u_id, key_str, is_add):
     
     # Obtain the previous number for requested stat
     init_num = target_stats[key_str][-1]['num_' + key_str]
+    dt = datetime.now()
+    timestamp = dt.timestamp()
     if is_add:
         # If we are adding to the number
         target_stats[key_str].append({
             'num_' + key_str: init_num + 1,
-            'time_stamp': datetime.now()
+            'time_stamp': timestamp
         })
     else:
         # If we are subtracting from the number
         target_stats[key_str].append({
             'num_' + key_str: init_num - 1,
-            'time_stamp': datetime.now()
+            'time_stamp': timestamp
         })
     
     calculate_involvement_util(target_stats)
