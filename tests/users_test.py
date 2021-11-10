@@ -2,6 +2,7 @@
 import pytest
 from src.auth import auth_register_v1, auth_login_v1
 from src.admin import admin_user_remove_id
+from src.config import url
 from src.other import clear_v1
 from src.user import user_profile_setemail_v1, user_profile_sethandle_v1, user_profile_setname_v1, user_stats_v1, users_all_v1, user_profile_v1, users_stats_v1
 from src.error import InputError, AccessError
