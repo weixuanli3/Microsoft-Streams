@@ -57,7 +57,10 @@ def standup_start_v1(token, channel_id, length):
         msgs.append(message_id)
 
         def job(curr_channel, curr_time):
-            print("meow1")
+            channel_data = data_store.get_data()['channels']
+            for channel in channel_data:
+                if channel_id == channel['chan_id']:
+                    curr_channel2 = channel
             message_data = {
                 'message_id' : message_id,
                 'u_id' : user_id,
@@ -69,11 +72,6 @@ def standup_start_v1(token, channel_id, length):
 
             curr_channel['standup']['is_active'] = False
             curr_channel['messages'].append(message_data)
-
-            # # adding message to channel_data
-            # for channel in channel_data:
-            #     if channel['chan_id'] == channel_id:
-            #         channel['messages'].append(message_data)
 
             update_workspace_stats('messages_exist', True)
             update_user_stats(user_id, 'messages_sent', True)
@@ -129,8 +127,6 @@ def standup_active_v1(token, channel_id):
     
     is_active = False
     time_finish = None
-    print(curr_channel['standup']['finish_time'])
-    print(dt.datetime.timestamp(dt.datetime.now()))
     if curr_channel['standup']['is_active']:
         is_active = True
         time_finish = curr_channel['standup']['finish_time']
@@ -185,16 +181,12 @@ def standup_send_v1(token, channel_id, message):
     if curr_channel['standup']['is_active']:
         user_data = data_store.get_data()['users']
         standup_active = True
-        print("woof1")
         for user in user_data:
-            print("woof2")
             if user_id == user['id']:
-                print("woof3")
                 if curr_channel['standup']['messages'] == "":
-                    print("woof4")
-                    curr_channel['standup']['messages'] + (f"{user['handle']}: {message}")
+                    curr_channel['standup']['messages'] += (f"{user['handle']}: {message}")
                 else:
-                    curr_channel['standup']['messages'] + (f"\n{user['handle']}: {message}")
+                    curr_channel['standup']['messages'] += (f"\n{user['handle']}: {message}")
                 print(curr_channel['standup']['messages'])
                 break
     
