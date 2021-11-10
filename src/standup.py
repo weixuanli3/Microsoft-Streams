@@ -85,8 +85,6 @@ def standup_start_v1(token, channel_id, length):
     }
     
 
-
-# MAYBE SEND IT HERE?????
 def standup_active_v1(token, channel_id):
     all_tokens = data_store.get('token')['token']
     token_exists = False
