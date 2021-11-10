@@ -174,7 +174,7 @@ def channels_create_v1(token, name, is_public):
             'is_active': False,
             'start_user': -1,
             'finish_time': dt.datetime.timestamp(dt.datetime.now()),
-            'messages': []
+            'messages': ""
         },
     })
     update_workspace_stats("channels_exist", True)
