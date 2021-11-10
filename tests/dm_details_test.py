@@ -1,6 +1,7 @@
 '''Contains tests for dm_details function'''
 import pytest
 from src.auth import auth_register_v1
+from src.config import url
 from src.dm import dm_create_v1, dm_list_v1, dm_details_v1
 from src.error import AccessError, InputError
 from src.other import clear_v1
@@ -35,28 +36,32 @@ def test_valid_details(def_setup):
         'email': "john.doe@unsw.com",
         'name_first': "John",
         'name_last': "Doe",
-        'handle_str': "johndoe"
+        'handle_str': "johndoe",
+        'profile_img_url': url + 'imgurl/default.jpg'
     }
     u1 = {
         'u_id': u1_id,
         'email': "patrick.liang@unsw.com",
         'name_first': "Patrick",
         'name_last': "Liang",
-        'handle_str': "patrickliang"
+        'handle_str': "patrickliang",
+        'profile_img_url': url + 'imgurl/default.jpg'
     }
     u2 = {
         'u_id': u2_id,
         'email': "john.citizen@unsw.com",
         'name_first': "John",
         'name_last': "Citizen",
-        'handle_str': "johncitizen"
+        'handle_str': "johncitizen",
+        'profile_img_url': url + 'imgurl/default.jpg'
     }
     u3 = {
         'u_id': u3_id,
         'email': "nangston.w@unsw.com",
         'name_first': "Wynston",
         'name_last': "Wang",
-        'handle_str': "wynstonwang"
+        'handle_str': "wynstonwang",
+        'profile_img_url': url + 'imgurl/default.jpg'
     }
     assert dm_details_v1(own_tok, dm_id1) == {
         'name': 'johncitizen, johndoe, patrickliang',

@@ -6,6 +6,7 @@ from src.channels import channels_create_v1
 from src.channel import channel_invite_v1, channel_leave_v1, channel_messages_v1
 from src.channel import channel_join_v1, channel_remove_owner_v1, channel_add_owner_v1
 from src.channel import channel_details_v1
+from src.config import url
 from src.message import message_send_v1
 from src.error import InputError
 from src.error import AccessError
@@ -178,8 +179,8 @@ def test_channel_details_valid_channel():
     assert (channel_details_v1(user1_token, channel_id) == {
         'name' : 'Channel 1',
         'is_public' : True,
-        'owner_members' : [{'email': 'john.doe@aunsw.edu.au', 'handle_str': 'johndoe', 'name_first': 'John', 'name_last': 'Doe', 'u_id': get_u_id(user1_token)}],
-        'all_members' : [{'email': 'john.doe@aunsw.edu.au', 'handle_str': 'johndoe', 'name_first': 'John', 'name_last': 'Doe', 'u_id': get_u_id(user1_token)}, {'email': 'john.smith@aunsw.edu.au', 'handle_str': 'johnsmith', 'name_first': 'John', 'name_last': 'Smith', 'u_id': get_u_id(user2_token)}],
+        'owner_members' : [{'email': 'john.doe@aunsw.edu.au', 'handle_str': 'johndoe', 'name_first': 'John', 'name_last': 'Doe', 'u_id': get_u_id(user1_token), 'profile_img_url': url + 'imgurl/default.jpg'}],
+        'all_members' : [{'email': 'john.doe@aunsw.edu.au', 'handle_str': 'johndoe', 'name_first': 'John', 'name_last': 'Doe', 'u_id': get_u_id(user1_token), 'profile_img_url': url + 'imgurl/default.jpg'}, {'email': 'john.smith@aunsw.edu.au', 'handle_str': 'johnsmith', 'name_first': 'John', 'name_last': 'Smith', 'u_id': get_u_id(user2_token), 'profile_img_url': url + 'imgurl/default.jpg'}],
     })
 
 def test_channel_details_valid_private_channel():
@@ -189,8 +190,8 @@ def test_channel_details_valid_private_channel():
     assert (channel_details_v1(user1_token, channel_id) == {
         'name' : 'Channel 1',
         'is_public' : False,
-        'owner_members' : [{'email': 'john.doe@aunsw.edu.au', 'handle_str': 'johndoe', 'name_first': 'John', 'name_last': 'Doe', 'u_id': get_u_id(user1_token)}],
-        'all_members' : [{'email': 'john.doe@aunsw.edu.au', 'handle_str': 'johndoe', 'name_first': 'John', 'name_last': 'Doe', 'u_id': get_u_id(user1_token)}],
+        'owner_members' : [{'email': 'john.doe@aunsw.edu.au', 'handle_str': 'johndoe', 'name_first': 'John', 'name_last': 'Doe', 'u_id': get_u_id(user1_token), 'profile_img_url': url + 'imgurl/default.jpg'}],
+        'all_members' : [{'email': 'john.doe@aunsw.edu.au', 'handle_str': 'johndoe', 'name_first': 'John', 'name_last': 'Doe', 'u_id': get_u_id(user1_token), 'profile_img_url': url + 'imgurl/default.jpg'}],
     })
     
 def test_channel_details_non_existant_channel():
@@ -628,8 +629,8 @@ def test_channel_leave_valid_token_and_channel():
     assert (channel_details_v1(user1_token, chan_id) == {
         'name' : 'Channel 1',
         'is_public' : True,
-        'owner_members' : [{'email': 'john.doe@aunsw.edu.au', 'handle_str': 'johndoe', 'name_first': 'John', 'name_last': 'Doe', 'u_id': get_u_id(user1_token)}],
-        'all_members' : [{'email': 'john.doe@aunsw.edu.au', 'handle_str': 'johndoe', 'name_first': 'John', 'name_last': 'Doe', 'u_id': get_u_id(user1_token)}],
+        'owner_members' : [{'email': 'john.doe@aunsw.edu.au', 'handle_str': 'johndoe', 'name_first': 'John', 'name_last': 'Doe', 'u_id': get_u_id(user1_token), 'profile_img_url': url + 'imgurl/default.jpg'}],
+        'all_members' : [{'email': 'john.doe@aunsw.edu.au', 'handle_str': 'johndoe', 'name_first': 'John', 'name_last': 'Doe', 'u_id': get_u_id(user1_token), 'profile_img_url': url + 'imgurl/default.jpg'}],
     })
     
 def test_channel_owner_leaves_valid_token_and_channel():
@@ -643,6 +644,6 @@ def test_channel_owner_leaves_valid_token_and_channel():
         'name' : 'Channel 1',
         'is_public' : True,
         'owner_members' : [],
-        'all_members' : [{'email': 'john.smith@aunsw.edu.au', 'handle_str': 'johnsmith', 'name_first': 'John', 'name_last': 'Smith', 'u_id': get_u_id(user2_token)}],
+        'all_members' : [{'email': 'john.smith@aunsw.edu.au', 'handle_str': 'johnsmith', 'name_first': 'John', 'name_last': 'Smith', 'u_id': get_u_id(user2_token), 'profile_img_url': url + 'imgurl/default.jpg'}],
     })
     
