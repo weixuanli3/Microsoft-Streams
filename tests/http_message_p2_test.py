@@ -233,7 +233,7 @@ def test_message_pin_global_user_not_owner_channel():
     chan_id = channels_create_req(token2, "Channel 1", True)['channel_id']
     channel_join_req(token1, chan_id)
     msg_id = message_send_req(token2, chan_id, "Hi there!")['message_id']
-    assert message_pin_req(token1, msg_id)['code'] == AccessError.code
+    message_pin_req(token1, msg_id)
 
 def test_message_pin_user_not_owner_dm():
     clear_req()
