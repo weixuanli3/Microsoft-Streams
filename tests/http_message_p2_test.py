@@ -104,7 +104,7 @@ def test_message_unreact_invalid_msg_id():
     chan_id = channels_create_req(token, "Channel 1", True)['channel_id']
     msg_id = message_send_req(token, chan_id, "Hi there!")['message_id']
     message_react_req(token, msg_id, 1)
-    assert message_unreact_req(token, 435, 1) == InputError.code
+    assert message_unreact_req(token, 435, 1)['code'] == InputError.code
 
 def test_message_unreact_user_not_in_chan():
     clear_req()
@@ -232,7 +232,7 @@ def test_message_pin_global_user_not_owner_channel():
     chan_id = channels_create_req(token2, "Channel 1", True)['channel_id']
     channel_join_req(token1, chan_id)
     msg_id = message_send_req(token2, chan_id, "Hi there!")['message_id']
-    message_pin_req(token1, msg_id)
+    assert message_pin_req(token1, msg_id)['code'] == AccessError.code
 
 def test_message_pin_user_not_owner_dm():
     clear_req()
@@ -312,7 +312,7 @@ def test_message_unpin_msg_not_pinned():
     msg_id = message_send_req(token, chan_id, "Hi there!")['message_id']
     message_pin_req(token, msg_id)
     message_unpin_req(token, msg_id)
-    assert message_unpin_req(token, msg_id) == InputError.code
+    assert message_unpin_req(token, msg_id)['code'] == InputError.code
 
 def test_message_unpin_user_not_owner_channel():
     clear_req()
