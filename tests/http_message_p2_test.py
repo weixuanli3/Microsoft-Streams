@@ -227,6 +227,7 @@ def test_message_pin_user_not_owner_channel():
     assert message_pin_req(token3, msg_id)['code'] == AccessError.code
 
 def test_message_pin_global_user_not_owner_channel():
+    clear_req()
     token1 = auth_register_req("john.doe@aunsw.edu.au","password","John","Doe")['token']
     token2 = auth_register_req("jane.doe@aunsw.edu.au","password","Jane","Doe")['token']
     chan_id = channels_create_req(token2, "Channel 1", True)['channel_id']
