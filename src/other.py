@@ -2,6 +2,7 @@
 # from data_store import data_store, update_permanent_storage
 from src.data_store import data_store, update_permanent_storage
 from datetime import datetime
+import os
 
 '''
 Eg.
@@ -42,6 +43,15 @@ def clear_v1():
     }
     data_store.set(store)
 
+    remove_images()
+
     update_permanent_storage()
 
     return {}
+
+def remove_images():
+    files = [f for f in os.listdir("./src/images")]
+    for f in files:
+        if f != 'default.jpg':
+            os.remove('./src/images/' + f)
+    print(files)
