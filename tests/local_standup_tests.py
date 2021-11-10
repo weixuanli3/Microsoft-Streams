@@ -114,4 +114,3 @@ def test_standup_send_valid(default_setup):
     u1_tok, chan1_id = default_setup
     standup_start_v1(u1_tok, chan1_id, 5)
     standup_send_v1(u1_tok, chan1_id, "argh!!!!!!")
-    assert True == False
