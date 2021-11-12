@@ -1,7 +1,13 @@
 '''Contains all functions that relate to the user profile'''
+from datetime import datetime
 from src.data_store import data_store, update_permanent_storage
 from src.error import InputError, AccessError
+from src.config import url
+from PIL import Image
+import requests
 import re
+
+IMAGE_DIR_NAME = "./src/images/"
 
 def users_all_v1(token):
     """
@@ -43,7 +49,8 @@ def users_all_v1(token):
                 'email': user['emails'],
                 'name_first': user['names'],
                 'name_last': user['name_lasts'],
-                'handle_str': user['handle']
+                'handle_str': user['handle'],
+                'profile_img_url': url + 'imgurl/' + user['profile_img_name']
             })
     return user_dict
     #Return type {users}
@@ -89,7 +96,8 @@ def user_profile_v1(token, u_id):
                 'email': user['emails'],
                 'name_first': user['names'],
                 'name_last': user['name_lasts'],
-                'handle_str': user['handle']
+                'handle_str': user['handle'],
+                'profile_img_url': url + 'imgurl/' + user['profile_img_name']
             }
     
     if not user_exists:
@@ -226,3 +234,167 @@ def user_profile_sethandle_v1(token, handle_str):
     update_permanent_storage()
     return {}
     #Return type {}
+
+def user_profile_uploadphoto_v1(token, img_url, x_start, y_start, x_end, y_end):
+    user_data = data_store.get_data()['users']
+    valid_token = False
+    for user in user_data:
+        if token in user['token']:
+            valid_token = True
+            auth_user = user
+    
+    if not valid_token:
+        raise AccessError("Invalid Token")
+    
+    if x_end < x_start or y_end < y_start:
+        raise InputError("x_end is less than x_start or y_end is less than y_start")
+
+    response = requests.get(url, stream=True)
+    if response.status_code != 200:
+        raise InputError("img_url returns an HTTP status other than 200")
+
+    img = Image.open(response.raw)
+    if img.format != "JPEG":
+        raise InputError("image uploaded is not a JPG")
+
+    width, height = img.size    
+    if x_start not in range(0, width) or x_end not in range(0, width) \
+        or y_start not in range(0, height) or y_end not in range(0, height):
+        raise InputError("any of x_start, y_start, x_end, y_end are not within the dimensions of the image at the URL")
+
+    cropped_img = img.crop((x_start, y_start, x_end, y_end))
+    cropped_img.save(IMAGE_DIR_NAME + token + '.jpg')
+    auth_user['profile_img_name'] = token + '.jpg'
+    update_permanent_storage()
+    return {}
+
+def user_stats_v1(token):
+    user_data = data_store.get_data()['users']
+    valid_token = False
+    for user in user_data:
+        if token in user['token']:
+            valid_token = True
+            stats = user['user_stats']
+    
+    if not valid_token:
+        raise AccessError("Invalid Token")
+
+    return {'user_stats': stats}
+
+def users_stats_v1(token):
+    user_data = data_store.get_data()['users']
+    valid_token = False
+    for user in user_data:
+        if token in user['token']:
+            valid_token = True
+    
+    if not valid_token:
+        raise AccessError("Invalid Token")
+
+    return {
+        "workspace_stats": data_store.get_data()['workspace_stats']
+    }
+
+######## Helper functions #########
+
+def update_workspace_stats(key_str, is_add):
+    work_stats = data_store.get_data()['workspace_stats'][key_str]
+
+    # Obtain the previous number for requested workspace stat
+    init_num = work_stats[-1]['num_' + key_str]
+    dt = datetime.now()
+    timestamp = dt.timestamp()
+    if is_add:
+        work_stats.append({
+            'num_' + key_str: init_num + 1,
+            'time_stamp': timestamp
+        })
+    else:
+        work_stats.append({
+            'num_' + key_str: init_num - 1,
+            'time_stamp': timestamp
+        })
+    
+    return
+
+def update_user_stats(u_id, key_str, is_add):
+    # Obtain the stats for the target user
+    user_data = data_store.get_data()['users']
+    for user in user_data:
+        if user['id'] == u_id:
+            target_stats = user['user_stats']
+    
+    # Obtain the previous number for requested stat
+    init_num = target_stats[key_str][-1]['num_' + key_str]
+    dt = datetime.now()
+    timestamp = dt.timestamp()
+    if is_add:
+        # If we are adding to the number
+        target_stats[key_str].append({
+            'num_' + key_str: init_num + 1,
+            'time_stamp': timestamp
+        })
+    else:
+        # If we are subtracting from the number
+        target_stats[key_str].append({
+            'num_' + key_str: init_num - 1,
+            'time_stamp': timestamp
+        })
+    
+    calculate_involvement_util(target_stats)
+    return
+
+def calculate_involvement_util(target_stats):
+    # Find the numerator of the involvement formula
+    num_chans_joined = target_stats['channels_joined'][-1]['num_channels_joined']
+    num_dms_joined = target_stats['dms_joined'][-1]['num_dms_joined']
+    num_msgs_sent = target_stats['messages_sent'][-1]['num_messages_sent']
+    sum_user = num_chans_joined + num_dms_joined + num_msgs_sent
+
+    # Find the denominator of the involvement formula
+    work_stats = data_store.get_data()['workspace_stats']
+    num_chans = work_stats['channels_exist'][-1]['num_channels_exist']
+    num_dms = work_stats['dms_exist'][-1]['num_dms_exist']
+    num_msgs = work_stats['messages_exist'][-1]['num_messages_exist']
+    sum_total = num_chans + num_dms + num_msgs
+
+    if sum_total == 0:
+        target_stats['involvement_rate'] = 0
+    elif sum_user / sum_total > 1:
+        target_stats['involvement_rate'] = 1
+    else:
+        target_stats['involvement_rate'] = sum_user / sum_total
+
+    work_stats['utilization_rate'] = util_rate()
+    return
+
+def util_rate():
+    ''' Calculates the utilization rate '''
+    user_data = data_store.get_data()['users']
+    total_users = 0
+    users_in_at_least_one = 0
+    for user in user_data:
+        if not user['is_removed']:
+            total_users += 1
+            if part_of_one_dm(user['id']) or part_of_one_chan(user['id']):
+                users_in_at_least_one += 1
+    
+    return users_in_at_least_one / total_users
+    
+def part_of_one_dm(u_id):
+    ''' Returns true if the user is part of at least one dm '''
+    dm_data = data_store.get_data()['DMs']
+    for dm in dm_data:
+        if u_id in dm['members']:
+            return True
+    
+    return False
+
+def part_of_one_chan(u_id):
+    ''' Returns true if the user is part of at least one channel '''
+    channel_data = data_store.get_data()['channels']
+    for channel in channel_data:
+        if u_id in channel['users_id']:
+            return True
+    
+    return False

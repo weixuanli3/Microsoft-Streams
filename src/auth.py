@@ -5,6 +5,9 @@ import jwt
 import hashlib
 import os
 from datetime import datetime
+import random
+import string
+import smtplib, ssl
 
 from src.data_store import data_store, update_permanent_storage
 from src.error import InputError, AccessError
@@ -43,21 +46,22 @@ def auth_login_v1(email, password):
 
             # Get the salt
             salt = users['passwords']['salt']
-            # Get the correct key 
-            key = users['passwords']['key'] 
+            
+            # Get the user password
+            entered_password = users['passwords']
 
-            new_key = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), salt, 100000)
+            new_key = encrypt_password(password, salt)
 
             # Logs the new user in
-            if key == new_key:
+            if entered_password == new_key:
 
                 user_id = users['id']
 
                 token = generate_token(users)
                 users['token'].append(token)
-                
+
                 update_permanent_storage()
-                
+
                 return {
                     'token': token,
                     'auth_user_id': user_id
@@ -111,7 +115,7 @@ def auth_register_v1(email, password, name_first, name_last):
     is_valid_email = is_email_valid(email)
 
     # Check remaining conditions
-    is_valid_password = len(password) >= 6 and len(password) <= 100
+    is_valid_password = is_password_valid(password)
     is_valid_name_first = len(name_first) >= 1 and len(name_first) <= 50
     is_valid_name_last = len(name_last) >= 1 and len(name_last) <= 50
 
@@ -120,20 +124,15 @@ def auth_register_v1(email, password, name_first, name_last):
             is_valid_name_first):
 
         # REGISTER USER
-        
+
         user_data = data_store.get_data()['users']
         new_user_id = len(user_data) + 1
-        
-        # Hashing of passwords
+
         # A new salt for this user
         salt = os.urandom(32) 
-        # High iteration number to make more secure
-        key = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), salt, 100000)
-        encrypted_password = { 
-            'salt': salt,
-            'key': key
-        }
-
+        encrypted_password = encrypt_password(password, salt)
+        dt = datetime.now()
+        timestamp = dt.timestamp()
         new_user = {
             'id': new_user_id,
             'names': name_first,
@@ -143,7 +142,15 @@ def auth_register_v1(email, password, name_first, name_last):
             'handle': generate_handle(name_first, name_last),
             'channels': [],
             'token' : [],
-            'is_removed' : False
+            'is_removed' : False,
+            'reset_code' : False,
+            'profile_img_name': 'default.jpg',
+            'user_stats': {
+                'channels_joined': [{'num_channels_joined': 0, 'time_stamp': timestamp}],
+                'dms_joined': [{'num_dms_joined': 0, 'time_stamp': timestamp}],
+                'messages_sent': [{'num_messages_sent': 0, 'time_stamp': timestamp}],
+                'involvement_rate' : 0
+            }
         }
         # print("Adding user", new_user)
         token = generate_token(new_user)
@@ -156,6 +163,13 @@ def auth_register_v1(email, password, name_first, name_last):
         if len(global_users) == 0:
             global_users.append(new_user_id)
             print("\n\nAdded ", new_user_id, "as global\n\n")
+            store = data_store.get_data()
+            store['workspace_stats'] = {
+                'channels_exist': [{'num_channels_exist': 0, 'time_stamp': timestamp}],
+                'dms_exist': [{'num_dms_exist': 0, 'time_stamp': timestamp}],
+                'messages_exist': [{'num_messages_exist': 0, 'time_stamp': timestamp}],
+                'utilization_rate': 0
+            }
 
         update_permanent_storage()
         
@@ -180,9 +194,65 @@ def auth_logout_v1(token):
     raise AccessError('Could not find token')
 
 
+def auth_passwordreset_request_v1(email):
+    user_data = data_store.get_data()['users']
+    for users in user_data:
+        if email == users['emails']:
+            # Genrates a random 6 digit number string
+            # Password : 3ZmIA3RV
+            # Email : w15a.beagle@gmail.com
+            reset_code = ''.join(random.choice(string.digits) for _ in range(6))
+            user_data['reset_code'] = reset_code
+
+            port = 465
+            password = '3ZmIA3RV' 
+
+            context = ssl.create_default_context()
+
+            with smtplib.SMTP_SSL('smtp.gmail.com',port,context=context) as server:
+                server.login('w15a.beagle@gmail.com', password)
+                server.sendmail('w15a.beagle@gmail.com', email, f'Reset code - {reset_code}')
+
+
+            # send email
+    return {}
+
+def auth_passwordreset_reset_v1(reset_code, new_password):
+
+    if not is_password_valid(new_password):
+        raise InputError('Password does not meet requirments')
+
+    user_data = data_store.get_data()['users']
+    for users in user_data:
+        if users['reset_code'] == reset_code:
+            salt = os.urandom(32) 
+            encrypted_password = encrypt_password(new_password, salt) 
+            # Changes the new passowrd
+            users['passwords'] = encrypted_password
+            users['reset_code'] = False
+            update_permanent_storage()
+            return {}
+
+    raise InputError('Incorrect reset code')
+
 ################################
 #   Helper functions for auth  #
 ################################
+
+def is_password_valid(password):
+    return len(password) >= 6 and len(password) <= 100
+
+def encrypt_password(password, salt):
+    # Hashing of passwords
+    # High iteration number to make more secure
+    key = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), salt, 100000)
+
+    encrypted_password = { 
+        'salt': salt,
+        'key': key
+    }
+
+    return encrypted_password
 
 def is_email_valid(email):
 
@@ -216,7 +286,7 @@ short than numbers are added until it is a length of 20. If it is 20 characters
 and this handle is already taken, then it may go over.
 
 Arguments: - name_first: first name of the user
-            - name_last: last name of the user
+           - name_last: last name of the user
 
 """
 

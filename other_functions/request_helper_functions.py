@@ -225,6 +225,136 @@ def admin_userpermission_change_req(token, u_id, permission_id):
 def clear_req():
     requests.delete(f"{url}clear/v1")
 
+def notifications_get_req(token):
+    input_data = {
+        "token": token
+    }
+    return requests.get(f"{url}notifications/get/v1", params=input_data).json()
+
+def search_req(token, query_str):
+    input_data = {
+        "token": token,
+        "query_str": query_str
+    }
+    return requests.get(f"{url}search/v1", params=input_data).json()
+
+def message_share_req(token, og_message_id, message, channel_id, dm_id):
+    input_data = {
+        "token": token,
+        "og_message_id": og_message_id,
+        "message": message,
+        "channel_id": channel_id,
+        "dm_id": dm_id
+    }
+    return requests.post(f"{url}message/share/v1", data=json.dumps(input_data)).json()
+
+def message_react_req(token, message_id, react_id):
+    input_data = {
+        "token": token,
+        "message_id": message_id,
+        "react_id": react_id
+    }
+    return requests.post(f"{url}message/react/v1", data=json.dumps(input_data)).json()
+
+def message_unreact_req(token, message_id, react_id):
+    input_data = {
+        "token": token,
+        "message_id": message_id,
+        "react_id": react_id
+    }
+    return requests.post(f"{url}message/unreact/v1", data=json.dumps(input_data)).json()
+
+def message_pin_req(token, message_id):
+    input_data = {
+        "token": token,
+        "message_id": message_id
+    }
+    return requests.post(f"{url}message/pin/v1", data=json.dumps(input_data)).json()
+
+def message_unpin_req(token, message_id):
+    input_data = {
+        "token": token,
+        "message_id": message_id
+    }
+    return requests.post(f"{url}message/unpin/v1", data=json.dumps(input_data)).json()
+
+def message_sendlater_req(token, channel_id, message, time_sent):
+    input_data = {
+        "token": token,
+        "channel_id": channel_id,
+        "message": message,
+        "time_sent": time_sent
+    }
+    return requests.post(f"{url}message/sendlater/v1", data=json.dumps(input_data)).json()
+
+def message_sendlaterdm_req(token, dm_id, message, time_sent):
+    input_data = {
+        "token": token,
+        "dm_id": dm_id,
+        "message": message,
+        "time_sent": time_sent
+    }
+    return requests.post(f"{url}message/sendlaterdm/v1", data=json.dumps(input_data)).json()
+
+def standup_start_req(token, channel_id, length):
+    input_data = {
+        "token": token,
+        "channel_id": channel_id,
+        "length": length
+    }
+    return requests.post(f"{url}standup/start/v1", data=json.dumps(input_data)).json()
+
+def standup_active_req(token, channel_id):
+    input_data = {
+        "token": token,
+        "channel_id": channel_id
+    }
+    return requests.get(f"{url}standup/active/v1", params=input_data).json()
+
+def standup_send_req(token, channel_id, message):
+    input_data = {
+        "token": token,
+        "channel_id": channel_id,
+        "message": message
+    }
+    return requests.post(f"{url}standup/send/v1", data=json.dumps(input_data)).json()
+
+def auth_passwordreset_request_req(email):
+    input_data = {
+        "email": email
+    }
+    return requests.post(f"{url}auth/passwordreset/request/v1", data=json.dumps(input_data)).json()
+
+def auth_passwordreset_reset_req(reset_code, new_password):
+    input_data = {
+        "reset_code": reset_code,
+        "new_password": new_password
+    }
+    return requests.post(f"{url}auth/passwordreset/reset/v1", data=json.dumps(input_data)).json()
+
+def user_profile_uploadphoto_req(token, img_url, x_start, y_start, x_end, y_end):
+    input_data = {
+        "token": token,
+        "img_url": img_url,
+        "x_start": x_start,
+        "y_start": y_start,
+        "x_end": x_end,
+        "y_end": y_end
+    }
+    return requests.post(f"{url}user/profile/uploadphoto/v1", data=json.dumps(input_data)).json()
+
+def user_stats_req(token):
+    input_data = {
+        "token": token
+    }
+    return requests.get(f"{url}user/stats/v1", params=input_data).json()
+
+def users_stats_req(token):
+    input_data = {
+        "token": token
+    }
+    return requests.get(f"{url}users/stats/v1", params=input_data).json()
+
 def echo_req(value):
     input_data = {
         'value': value

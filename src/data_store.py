@@ -1,5 +1,6 @@
 import jwt
 import shelve
+from datetime import datetime
 
 DATABASE_FILE_NAME = "src/data_base_files/database"
 
@@ -40,7 +41,9 @@ Example Storage: (Joseph)
                 'passwords': '123123',
                 'handle' : 'AdminUser1234567891011',
                 'channels' : [1, 2]
-                'token': ["OLIUEFKSEJF.IEUFHKESF.Iuhflskejhf"]
+                'token': ["OLIUEFKSEJF.IEUFHKESF.Iuhflskejhf"],
+                'is_removed' : False
+                'reset_code' : False
             },
         ],
         'channels': [
@@ -49,14 +52,23 @@ Example Storage: (Joseph)
                 'name': 'Channel 1',
                 'owner_id': [1],
                 'users_id' : [1, 2, 3],
-                'is_public': True
-                'messages': []
+                'is_public': True,
+                'messages': [],
+                'standup': {},
             },
         ],
         'global_owners':[],
         'DMs' : [],
         'msgs' : []
     }
+    
+    'standup': {
+        'is_active': True,
+        'start_user': 1,
+        'finish_time': [],
+        'messages': []
+    }
+    'messages': []
 '''
 ## YOU SHOULD MODIFY THIS OBJECT BELOW
 initial_object = {
@@ -64,7 +76,8 @@ initial_object = {
     'channels': [], 
     'global_owners': [],
     'DMs': [],
-    'msgs' : []
+    'msgs' : [],
+    'workspace_stats': {}
 }
 
 ## YOU SHOULD MODIFY THIS OBJECT ABOVE
