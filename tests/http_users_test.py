@@ -164,7 +164,7 @@ def test_sethandle_valid_test(registered_user):
 #   user/stats                  #
 #################################
 def test_user_stats_invalid_token(registered_user):
-    assert user_stats_req(123).code == AccessError.code
+    assert user_stats_req(123)['code'] == AccessError.code
 
 # def test_user_stats_success(registered_user):
     
