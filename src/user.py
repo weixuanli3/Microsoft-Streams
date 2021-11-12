@@ -249,7 +249,7 @@ def user_profile_uploadphoto_v1(token, img_url, x_start, y_start, x_end, y_end):
     if x_end < x_start or y_end < y_start:
         raise InputError("x_end is less than x_start or y_end is less than y_start")
 
-    response = requests.get(url, stream=True)
+    response = requests.get(img_url, stream=True)
     if response.status_code != 200:
         raise InputError("img_url returns an HTTP status other than 200")
 
