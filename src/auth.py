@@ -131,7 +131,8 @@ def auth_register_v1(email, password, name_first, name_last):
         # A new salt for this user
         salt = os.urandom(32) 
         encrypted_password = encrypt_password(password, salt)
-
+        dt = datetime.now()
+        timestamp = dt.timestamp()
         new_user = {
             'id': new_user_id,
             'names': name_first,
@@ -143,10 +144,11 @@ def auth_register_v1(email, password, name_first, name_last):
             'token' : [],
             'is_removed' : False,
             'reset_code' : False,
+            'profile_img_name': 'default.jpg',
             'user_stats': {
-                'channels_joined': [{'num_channels_joined': 0, 'time_stamp': datetime.now()}],
-                'dms_joined': [{'num_dms_joined': 0, 'time_stamp': datetime.now()}],
-                'messages_sent': [{'num_messages_sent': 0, 'time_stamp': datetime.now()}],
+                'channels_joined': [{'num_channels_joined': 0, 'time_stamp': timestamp}],
+                'dms_joined': [{'num_dms_joined': 0, 'time_stamp': timestamp}],
+                'messages_sent': [{'num_messages_sent': 0, 'time_stamp': timestamp}],
                 'involvement_rate' : 0
             }
         }
@@ -161,6 +163,13 @@ def auth_register_v1(email, password, name_first, name_last):
         if len(global_users) == 0:
             global_users.append(new_user_id)
             print("\n\nAdded ", new_user_id, "as global\n\n")
+            store = data_store.get_data()
+            store['workspace_stats'] = {
+                'channels_exist': [{'num_channels_exist': 0, 'time_stamp': timestamp}],
+                'dms_exist': [{'num_dms_exist': 0, 'time_stamp': timestamp}],
+                'messages_exist': [{'num_messages_exist': 0, 'time_stamp': timestamp}],
+                'utilization_rate': 0
+            }
 
         update_permanent_storage()
         

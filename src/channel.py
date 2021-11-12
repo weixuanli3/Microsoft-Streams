@@ -1,5 +1,6 @@
 '''Conatins functions to invite to channel, joins channel, return channel messages and return channel details'''
 import copy
+from src.config import url
 from src.data_store import data_store, update_permanent_storage, get_u_id
 from src.user import update_user_stats
 from src.error import InputError
@@ -193,6 +194,7 @@ def channel_details_v1(token, channel_id):
             'name_first': user['names'],
             'name_last': user['name_lasts'],
             'handle_str': user['handle'],
+            'profile_img_url': url + 'imgurl/' + user['profile_img_name']
         })
         if user['id'] in member_ids:
             return_dictionary['all_members'].append({
@@ -201,6 +203,7 @@ def channel_details_v1(token, channel_id):
             'name_first': user['names'],
             'name_last': user['name_lasts'],
             'handle_str': user['handle'],
+            'profile_img_url': url + 'imgurl/' + user['profile_img_name']
         })
 
     return return_dictionary

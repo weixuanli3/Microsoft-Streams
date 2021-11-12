@@ -2,7 +2,12 @@
 from datetime import datetime
 from src.data_store import data_store, update_permanent_storage
 from src.error import InputError, AccessError
+from src.config import url
+from PIL import Image
+import requests
 import re
+
+IMAGE_DIR_NAME = "./src/images/"
 
 def users_all_v1(token):
     """
@@ -44,7 +49,8 @@ def users_all_v1(token):
                 'email': user['emails'],
                 'name_first': user['names'],
                 'name_last': user['name_lasts'],
-                'handle_str': user['handle']
+                'handle_str': user['handle'],
+                'profile_img_url': url + 'imgurl/' + user['profile_img_name']
             })
     return user_dict
     #Return type {users}
@@ -90,7 +96,8 @@ def user_profile_v1(token, u_id):
                 'email': user['emails'],
                 'name_first': user['names'],
                 'name_last': user['name_lasts'],
-                'handle_str': user['handle']
+                'handle_str': user['handle'],
+                'profile_img_url': url + 'imgurl/' + user['profile_img_name']
             }
     
     if not user_exists:
@@ -229,6 +236,36 @@ def user_profile_sethandle_v1(token, handle_str):
     #Return type {}
 
 def user_profile_uploadphoto_v1(token, img_url, x_start, y_start, x_end, y_end):
+    user_data = data_store.get_data()['users']
+    valid_token = False
+    for user in user_data:
+        if token in user['token']:
+            valid_token = True
+            auth_user = user
+    
+    if not valid_token:
+        raise AccessError("Invalid Token")
+    
+    if x_end < x_start or y_end < y_start:
+        raise InputError("x_end is less than x_start or y_end is less than y_start")
+
+    response = requests.get(url, stream=True)
+    if response.status_code != 200:
+        raise InputError("img_url returns an HTTP status other than 200")
+
+    img = Image.open(response.raw)
+    if img.format != "JPEG":
+        raise InputError("image uploaded is not a JPG")
+
+    width, height = img.size    
+    if x_start not in range(0, width) or x_end not in range(0, width) \
+        or y_start not in range(0, height) or y_end not in range(0, height):
+        raise InputError("any of x_start, y_start, x_end, y_end are not within the dimensions of the image at the URL")
+
+    cropped_img = img.crop((x_start, y_start, x_end, y_end))
+    cropped_img.save(IMAGE_DIR_NAME + token + '.jpg')
+    auth_user['profile_img_name'] = token + '.jpg'
+    update_permanent_storage()
     return {}
 
 def user_stats_v1(token):
@@ -265,15 +302,17 @@ def update_workspace_stats(key_str, is_add):
 
     # Obtain the previous number for requested workspace stat
     init_num = work_stats[-1]['num_' + key_str]
+    dt = datetime.now()
+    timestamp = dt.timestamp()
     if is_add:
         work_stats.append({
             'num_' + key_str: init_num + 1,
-            'time_stamp': datetime.now()
+            'time_stamp': timestamp
         })
     else:
         work_stats.append({
             'num_' + key_str: init_num - 1,
-            'time_stamp': datetime.now()
+            'time_stamp': timestamp
         })
     
     return
@@ -287,17 +326,19 @@ def update_user_stats(u_id, key_str, is_add):
     
     # Obtain the previous number for requested stat
     init_num = target_stats[key_str][-1]['num_' + key_str]
+    dt = datetime.now()
+    timestamp = dt.timestamp()
     if is_add:
         # If we are adding to the number
         target_stats[key_str].append({
             'num_' + key_str: init_num + 1,
-            'time_stamp': datetime.now()
+            'time_stamp': timestamp
         })
     else:
         # If we are subtracting from the number
         target_stats[key_str].append({
             'num_' + key_str: init_num - 1,
-            'time_stamp': datetime.now()
+            'time_stamp': timestamp
         })
     
     calculate_involvement_util(target_stats)

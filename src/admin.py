@@ -1,4 +1,5 @@
 '''Contains all admin related functions, such as removing users and permissions'''
+from src.config import url
 from src.data_store import data_store, update_permanent_storage, get_u_id
 from src.error import InputError
 from src.error import AccessError
@@ -87,9 +88,9 @@ def admin_user_remove_id(token, u_id):
                     'email': currect_user['emails'],
                     'name_first': currect_user['names'],
                     'name_last': currect_user['name_lasts'],
-                    'handle_str': currect_user['handle']
-                    }
-                )
+                    'handle_str': currect_user['handle'],
+                    'profile_img_url': url + 'imgurl/' + currect_user['profile_img_name']
+                })
                 messages = chat['messages']
 
                 for message in messages:

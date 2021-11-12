@@ -52,14 +52,23 @@ Example Storage: (Joseph)
                 'name': 'Channel 1',
                 'owner_id': [1],
                 'users_id' : [1, 2, 3],
-                'is_public': True
-                'messages': []
+                'is_public': True,
+                'messages': [],
+                'standup': {},
             },
         ],
         'global_owners':[],
         'DMs' : [],
         'msgs' : []
     }
+    
+    'standup': {
+        'is_active': True,
+        'start_user': 1,
+        'finish_time': [],
+        'messages': []
+    }
+    'messages': []
 '''
 ## YOU SHOULD MODIFY THIS OBJECT BELOW
 initial_object = {
@@ -68,12 +77,7 @@ initial_object = {
     'global_owners': [],
     'DMs': [],
     'msgs' : [],
-    'workspace_stats': {
-        'channels_exist': [{'num_channels_exist': 0, 'time_stamp': datetime.now()}],
-        'dms_exist': [{'num_dms_exist': 0, 'time_stamp': datetime.now()}],
-        'messages_exist': [{'num_messages_exist': 0, 'time_stamp': datetime.now()}],
-        'utilization_rate': 0
-    }
+    'workspace_stats': {}
 }
 
 ## YOU SHOULD MODIFY THIS OBJECT ABOVE
