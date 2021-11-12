@@ -127,6 +127,8 @@ def test_mult_match_dm_and_channel(def_setup):
     u1_id = user1['auth_user_id']
     u2_tok = user2['token']
 
+    channels_create_v1(u2_tok, "No one's Channel", True)
+
     channel_id = channels_create_v1(own_tok, "bruhdems", True)['channel_id']
     channel_join_v1(u1_tok, channel_id)
     channel_join_v1(u2_tok, channel_id)
