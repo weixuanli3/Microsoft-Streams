@@ -193,7 +193,7 @@ def auth_passwordreset_request_v1(email):
             # Password : 3ZmIA3RV
             # Email : w15a.beagle@gmail.com
             reset_code = ''.join(random.choice(string.digits) for _ in range(6))
-            user_data['reset_code'] = reset_code
+            users['reset_code'] = reset_code
 
             port = 465
             password = '3ZmIA3RV' 
