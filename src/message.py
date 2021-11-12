@@ -379,12 +379,13 @@ def message_share_v1(token, og_message_id, message, channel_id, dm_id):
     #Check dm
     valid_message_id_dm = False
     for dm in dm_data:
-        if user_id in dm['members']:
-            for msg in dm['messages']:
-                if og_message_id == msg['message_id']:
-                    valid_message_id_dm = True
-                    #Find og_message from id
-                    og_message = msg['message']
+        for members in dm['members']:
+            if user_id == members['u_id']:
+                for msg in dm['messages']:
+                    if og_message_id == msg['message_id']:
+                        valid_message_id_dm = True
+                        #Find og_message from id
+                        og_message = msg['message']
     
     #Check channels
     valid_message_id_channel = False
@@ -396,7 +397,7 @@ def message_share_v1(token, og_message_id, message, channel_id, dm_id):
                     #Find og_message from id
                     og_message = msg['message']
     
-    if (not valid_message_id_channel) and (not valid_message_id_dm):
+    if not valid_message_id_channel and not valid_message_id_dm:
         raise InputError("og_message_id does not refer to a valid message within a channel/DM that the authorised user has joined")
     
     #Check if length of message is greater than 1000
@@ -453,7 +454,7 @@ def message_share_v1(token, og_message_id, message, channel_id, dm_id):
                     if user_id == members['u_id']:
                         user_in_dm = True
                         #Share to dm
-                        shared_message_id = message_senddm_v1(token, dm_id, f"'Original Message': {og_message}, 'User message': {message}")['dm_id']
+                        shared_message_id = message_senddm_v1(token, dm_id, f"'Original Message': {og_message}, 'User message': {message}")['message_id']
                         return {"shared_message_id": shared_message_id}
 
         if not dm_exists:
