@@ -44,6 +44,7 @@ Example Storage: (Joseph)
                 'token': ["OLIUEFKSEJF.IEUFHKESF.Iuhflskejhf"],
                 'is_removed' : False
                 'reset_code' : False
+                'notifications':[]
             },
         ],
         'channels': [
