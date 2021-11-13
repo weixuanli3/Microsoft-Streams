@@ -144,6 +144,7 @@ def auth_register_v1(email, password, name_first, name_last):
             'token' : [],
             'is_removed' : False,
             'reset_code' : False,
+            'notifications': [],
             'profile_img_name': 'default.jpg',
             'user_stats': {
                 'channels_joined': [{'num_channels_joined': 0, 'time_stamp': timestamp}],

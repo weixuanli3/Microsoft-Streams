@@ -3,6 +3,7 @@ from src.data_store import data_store, update_permanent_storage, get_u_id
 from src.user import update_workspace_stats, update_user_stats
 from src.error import InputError
 from src.error import AccessError
+from src.notifications import helper_tagged_add_notif
 from datetime import datetime
 import datetime as dt
 
@@ -83,10 +84,12 @@ def message_send_v1(token, channel_id, message):
     for channel in channel_data:
         if channel['chan_id'] == channel_id:
             channel['messages'].append(message)
+            parsed_channel = channel
 
     # updating msgs
     msgs.append(message_id)
 
+    helper_tagged_add_notif(token, message, parsed_channel, -1)
     update_workspace_stats("messages_exist", True)
     update_user_stats(user_id, "messages_sent", True)
     update_permanent_storage()
@@ -166,10 +169,15 @@ def message_edit_v1(token, message_id, message):
     if not message_len_valid:
         raise InputError("Length of message is not valid")
 
+    parsed_channel = -1
+    parsed_dm = -1    
+    
     # editing msg in channel
     for channel in channel_data:
         for msg in channel['messages']:
             if msg['message_id'] == message_id:
+                parsed_msg = msg
+                parsed_channel = channel
                 if len(message) == 0:
                     channel['messages'].remove(msg)
                 else:
@@ -179,12 +187,17 @@ def message_edit_v1(token, message_id, message):
     for dm in dm_data:
         for msg in dm['messages']:
             if msg['message_id'] == message_id:
+                parsed_msg = msg
+                parsed_dm = dm
                 if len(message) == 0:
                     dm['messages'].remove(msg)
                 else:
                     msg['message'] = message
 
     update_permanent_storage()
+    
+    helper_tagged_add_notif(token, parsed_msg, parsed_channel, parsed_dm)
+    
     return {}
 
 def message_senddm_v1(token, dm_id, message):
@@ -266,10 +279,12 @@ def message_senddm_v1(token, dm_id, message):
     for dm in dm_data:
         if dm['dm_id'] == dm_id:
             dm['messages'].append(message)
+            parsed_dm = dm
 
     # updating msgs
     msgs.append(message_id)
     
+    helper_tagged_add_notif(token, message, -1, parsed_dm)
     update_workspace_stats("messages_exist", True)
     update_user_stats(user_id, "messages_sent", True)
     update_permanent_storage()

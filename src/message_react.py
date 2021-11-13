@@ -2,6 +2,7 @@
 from src.data_store import data_store, update_permanent_storage, get_u_id
 from src.error import InputError
 from src.error import AccessError
+from src.notifications import helper_reacted_add_notif
 
 def message_react_v1(token, message_id, react_id):
     """
@@ -84,12 +85,14 @@ def message_react_v1(token, message_id, react_id):
         for msg in channel['messages']:
             if msg['message_id'] == message_id:
                 msg['reacts'].append(react)
+                helper_reacted_add_notif(token, msg, channel, -1)
 
     # when message is in a DM
     for dm in dm_data:
         for msg in dm['messages']:
             if msg['message_id'] == message_id:
                 msg['reacts'].append(react)
+                helper_reacted_add_notif(token, msg, -1, dm)
 
     update_permanent_storage()
     return {}

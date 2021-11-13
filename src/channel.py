@@ -5,6 +5,7 @@ from src.data_store import data_store, update_permanent_storage, get_u_id
 from src.user import update_user_stats
 from src.error import InputError
 from src.error import AccessError
+from src.notifications import helper_added_add_notif
 
 # Invite a user to a channel that the current user is in
 def channel_invite_v1(token, channel_id, u_id):
@@ -35,7 +36,7 @@ def channel_invite_v1(token, channel_id, u_id):
 
     channel_data = data_store.get_data()['channels']
     user_data = data_store.get_data()['users']
-    user_data = data_store.get_data()['users']
+
     
     valid_token = False
     for user in user_data:
@@ -101,6 +102,8 @@ def channel_invite_v1(token, channel_id, u_id):
     for user in user_data:
         if (user['id']) == (u_id):
             user['channels'].append(channel_id)
+            
+    helper_added_add_notif(token, curr_channel, -1, u_id, None)
     update_user_stats(u_id, "channels_joined", True)
     update_permanent_storage()
     return {}
