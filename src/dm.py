@@ -6,6 +6,7 @@ from src.data_store import data_store, get_u_id, update_permanent_storage
 from src.user import update_workspace_stats, update_user_stats
 from src.error import InputError
 from src.error import AccessError
+from src.notifications import helper_added_add_notif, helper_reacted_add_notif, helper_tagged_add_notif
 
 def dm_create_v1(token, u_ids):
     """
@@ -110,6 +111,7 @@ def dm_create_v1(token, u_ids):
     
     dm_data.append(new_dm)
     
+    helper_added_add_notif(token, -1, new_dm, None, u_ids)
     update_workspace_stats("dms_exist", True)
     update_user_stats(get_u_id(token), "dms_joined", True)
     update_permanent_storage()
