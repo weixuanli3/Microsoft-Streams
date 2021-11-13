@@ -51,7 +51,7 @@ def helper_tagged_add_notif(token, message, channel, dm):
                 
                 #Check length of message
                 if len(message['message']) <= 20:
-                            notif_msg = message['message'][:]
+                    notif_msg = message['message'][:]
                 else:
                     #If message is more than 20 return first 20
                     notif_msg = message['message'][0:20]
@@ -70,7 +70,7 @@ def helper_tagged_add_notif(token, message, channel, dm):
                 
                 #Check length of message
                 if len(message['message']) <= 20:
-                            notif_msg = message['message'][:-1]
+                    notif_msg = message['message'][:-1]
                 else:
                     #If message is more than 20 return first 20
                     notif_msg = message['message'][0:20]
