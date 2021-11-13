@@ -119,7 +119,6 @@ def helper_reacted_add_notif(token, message, channel, dm):
     #Check channel
     if dm == -1:
         for user in user_data:
-            user_handle = find_handle(user['id'])
             user['notifications'].append({
                 'channel_id': channel['chan_id'],
                 'dm_id': -1,
@@ -129,7 +128,6 @@ def helper_reacted_add_notif(token, message, channel, dm):
     #Check dm
     if channel == -1:
         for user in user_data:
-            user_handle = find_handle(user['id'])
             user['notifications'].append({
                 'channel_id': -1,
                 'dm_id': dm['dm_id'],
