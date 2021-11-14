@@ -1,4 +1,4 @@
-'users', (30208, 6)
+'users', (3072, 6)
 'channels', (512, 6)
 'global_owners', (1024, 6)
 'DMs', (1536, 6)
