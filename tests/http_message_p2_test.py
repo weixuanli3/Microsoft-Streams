@@ -47,12 +47,12 @@ def test_message_share_invalid_chan_id(Channel_setup):
     assert message_share_req(u1['token'], msg_id, "heyo", 33, -1)['code'] == InputError.code  
 
 def test_message_share_invalid_dm_id(dms_setup):
-    u1, u2, dm_id1 = dms_setup
+    u1, _, dm_id1 = dms_setup
     dm_msg_id = message_senddm_req(u1['token'], dm_id1, "Hey")['message_id']
     assert message_share_req(u1['token'], dm_msg_id, "heyo", -1, 66)['code'] == InputError.code
 
 def test_message_share_invalid_dm_and_chan_id(dms_setup):
-    u1, u2, dm_id1 = dms_setup
+    u1, _, dm_id1 = dms_setup
     dm_msg_id = message_senddm_req(u1['token'], dm_id1, "Hey")['message_id']
     u1_tok = u1['token']
     chan1_id = channels_create_req(u1_tok, "Channel 1", True)['channel_id']
@@ -61,8 +61,8 @@ def test_message_share_invalid_dm_and_chan_id(dms_setup):
     assert message_share_req(u1['token'], dm_msg_id, "heyo", 77, 66)['code'] == InputError.code 
 
 def test_message_share_invalid_dm_msg_id(dms_setup):
-    u1, u2, dm_id1 = dms_setup
-    dm_msg_id = message_senddm_req(u1['token'], dm_id1, "Hey")['message_id']
+    u1, _, dm_id1 = dms_setup
+    message_senddm_req(u1['token'], dm_id1, "Hey")['message_id']
     assert message_share_req(u1['token'], 33, "heyo", -1, dm_id1)['code'] == InputError.code
 
 def test_message_share_invalid_msg_id(Channel_setup):

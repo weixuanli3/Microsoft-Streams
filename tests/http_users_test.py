@@ -299,7 +299,7 @@ def test_user_stats_remove_dm(registered_user):
     check_user_stats(output, 1, 0, 0, 1)
 
 def test_user_stats_remove_message(registered_user):
-    user1 = auth_register_req("patrick.liang@unsw.com", "katrick", "Patrick", "Liang")
+    auth_register_req("patrick.liang@unsw.com", "katrick", "Patrick", "Liang")
 
     chan_id = channels_create_req(registered_user['token'], "Channel 2", True)['channel_id']
     msg_id = message_send_req(registered_user['token'], chan_id, "bruh removed")['message_id']
@@ -321,7 +321,7 @@ def test_users_stats_one_user(registered_user):
 
 def test_users_stats_remove_user(registered_user):
     user1 = auth_register_req("patrick.liang@unsw.com", "katrick", "Patrick", "Liang")
-    user2 = auth_register_req("john.citizen@unsw.com", "password", "John", "Citizen")
+    auth_register_req("john.citizen@unsw.com", "password", "John", "Citizen")
 
     chan_id = channels_create_req(registered_user['token'], "Channel 1", True)['channel_id']
     channels_create_req(registered_user['token'], "Channel 2", True)
@@ -339,7 +339,7 @@ def test_users_stats_remove_user(registered_user):
 
 def test_users_stats_mult_user_channels(registered_user):
     user1 = auth_register_req("patrick.liang@unsw.com", "katrick", "Patrick", "Liang")
-    user2 = auth_register_req("john.citizen@unsw.com", "password", "John", "Citizen")
+    auth_register_req("john.citizen@unsw.com", "password", "John", "Citizen")
 
     chan_id = channels_create_req(registered_user['token'], "Channel 1", True)['channel_id']
     channels_create_req(registered_user['token'], "Channel 2", True)
@@ -353,7 +353,7 @@ def test_users_stats_mult_user_channels(registered_user):
 def test_users_stats_mult_user_dms(registered_user):
     user1 = auth_register_req("patrick.liang@unsw.com", "katrick", "Patrick", "Liang")
     user2 = auth_register_req("john.citizen@unsw.com", "password", "John", "Citizen")
-    user3 = auth_register_req("alex.nguyen@unsw.com", "bigsausage", "Alex", "Nguyen")
+    auth_register_req("alex.nguyen@unsw.com", "bigsausage", "Alex", "Nguyen")
 
     channels_create_req(registered_user['token'], "Channel 2", True)
 
@@ -365,7 +365,7 @@ def test_users_stats_mult_user_dms(registered_user):
 def test_users_stats_mult_user_messages(registered_user):
     user1 = auth_register_req("patrick.liang@unsw.com", "katrick", "Patrick", "Liang")
     user2 = auth_register_req("john.citizen@unsw.com", "password", "John", "Citizen")
-    user3 = auth_register_req("alex.nguyen@unsw.com", "bigsausage", "Alex", "Nguyen")
+    auth_register_req("alex.nguyen@unsw.com", "bigsausage", "Alex", "Nguyen")
 
     chan_id = channels_create_req(registered_user['token'], "Channel 2", True)['channel_id']
 

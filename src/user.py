@@ -251,8 +251,8 @@ def user_profile_uploadphoto_v1(token, img_url, x_start, y_start, x_end, y_end):
 
     try:
         response = requests.get(img_url, stream=True)
-    except:
-        raise InputError("img_url returns an HTTP status other than 200")
+    except InputError:
+        print("img_url returns an HTTP status other than 200")
 
     img = Image.open(response.raw)
     if img.format != "JPEG":
