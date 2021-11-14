@@ -121,9 +121,12 @@ def standup_active_v1(token, channel_id):
         is_active = True
         time_finish = curr_channel['standup']['finish_time']
     else:
-        pass      
+        pass
     
-    return {is_active, time_finish}
+    return {
+        "is_active": is_active, 
+        "time_finish": time_finish
+    }
 
 def standup_send_v1(token, channel_id, message):
     all_tokens = data_store.get('token')['token']
