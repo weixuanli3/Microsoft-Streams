@@ -96,7 +96,6 @@ def test_dm_kick_valid():
     user3_id = auth_register_v1("jane.doe@aunsw.edu.au", "naisud", "Jane", "Doe")['auth_user_id']
     dm_id = dm_create_v1(user1['token'], [user2_id, user3_id])['dm_id']
     dm_kick_v1(user1['token'], dm_id, user3_id)
-    own_tok = user1['token']
     u1_id = user1['auth_user_id']
     u2_id = user2_id
     u1 = {
