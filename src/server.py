@@ -391,7 +391,7 @@ def channel_kick():
 @APP.route("/dm/kick/v1", methods=['POST'])
 def dm_kick():
     data = request.get_json(force = True)
-    return json.dumps(dm_kick_v1(data['token'], data['dm_id'], data['user_id'])
+    return json.dumps(dm_kick_v1(data['token'], data['dm_id'], data['user_id']))
 
 #### NO NEED TO MODIFY BELOW THIS POINT
 
