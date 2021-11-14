@@ -120,7 +120,6 @@ def dm_kick_v1(token, dm_id, user_id):
     """    
     user_data = data_store.get_data()['users']
     dm_data = data_store.get_data()['DMs']
-    global_data = data_store.get_data()['global_owners']
 
     # checking token
     valid_token = False
