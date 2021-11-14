@@ -111,7 +111,7 @@ def test_message_share_user_not_in_chan():
     token2 = auth_register_v1("James.Smith@aunsw.edu.au","password","James","Smith")['token']
     chan_id = channels_create_v1(token1, "Channel 1", True)['channel_id']
     msg_id = message_send_v1(token1, chan_id, "Hi there!")['message_id']
-    with pytest.raises(InputError):
+    with pytest.raises(AccessError):
         message_share_v1(token2, msg_id, "heyo", chan_id, -1)
         
 def test_message_share_user_not_in_dm():
@@ -121,7 +121,7 @@ def test_message_share_user_not_in_dm():
     token3 = auth_register_v1("Tim.doe@aunsw.edu.au","password","Tim","Doe")['token']
     dm_id = dm_create_v1(token1, [u_id2])['dm_id']
     dm_msg_id = message_senddm_v1(token1, dm_id, "Hey")['message_id']
-    with pytest.raises(InputError):
+    with pytest.raises(AccessError):
         message_share_v1(token3, dm_msg_id, "heyo", -1, dm_id)
         
 def test_message_share_dm_valid():

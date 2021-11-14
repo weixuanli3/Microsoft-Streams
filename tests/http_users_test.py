@@ -182,7 +182,55 @@ def test_sethandle_valid_test(registered_user):
     result = user_profile_req(registered_user_token, registered_user_id)['user']['handle_str']
     expected = "johnDoe"
     assert result == expected
-    clear_req()
+
+#################################
+#   user/profile/uploadphoto    #
+#################################
+# Not really sure how to test these blackbox :(
+def test_user_profile_uploadphoto_not_found(registered_user):
+    tok = registered_user['token']
+    user_id = registered_user['auth_user_id']
+    default_image_url = user_profile_req(tok, user_id)['user']['profile_img_url']
+    non_jpg = "http://www.cse.unsw.edu.au/~richardb/index_files/RichardBuckland-200.png"
+    resp = user_profile_uploadphoto_req(tok, non_jpg, 0, 0, 150 , 150)
+    assert resp['code'] == InputError.code
+    
+    non_link = "http:theresnowaythisisalink"
+    resp = user_profile_uploadphoto_req(tok, non_link, 0, 0, 150 , 150)
+    assert resp['code'] == InputError.code
+
+    non_http_link = "https://cdn.motor1.com/images/mgl/RPrgg/s1/bmw-m4-competition-kith-design-study-edition-lead-image.webp"
+    resp = user_profile_uploadphoto_req(tok, non_http_link, 0, 0, 150 , 150)
+    assert resp['code'] == InputError.code
+
+    assert default_image_url == user_profile_req(tok, user_id)['user']['profile_img_url']
+
+def test_user_profile_uploadphoto_invalid_coordinate(registered_user):
+    tok = registered_user['token']
+    jpg_link = 'http://cgi.cse.unsw.edu.au/~jas/home/pics/jas.jpg'
+
+    resp = user_profile_uploadphoto_req(tok, jpg_link, 150, 150, 0, 0)
+    assert resp['code'] == InputError.code
+
+    resp = user_profile_uploadphoto_req(tok, jpg_link, -3, 0, 420, 420)
+    assert resp['code'] == InputError.code
+
+def test_user_profile_uploadphoto_invalid_token(registered_user):
+    tok = registered_user['token']
+    jpg_link = 'http://cgi.cse.unsw.edu.au/~jas/home/pics/jas.jpg'
+
+    resp = user_profile_uploadphoto_req(tok + "asdfgasdf", jpg_link, 150, 150, 0, 0)
+    assert resp['code'] == AccessError.code
+
+def test_user_profile_uploadphoto_success(registered_user):
+    user1 = auth_register_req("patrick.liang@unsw.com", "katrick", "Patrick", "Liang")
+
+    reg_img_link = 'http://cgi.cse.unsw.edu.au/~morri/morriphoto.jpg'
+    u1_img_link = 'http://cgi.cse.unsw.edu.au/~jas/home/pics/jas.jpg'
+    
+    user_profile_uploadphoto_req(registered_user['token'], reg_img_link, 0, 0, 3957, 3029)
+    user_profile_uploadphoto_req(user1['token'], u1_img_link, 0, 0, 158, 199)
+
 
 #################################
 #   user/stats                  #
@@ -329,3 +377,4 @@ def test_users_stats_mult_user_messages(registered_user):
 
     output = users_stats_req(registered_user['token'])['workspace_stats']
     check_workspace_stats(output, 1, 1, 3, 3/4)
+    clear_req()
