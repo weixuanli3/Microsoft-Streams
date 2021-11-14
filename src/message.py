@@ -374,7 +374,27 @@ def message_remove_v1(token, message_id):
     return {}
 
 def message_share_v1(token, og_message_id, message, channel_id, dm_id):
-    
+    """
+    Given a message_id for a message, this message is shared to the channel/DM
+
+    Args:
+        token: The generated token of user removing the message.
+        og_message_id: The integer id of the message the user is sharing
+        message: optional message in addition to the shared message
+        channel_id: if message is shared to a channel, channel_id is the id, else is -1
+        channel_id: if message is shared to a dm, dm_id is the id, else is -1
+
+    Returns:
+        dictionary with shared message id
+
+    Raises:
+        Input Error: - both channel and dm id are invalid
+                     - neither channel nor dm id are -1
+                     - og_message_id is not valid
+                     - length of message is more than 1000 chars
+
+        Access Error: - authorised user has not joined valid channel/dm
+    """
     user_data = data_store.get_data()['users']
     dm_data = data_store.get_data()['DMs']
     channel_data = data_store.get_data()['channels']
@@ -384,12 +404,59 @@ def message_share_v1(token, og_message_id, message, channel_id, dm_id):
     for user in user_data:
         if token in user['token']:
             valid_token = True
+            user_id = user['id']
 
     if not valid_token:
         raise AccessError("Invalid Token")
+
+    #Check channel/dm ID pair contains a -1
+    if channel_id != -1:
+        if dm_id != -1:
+            #Neither ids are -1
+            raise InputError("Neither channel_id nor dm_id are -1")
+    elif channel_id == -1:
+        if dm_id == -1:
+            #Both ids are -1
+            raise InputError("Both channel_id and dm_id are invalid")
+
+    #If channel_id is not -1
+    if channel_id != -1:
     
-    user_id = get_u_id(token)
-    
+        channel_exists = False
+        user_in_channel = False
+        
+        #Check if the channel exists and if the user is in the channel
+        for channel in channel_data:
+            if channel_id == channel['chan_id']:
+                channel_exists = True
+                if user_id in channel['users_id']:
+                    user_in_channel = True
+
+        if not channel_exists:
+            raise InputError("Channel ID not valid")
+
+        if not user_in_channel:
+            raise AccessError("User isn't part of the channel")
+
+    elif dm_id != -1:
+        #If dm_id is not -1
+        dm_exists = False
+        user_in_dm = False
+        
+        #Check if the dm exists and if the user is in the dm
+        for dm in dm_data:
+            if dm_id == dm['dm_id']:
+                dm_exists = True
+                for members in dm['members']:
+                    if user_id == members['u_id']:
+                        user_in_dm = True
+
+        if not dm_exists:
+            raise InputError("DM ID not valid")
+
+        if not user_in_dm:
+            raise AccessError("User isn't part of the DM")
+
     #Check if og_message is in a valid channel or dm the user is in
     #Check dm
     valid_message_id_dm = False
@@ -423,57 +490,14 @@ def message_share_v1(token, og_message_id, message, channel_id, dm_id):
     if not isinstance(message, str):
         raise InputError("Message is not a string")
     
-    #Check channel/dm ID pair contains a -1
-    if channel_id != -1:
-        if dm_id != -1:
-            #Neither ids are -1
-            raise InputError("Neither channel_id nor dm_id are -1")
-    elif channel_id == -1:
-        if dm_id == -1:
-            #Both ids are -1
-            raise InputError("Both channel_id and dm_id are invalid")
-    
     #If channel_id is not -1
     if channel_id != -1:
-    
-        channel_exists = False
-        user_in_channel = False
-        
-        #Check if the channel exists and if the user is in the channel
-        for channel in channel_data:
-            if channel_id == channel['chan_id']:
-                channel_exists = True
-                if user_id in channel['users_id']:
-                    user_in_channel = True
-                    #Share to channel
-                    shared_message_id = message_send_v1(token, channel_id, f"'Original Message': {og_message}, 'User message': {message}")['message_id']
-                    return {"shared_message_id": shared_message_id}
+        shared_message_id = message_send_v1(token, channel_id, f"'Original Message': {og_message}, 'User message': {message}")['message_id']
+    elif dm_id != -1:
+        shared_message_id = message_senddm_v1(token, dm_id, f"'Original Message': {og_message}, 'User message': {message}")['message_id']
 
-        if not channel_exists:
-            raise InputError("Channel ID not valid")
+    update_workspace_stats("messages_exist", True)
+    update_user_stats(user_id, "messages_sent", True)
+    update_permanent_storage()
 
-        if not user_in_channel:
-            raise AccessError("User isn't part of the channel")
-
-    #If dm_id is not -1
-    if dm_id != -1:
-        
-        dm_exists = False
-        user_in_dm = False
-        
-        #Check if the dm exists and if the user is in the dm
-        for dm in dm_data:
-            if dm_id == dm['dm_id']:
-                dm_exists = True
-                for members in dm['members']:
-                    if user_id == members['u_id']:
-                        user_in_dm = True
-                        #Share to dm
-                        shared_message_id = message_senddm_v1(token, dm_id, f"'Original Message': {og_message}, 'User message': {message}")['message_id']
-                        return {"shared_message_id": shared_message_id}
-
-        if not dm_exists:
-            raise InputError("DM ID not valid")
-
-        if not user_in_dm:
-            raise AccessError("User isn't part of the DM")
+    return {"shared_message_id": shared_message_id}

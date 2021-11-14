@@ -114,6 +114,8 @@ def dm_create_v1(token, u_ids):
     helper_added_add_notif(token, -1, new_dm, None, u_ids)
     update_workspace_stats("dms_exist", True)
     update_user_stats(get_u_id(token), "dms_joined", True)
+    for u_id in u_ids:
+        update_user_stats(u_id, "dms_joined", True)
     update_permanent_storage()
     
     return {'dm_id': dm_id}
