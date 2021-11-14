@@ -279,6 +279,7 @@ def user_stats_v1(token):
     if not valid_token:
         raise AccessError("Invalid Token")
 
+    calculate_involvement_util(stats)
     return {'user_stats': stats}
 
 def users_stats_v1(token):
@@ -291,6 +292,7 @@ def users_stats_v1(token):
     if not valid_token:
         raise AccessError("Invalid Token")
 
+    data_store.get_data()['workspace_stats']['utilization_rate'] = util_rate()
     return {
         "workspace_stats": data_store.get_data()['workspace_stats']
     }
@@ -314,7 +316,6 @@ def update_workspace_stats(key_str, is_add):
             'num_' + key_str: init_num - 1,
             'time_stamp': timestamp
         })
-    
     return
 
 def update_user_stats(u_id, key_str, is_add):
@@ -340,8 +341,6 @@ def update_user_stats(u_id, key_str, is_add):
             'num_' + key_str: init_num - 1,
             'time_stamp': timestamp
         })
-    
-    calculate_involvement_util(target_stats)
     return
 
 def calculate_involvement_util(target_stats):
@@ -365,7 +364,6 @@ def calculate_involvement_util(target_stats):
     else:
         target_stats['involvement_rate'] = sum_user / sum_total
 
-    work_stats['utilization_rate'] = util_rate()
     return
 
 def util_rate():
@@ -385,8 +383,9 @@ def part_of_one_dm(u_id):
     ''' Returns true if the user is part of at least one dm '''
     dm_data = data_store.get_data()['DMs']
     for dm in dm_data:
-        if u_id in dm['members']:
-            return True
+        for member in dm['members']:
+            if member['u_id'] == u_id:
+                return True
     
     return False
 

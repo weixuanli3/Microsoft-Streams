@@ -11,6 +11,30 @@ def registered_user():
     clear_req()
     return auth_register_req('john.doe@unsw.edu.au', '123123', 'John', 'Doe')
 
+def check_user_stats(stats, channels, dms, messages, involvement_rate):
+    channels_joined = stats['channels_joined']
+    assert channels_joined[-1]['num_channels_joined'] == channels
+
+    dms_joined = stats['dms_joined']
+    assert dms_joined[-1]['num_dms_joined'] == dms
+
+    messages_sent = stats['messages_sent']
+    assert messages_sent[-1]['num_messages_sent'] == messages
+
+    assert stats['involvement_rate'] == involvement_rate
+
+def check_workspace_stats(stats, channels, dms, messages, utilization_rate):
+    channels_exist = stats['channels_exist']
+    assert channels_exist[-1]['num_channels_exist'] == channels
+
+    dms_exist = stats['dms_exist']
+    assert dms_exist[-1]['num_dms_exist'] == dms
+
+    messages_exist = stats['messages_exist']
+    assert messages_exist[-1]['num_messages_exist'] == messages
+
+    assert stats['utilization_rate'] == utilization_rate
+
 """
 The following tests make some assumptions based on the gitlab doc!
  - id dictionary key is now called u_id.
@@ -166,36 +190,142 @@ def test_sethandle_valid_test(registered_user):
 def test_user_stats_invalid_token(registered_user):
     assert user_stats_req(123)['code'] == AccessError.code
 
-# def test_user_stats_success(registered_user):
-    
-#     output = user_stats_v1(registered_user['token'])
+def test_user_stats_zero(registered_user):
+    output = user_stats_req(registered_user['token'])['user_stats']
+    check_user_stats(output, 0, 0, 0, 0)
 
-#     expected_output = {
-#         'channels_joined': [],
-#         'dms_joined': [], 
-#         'messages_sent': [], 
-#         'involvement_rate' : 0
-#     }
+def test_user_stats_success_channels_joined(registered_user):
+    user1 = auth_register_req("patrick.liang@unsw.com", "katrick", "Patrick", "Liang")
 
-#     assert output == expected_output
+    chan_id = channels_create_req(registered_user['token'], "Channel 1", True)['channel_id']
+    channel_join_req(user1['token'], chan_id)
+    channels_create_req(user1['token'], "channel 2", True)
+
+    output1 = user_stats_req(user1['token'])['user_stats']
+    check_user_stats(output1, 2, 0, 0, 1)
+
+    output2 = user_stats_req(registered_user['token'])['user_stats']
+    check_user_stats(output2, 1, 0, 0, 0.5)
+
+def test_user_stats_success_dms_joined(registered_user):
+    user1 = auth_register_req("patrick.liang@unsw.com", "katrick", "Patrick", "Liang")
+
+    chan_id = channels_create_req(registered_user['token'], "Channel 1", True)['channel_id']
+    channel_join_req(user1['token'], chan_id)
+    channels_create_req(user1['token'], "channel 2", True)
+
+    dm_create_req(registered_user['token'], [user1['auth_user_id']])
+
+    output1 = user_stats_req(user1['token'])['user_stats']
+    check_user_stats(output1, 2, 1, 0, 1)
+
+    output2 = user_stats_req(registered_user['token'])['user_stats']
+    check_user_stats(output2, 1, 1, 0, 2/3)
+
+def test_user_stats_success_messages(registered_user):
+    user1 = auth_register_req("patrick.liang@unsw.com", "katrick", "Patrick", "Liang")
+
+    chan_id = channels_create_req(registered_user['token'], "Channel 1", True)['channel_id']
+    channel_join_req(user1['token'], chan_id)
+    channels_create_req(user1['token'], "channel 2", True)
+
+    message_send_req(registered_user['token'], chan_id, "bruh 1")
+    message_send_req(registered_user['token'], chan_id, "bruh 2")
+
+    output1 = user_stats_req(user1['token'])['user_stats']
+    check_user_stats(output1, 2, 0, 0, 1/2)
+
+    output2 = user_stats_req(registered_user['token'])['user_stats']
+    check_user_stats(output2, 1, 0, 2, 3/4)
+
+def test_user_stats_remove_dm(registered_user):
+    user1 = auth_register_req("patrick.liang@unsw.com", "katrick", "Patrick", "Liang")
+
+    channels_create_req(registered_user['token'], "Channel 2", True)
+
+    dm_id = dm_create_req(registered_user['token'], [user1['auth_user_id']])['dm_id']
+
+    dm_remove_req(registered_user['token'], dm_id)
+
+    output = user_stats_req(registered_user['token'])['user_stats']
+    check_user_stats(output, 1, 0, 0, 1)
+
+def test_user_stats_remove_message(registered_user):
+    user1 = auth_register_req("patrick.liang@unsw.com", "katrick", "Patrick", "Liang")
+
+    chan_id = channels_create_req(registered_user['token'], "Channel 2", True)['channel_id']
+    msg_id = message_send_req(registered_user['token'], chan_id, "bruh removed")['message_id']
+    message_remove_req(registered_user['token'], msg_id)
+
+    output = user_stats_req(registered_user['token'])['user_stats']
+    check_user_stats(output, 1, 0, 1, 1)
 
 #################################
 #   users/stats                 #
 #################################
 
-# def test_users_stats_invalid_token(registered_user):
-#     with pytest.raises(AccessError):
-#         users_stats_v1('123')
+def test_users_stats_invalid_token(registered_user):
+    assert users_stats_req('123')['code'] == AccessError.code
 
-# def test_users_stats_success(registered_user):
-    
-#     output = users_stats_v1(registered_user['token'])
+def test_users_stats_one_user(registered_user):
+    output = users_stats_req(registered_user['token'])['workspace_stats']
+    check_workspace_stats(output, 0, 0, 0, 0)
 
-#     expected_output = {
-#         'channels_exist': [], 
-#         'dms_exist': [], 
-#         'messages_exist': [], 
-#         'utilization_rate' : 0
-#     }
+def test_users_stats_remove_user(registered_user):
+    user1 = auth_register_req("patrick.liang@unsw.com", "katrick", "Patrick", "Liang")
+    user2 = auth_register_req("john.citizen@unsw.com", "password", "John", "Citizen")
 
-#     assert output == expected_output
+    chan_id = channels_create_req(registered_user['token'], "Channel 1", True)['channel_id']
+    channels_create_req(registered_user['token'], "Channel 2", True)
+    channels_create_req(registered_user['token'], "Channel 3", True)
+
+    channel_join_req(user1['token'], chan_id)
+
+    output = users_stats_req(registered_user['token'])['workspace_stats']
+    check_workspace_stats(output, 3, 0, 0, 2/3)
+
+    admin_user_remove_req(registered_user['token'], user1['auth_user_id'])
+
+    output = users_stats_req(registered_user['token'])['workspace_stats']
+    check_workspace_stats(output, 3, 0, 0, 1/2)
+
+def test_users_stats_mult_user_channels(registered_user):
+    user1 = auth_register_req("patrick.liang@unsw.com", "katrick", "Patrick", "Liang")
+    user2 = auth_register_req("john.citizen@unsw.com", "password", "John", "Citizen")
+
+    chan_id = channels_create_req(registered_user['token'], "Channel 1", True)['channel_id']
+    channels_create_req(registered_user['token'], "Channel 2", True)
+    channels_create_req(registered_user['token'], "Channel 3", True)
+
+    channel_join_req(user1['token'], chan_id)
+
+    output = users_stats_req(registered_user['token'])['workspace_stats']
+    check_workspace_stats(output, 3, 0, 0, 2/3)
+
+def test_users_stats_mult_user_dms(registered_user):
+    user1 = auth_register_req("patrick.liang@unsw.com", "katrick", "Patrick", "Liang")
+    user2 = auth_register_req("john.citizen@unsw.com", "password", "John", "Citizen")
+    user3 = auth_register_req("alex.nguyen@unsw.com", "bigsausage", "Alex", "Nguyen")
+
+    channels_create_req(registered_user['token'], "Channel 2", True)
+
+    dm_create_req(registered_user['token'], [user1['auth_user_id'], user2['auth_user_id']])
+
+    output = users_stats_req(registered_user['token'])['workspace_stats']
+    check_workspace_stats(output, 1, 1, 0, 3/4)
+
+def test_users_stats_mult_user_messages(registered_user):
+    user1 = auth_register_req("patrick.liang@unsw.com", "katrick", "Patrick", "Liang")
+    user2 = auth_register_req("john.citizen@unsw.com", "password", "John", "Citizen")
+    user3 = auth_register_req("alex.nguyen@unsw.com", "bigsausage", "Alex", "Nguyen")
+
+    chan_id = channels_create_req(registered_user['token'], "Channel 2", True)['channel_id']
+
+    message_send_req(registered_user['token'], chan_id, "bruh 1")
+    message_send_req(registered_user['token'], chan_id, "bruh 2")
+    message_send_req(registered_user['token'], chan_id, "bruh 3")
+
+    dm_create_req(registered_user['token'], [user1['auth_user_id'], user2['auth_user_id']])
+
+    output = users_stats_req(registered_user['token'])['workspace_stats']
+    check_workspace_stats(output, 1, 1, 3, 3/4)
