@@ -4,6 +4,7 @@ import signal
 from json import dumps
 from flask import Flask, request, send_file
 from flask_cors import CORS
+from other_functions.kick import channel_kick_v1, dm_kick_v1
 from src.error import InputError
 from src import config
 from src.auth import auth_login_v1, auth_passwordreset_request_v1, auth_passwordreset_reset_v1, auth_register_v1, auth_logout_v1
@@ -378,6 +379,19 @@ def standup_active():
 def standup_send():
     data = request.get_json(force = True)
     return json.dumps(standup_send_v1(data['token'], data['channel_id'], data['message']))
+
+##########ADDITIONAL FUNCTIONS##########
+# Kicks someone from the channel
+@APP.route("/channel/kick/v1", methods=['POST'])
+def channel_kick():
+    data = request.get_json(force = True)
+    return json.dumps(channel_kick_v1(data['token'], data['channel_id'], data['user_id']))
+
+# Kicks someone from a dm
+@APP.route("/dm/kick/v1", methods=['POST'])
+def dm_kick():
+    data = request.get_json(force = True)
+    return json.dumps(dm_kick_v1(data['token'], data['dm_id'], data['user_id']))
 
 #### NO NEED TO MODIFY BELOW THIS POINT
 

@@ -65,12 +65,12 @@ def user_profile_v1(token, u_id):
 
     Returns:
         {
-                'u_id': user['id'],
-                'email': user['emails'],
-                'name_first': user['names'],
-                'name_last': user['name_lasts'],
-                'handle_str': user['handle']
-            }
+            'u_id': user['id'],
+            'email': user['emails'],
+            'name_first': user['names'],
+            'name_last': user['name_lasts'],
+            'handle_str': user['handle']
+        }
 
     Raises:
         Input Error: - u_id does not exist
@@ -208,6 +208,7 @@ def user_profile_sethandle_v1(token, handle_str):
 
         Access Error: - The token does not exist
     """
+    # Token check
     user_data = data_store.get_data()['users']
     valid_token = False
     for user in user_data:
@@ -224,10 +225,11 @@ def user_profile_sethandle_v1(token, handle_str):
     if is_not_alpha_numeric:
         raise InputError("Handle cannot contain non-alphanumeric characters")
 
+    # Check if handle is taken
     for user in user_data:
         if user['handle'] == handle_str:
             raise InputError("Handle already taken")
-    
+    # Change handle of the user
     for user in user_data:
         if token in user['token']:
             user['handle'] = handle_str
@@ -236,6 +238,24 @@ def user_profile_sethandle_v1(token, handle_str):
     #Return type {}
 
 def user_profile_uploadphoto_v1(token, img_url, x_start, y_start, x_end, y_end):
+    """
+    Update the authorised user's profile photo
+
+    Args:
+        token: The generated token of user changing their handle.
+        img_url: url to an image on the internet
+        x_start, x_end: start and end coords to crop
+        y_start, y_end: start and end coords to crop
+
+    Returns:
+        An empty dictionary
+
+    Raises:
+        Input Error: - when start and end coords are not valid
+                     - Image uploaded is not a JPG
+
+        Access Error: - The token does not exist
+    """
     user_data = data_store.get_data()['users']
     valid_token = False
     for user in user_data:
@@ -249,26 +269,44 @@ def user_profile_uploadphoto_v1(token, img_url, x_start, y_start, x_end, y_end):
     if x_end < x_start or y_end < y_start:
         raise InputError("x_end is less than x_start or y_end is less than y_start")
 
-    response = requests.get(img_url, stream=True)
-    if response.status_code != 200:
-        raise InputError("img_url returns an HTTP status other than 200")
-
+    try:
+        response = requests.get(img_url, stream=True)
+    except InputError as e:
+        raise InputError from e
+    # Open image from response and check it is a jpeg
     img = Image.open(response.raw)
     if img.format != "JPEG":
         raise InputError("image uploaded is not a JPG")
-
+    # Check cropping dimensions
     width, height = img.size    
     if x_start not in range(0, width) or x_end not in range(0, width) \
         or y_start not in range(0, height) or y_end not in range(0, height):
         raise InputError("any of x_start, y_start, x_end, y_end are not within the dimensions of the image at the URL")
 
     cropped_img = img.crop((x_start, y_start, x_end, y_end))
+    # Save the image to the src/images folder and store it in user
     cropped_img.save(IMAGE_DIR_NAME + token + '.jpg')
     auth_user['profile_img_name'] = token + '.jpg'
     update_permanent_storage()
     return {}
 
 def user_stats_v1(token):
+    """
+    Gives the users stats
+
+    Args:
+        token: The generated token of user changing their handle.
+
+    Returns:
+        users_stats = {
+            'num_channels_joined': [],
+            'num_dms_joined' : [],
+            'num_messages_sent' :[]
+        }
+
+    Raises:
+        Access Error: - The token does not exist
+    """
     user_data = data_store.get_data()['users']
     valid_token = False
     for user in user_data:
@@ -279,9 +317,26 @@ def user_stats_v1(token):
     if not valid_token:
         raise AccessError("Invalid Token")
 
+    calculate_involvement_util(stats)
     return {'user_stats': stats}
 
 def users_stats_v1(token):
+    """
+    Gives workspace stats
+
+    Args:
+        token: The generated token of user changing their handle.
+
+    Returns:
+        users_stats = {
+            'num_channels_exist': [],
+            'num_dms_exist' : [],
+            'num_messages_exist' :[]
+        }
+
+    Raises:
+        Access Error: - The token does not exist
+    """
     user_data = data_store.get_data()['users']
     valid_token = False
     for user in user_data:
@@ -291,6 +346,7 @@ def users_stats_v1(token):
     if not valid_token:
         raise AccessError("Invalid Token")
 
+    data_store.get_data()['workspace_stats']['utilization_rate'] = util_rate()
     return {
         "workspace_stats": data_store.get_data()['workspace_stats']
     }
@@ -314,7 +370,6 @@ def update_workspace_stats(key_str, is_add):
             'num_' + key_str: init_num - 1,
             'time_stamp': timestamp
         })
-    
     return
 
 def update_user_stats(u_id, key_str, is_add):
@@ -340,8 +395,6 @@ def update_user_stats(u_id, key_str, is_add):
             'num_' + key_str: init_num - 1,
             'time_stamp': timestamp
         })
-    
-    calculate_involvement_util(target_stats)
     return
 
 def calculate_involvement_util(target_stats):
@@ -365,7 +418,6 @@ def calculate_involvement_util(target_stats):
     else:
         target_stats['involvement_rate'] = sum_user / sum_total
 
-    work_stats['utilization_rate'] = util_rate()
     return
 
 def util_rate():
@@ -385,8 +437,9 @@ def part_of_one_dm(u_id):
     ''' Returns true if the user is part of at least one dm '''
     dm_data = data_store.get_data()['DMs']
     for dm in dm_data:
-        if u_id in dm['members']:
-            return True
+        for member in dm['members']:
+            if member['u_id'] == u_id:
+                return True
     
     return False
 
