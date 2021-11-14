@@ -360,3 +360,19 @@ def echo_req(value):
         'value': value
     }
     return requests.get(f"{url}echo", params=input_data).json()
+
+def channel_kick_req(token, channel_id, user_id):
+    input_data = {
+        "token": token,
+        "channel_id": channel_id,
+        "user_id": user_id
+    }
+    return requests.post(f"{url}channel/kick/v1", data=json.dumps(input_data)).json()
+
+def dm_kick_req(token, dm_id, user_id):
+    input_data = {
+        "token": token,
+        "dm_id": dm_id,
+        "user_id": user_id
+    }
+    return requests.post(f"{url}dm/kick/v1", data=json.dumps(input_data)).json()

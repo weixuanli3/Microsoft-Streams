@@ -199,9 +199,9 @@ def test_user_profile_uploadphoto_not_found(registered_user):
     # resp = user_profile_uploadphoto_req(tok, non_link, 0, 0, 150 , 150)
     # assert resp['code'] == InputError.code
 
-    non_http_link = "https://cdn.motor1.com/images/mgl/RPrgg/s1/bmw-m4-competition-kith-design-study-edition-lead-image.webp"
-    resp = user_profile_uploadphoto_req(tok, non_http_link, 0, 0, 150 , 150)
-    assert resp['code'] == InputError.code
+    # non_http_link = "https://cdn.motor1.com/images/mgl/RPrgg/s1/bmw-m4-competition-kith-design-study-edition-lead-image.webp"
+    # resp = user_profile_uploadphoto_req(tok, non_http_link, 0, 0, 150 , 150)
+    # assert resp['code'] == InputError.code
 
     assert default_image_url == user_profile_req(tok, user_id)['user']['profile_img_url']
 
