@@ -5,7 +5,26 @@ from datetime import datetime
 import copy
 
 def notifications_get_v1(token):
-    
+    """
+    Provides the latest 20 notifications for the user
+
+    Args:
+        token: The generated token of user changing their handle.
+
+    Returns:
+        notifications : {
+            [
+                {
+                    "channel_id": 1,
+                    "dm_id": -1,
+                    "notification_message": "bruh tagged you in bruh: asdfasdf"
+                }
+            ]
+        }
+
+    Raises:
+        Access Error: - The token does not exist
+    """
     user_data = data_store.get_data()['users']
     
     #Check if user token is valid
@@ -37,6 +56,7 @@ def notifications_get_v1(token):
     #     ]
     # }
 
+########## Helper Functions ##########
 def helper_tagged_add_notif(token, message, channel, dm):
     
     user_data = data_store.get_data()['users']

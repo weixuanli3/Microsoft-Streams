@@ -196,6 +196,23 @@ def auth_logout_v1(token):
 
 
 def auth_passwordreset_request_v1(email):
+    '''
+    Given a reset code for a user, set that user's new password to the password provided.
+
+    Arguments:
+        email - email for the current
+        
+    Exceptions:
+      
+      AccessError when:
+      
+        - token invalid
+        
+    Return Value:
+        Returns an empty dicionary
+        Example:
+        return {}
+    '''
     user_data = data_store.get_data()['users']
     for users in user_data:
         if email == users['emails']:
@@ -219,7 +236,30 @@ def auth_passwordreset_request_v1(email):
     return {}
 
 def auth_passwordreset_reset_v1(reset_code, new_password):
+    '''
+    Function takes in channel id and returns whether there
+    is a standup active in the channel.
 
+    Arguments:
+        reset_code - Code sent to user to reset password
+        new_password - New password to replace old one
+        
+    Exceptions:
+       InputError when:
+      
+        - reset_code is not a valid reset code
+        - password entered is less than 6 characters long
+      
+      AccessError when:
+      
+        - token invalid
+        
+    Return Value:
+        Returns an empty dicionary
+        Example:
+        return {
+        }
+    '''
     if not is_password_valid(new_password):
         raise InputError('Password does not meet requirments')
 

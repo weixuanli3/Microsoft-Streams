@@ -374,6 +374,27 @@ def message_remove_v1(token, message_id):
     return {}
 
 def message_share_v1(token, og_message_id, message, channel_id, dm_id):
+    """
+    Given a message_id for a message, this message is shared to the channel/DM
+
+    Args:
+        token: The generated token of user removing the message.
+        og_message_id: The integer id of the message the user is sharing
+        message: optional message in addition to the shared message
+        channel_id: if message is shared to a channel, channel_id is the id, else is -1
+        channel_id: if message is shared to a dm, dm_id is the id, else is -1
+
+    Returns:
+        dictionary with shared message id
+
+    Raises:
+        Input Error: - both channel and dm id are invalid
+                     - neither channel nor dm id are -1
+                     - og_message_id is not valid
+                     - length of message is more than 1000 chars
+
+        Access Error: - authorised user has not joined valid channel/dm
+    """
     user_data = data_store.get_data()['users']
     dm_data = data_store.get_data()['DMs']
     channel_data = data_store.get_data()['channels']

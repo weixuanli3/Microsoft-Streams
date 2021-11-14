@@ -9,6 +9,33 @@ import threading
 import time
 
 def standup_start_v1(token, channel_id, length):
+    '''
+    Function takes in channel id and length and starts a standup in the
+    channel for "length" seconds
+
+    Arguments:
+        token - Used to uniquely identify the user
+        channel_id - ID of the channel to identify it
+        length - Length of standups in seconds
+
+    Exceptions:
+        InputError when any of:
+      
+        - channel_id does not refer to a valid channel
+        - length is a negative integer
+        - an active standup is currently running in the channel
+      
+      AccessError when:
+        - token invalid
+        - channel_id is valid and the authorised user is not a member of the channel
+
+    Return Value:
+        Returns a dicionary containing the time_finish
+        Example:
+        return {
+            'time_finish': 00000000.0000
+        }
+    '''
     all_tokens = data_store.get('token')['token']
     token_exists = False
     
@@ -86,6 +113,33 @@ def standup_start_v1(token, channel_id, length):
     
 
 def standup_active_v1(token, channel_id):
+    '''
+    Function takes in channel id and returns whether there
+    is a standup active in the channel.
+
+    Arguments:
+        token - Used to uniquely identify the user
+        channel_id - ID of the channel to identify it
+        
+    Exceptions:
+       InputError when:
+      
+        - channel_id does not refer to a valid channel
+      
+      AccessError when:
+      
+        - channel_id is valid and the authorised user is not a member of the channel
+        - token invalid
+        
+    Return Value:
+        Returns a dicionary containing the time_finish and bool for whether
+        there is an active standup
+        Example:
+        return {
+            'is_active': True
+            'time_finish': 00000000.0000
+        }
+    '''
     all_tokens = data_store.get('token')['token']
     token_exists = False
 
@@ -129,6 +183,30 @@ def standup_active_v1(token, channel_id):
     }
 
 def standup_send_v1(token, channel_id, message):
+    '''
+    Function takes in channel id and a message, then adds
+    it to the current standup's message if one is active
+    Arguments:
+        token - Used to uniquely identify the user
+        channel_id - ID of the channel to identify it
+        message - string that will be added to the standups's message
+        
+    Exceptions:
+    InputError when any of:
+      
+        - channel_id does not refer to a valid channel
+        - length of message is over 1000 characters
+        - an active standup is not currently running in the channel
+      
+    AccessError when:
+      
+        - channel_id is valid and the authorised user is not a 
+        member of the channel- token invalid
+        - token invalid
+        
+    Return Value:
+        Returns an empty dictionary {}
+    '''
     all_tokens = data_store.get('token')['token']
     token_exists = False
 
