@@ -8,7 +8,7 @@ from datetime import datetime
 import random
 import string
 import smtplib, ssl
-
+from email.message import EmailMessage
 from src.data_store import data_store, update_permanent_storage
 from src.error import InputError, AccessError
 
@@ -204,15 +204,22 @@ def auth_passwordreset_request_v1(email):
             # Email : w15a.beagle@gmail.com
             reset_code = ''.join(random.choice(string.digits) for _ in range(6))
             users['reset_code'] = reset_code
+            
+            msg = EmailMessage()
+            msg['Subject'] = 'UNSW Streams - Reset code'
+            msg['From'] = 'w15a.beagle@gmail.com' 
+            msg['To'] = email
 
-            port = 465
-            password = '3ZmIA3RV' 
+            with open('email_format.txt', 'r') as file:
+                data = file.read().replace('\n', '')
 
-            context = ssl.create_default_context()
+            data = data.replace("................................................", reset_code)
 
-            with smtplib.SMTP_SSL('smtp.gmail.com',port,context=context) as server:
-                server.login('w15a.beagle@gmail.com', password)
-                server.sendmail('w15a.beagle@gmail.com', email, f'Reset code - {reset_code}')
+            msg.set_content(data, subtype='html')
+
+            with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
+                smtp.login('w15a.beagle@gmail.com' , '3ZmIA3RV' ) 
+                smtp.send_message(msg)
 
 
             # send email
